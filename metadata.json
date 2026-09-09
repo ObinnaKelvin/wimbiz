@@ -1,0 +1,7 @@
+{
+  "name": "Iwosan HerHealth",
+  "description": "A privacy-first, clinician-reviewed women's health awareness and screening guide Progressive Web App by WIMBIZ and Iwosan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

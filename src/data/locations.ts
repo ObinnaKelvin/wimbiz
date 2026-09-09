@@ -1,0 +1,64 @@
+import { IwosanLocation } from '../types';
+
+export const IWOSAN_LOCATIONS: IwosanLocation[] = [
+  {
+    id: 'lagoon-vi',
+    name: 'Iwosan Lagoon Hospital, Victoria Island',
+    address: '17B Idejo Street, Off Adeola Odeku, Victoria Island, Lagos',
+    area: 'Victoria Island',
+    phone: '+234 700 524666 / +234 1 888 8888',
+    hours: '24/7 Full Emergency & Multi-Specialty Clinic',
+    specialties: ["Women's Health & Gynaecology", 'Digital Mammography', 'Cardiology & Catheterization Lab', 'Advanced Surgery', 'Executive Wellness'],
+    mapLink: 'https://maps.google.com/?q=Iwosan+Lagoon+Hospital+Victoria+Island+Lagos',
+  },
+  {
+    id: 'lagoon-ikoyi',
+    name: 'Iwosan Lagoon Hospital, Ikoyi',
+    address: '11B Bourdillon Road, Ikoyi, Lagos',
+    area: 'Ikoyi',
+    phone: '+234 700 524666 / +234 1 271 2700',
+    hours: '24/7 Outpatient, Specialist Clinics & Inpatient Care',
+    specialties: ['Obstetrics & Maternity', 'Well-Woman Health Packages', 'Paediatrics', 'Ultrasound & Radiology', 'Endocrinology'],
+    mapLink: 'https://maps.google.com/?q=Iwosan+Lagoon+Hospital+Ikoyi+Lagos',
+  },
+  {
+    id: 'lagoon-ikeja',
+    name: 'Iwosan Lagoon Hospital, Ikeja',
+    address: '97 Obafemi Awolowo Way, Ikeja, Lagos',
+    area: 'Ikeja Mainland',
+    phone: '+234 700 524666 / +234 1 888 8888',
+    hours: '24/7 Emergency, Surgery & Intensive Care',
+    specialties: ['Comprehensive Health Screenings', 'Orthopaedics & Bone Care', 'Gynaecology & Minimally Invasive Surgery', 'Cardiac Diagnostics'],
+    mapLink: 'https://maps.google.com/?q=Iwosan+Lagoon+Hospital+Ikeja+Lagos',
+  },
+  {
+    id: 'lagoon-lekki',
+    name: 'Iwosan Lagoon Clinic & Diagnostic Centre, Lekki',
+    address: 'Block 24, Plot 1, Admiralty Way, Lekki Phase 1, Lagos',
+    area: 'Lekki Phase 1',
+    phone: '+234 700 524666 / +234 809 396 0000',
+    hours: 'Monday – Saturday: 8:00 AM – 8:00 PM | Sunday: 10:00 AM – 4:00 PM',
+    specialties: ['Fast-Track Blood & Vitals Screening', 'Women’s Health Consultations', 'Pharmacy & Diagnostic Lab', 'Vaccinations & HPV Care'],
+    mapLink: 'https://maps.google.com/?q=Iwosan+Lagoon+Clinic+Lekki+Phase+1+Lagos',
+  },
+  {
+    id: 'iwosan-heart-vi',
+    name: 'Iwosan Lagoon Centre for Cardiovascular Care',
+    address: 'Plot 21B, Ligali Ayorinde Street, Victoria Island, Lagos',
+    area: 'Victoria Island',
+    phone: '+234 700 524666 / +234 1 888 8888',
+    hours: '24/7 Specialized Cardiac Emergencies & Interventional Care',
+    specialties: ['Women’s Heart Program', 'Echocardiography & Stress Testing', 'Holter Blood Pressure Monitoring', 'Hypertension Clinic'],
+    mapLink: 'https://maps.google.com/?q=Iwosan+Lagoon+Center+for+Cardiovascular+Care+Lagos',
+  }
+];
+
+export const IWOSAN_CONTACT_INFO = {
+  generalHotline: '+234 700 524666 (0700 LAGOON)',
+  emergencyHotline: '+234 1 888 8888',
+  whatsappConcierge: '+234 809 396 0000',
+  whatsappDirectUrl: 'https://wa.me/2348093960000?text=Hello%20Iwosan%20HerHealth%20Team%2C%20I%20completed%20the%20WIMBIZ%20Health%20Awareness%20Check%20and%20would%20like%20to%20inquire%20about%20a%20screening%20appointment.',
+  email: 'wellness@iwosanlagoon.life',
+  website: 'https://iwosanlagoon.life',
+  wimbizPartnerNote: 'Proudly delivered in partnership with WIMBIZ (Women in Management, Business and Public Service).',
+};
