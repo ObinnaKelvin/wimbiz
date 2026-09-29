@@ -16,6 +16,7 @@ import {
   RotateCcw,
   Check,
   Stethoscope,
+  ClipboardList,
 } from 'lucide-react';
 
 interface SummaryScreenProps {
@@ -24,6 +25,7 @@ interface SummaryScreenProps {
   onNavigate: (screen: ScreenId) => void;
   onOpenArticle: (articleId: string) => void;
   onRetakeCheck: () => void;
+  onReviewSelections?: () => void;
 }
 
 const containerVariants = {
@@ -52,6 +54,7 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
   onNavigate,
   onOpenArticle,
   onRetakeCheck,
+  onReviewSelections,
 }) => {
   const [copiedLink, setCopiedLink] = useState(false);
   const summary: SummaryResults = generateSummary(answers, numbers);
@@ -214,7 +217,7 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
                       className="inline-flex items-center gap-1 text-[11px] font-bold text-sky-700 hover:text-sky-900 transition cursor-pointer"
                     >
                       <BookOpen className="w-3.5 h-3.5" />
-                      <span>Learn More</span>
+                      <span>Read Article</span>
                     </button>
                   )}
                   {item.actionScreen && (
@@ -279,7 +282,7 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
                         className="inline-flex items-center gap-1 text-[11px] font-bold text-sky-700 hover:text-sky-900 transition cursor-pointer"
                       >
                         <BookOpen className="w-3.5 h-3.5" />
-                        <span>Guide</span>
+                        <span>Read Article</span>
                       </button>
                     )}
                     <button
@@ -334,6 +337,35 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
             <span>See Age Screening Matrix</span>
           </motion.button>
         </div>
+      </motion.div>
+
+      {/* Review Selection Button: Links directly back to form selections */}
+      <motion.div variants={itemVariants} className="pt-2 print:hidden">
+        <motion.button
+          whileHover={{ scale: 1.015 }}
+          whileTap={{ scale: 0.98 }}
+          id="btn-review-selection"
+          onClick={onReviewSelections || (() => onNavigate('check'))}
+          className="w-full p-4 rounded-2xl bg-white border-2 border-emerald-500/40 hover:border-emerald-600 hover:bg-emerald-50/40 text-slate-900 shadow-xs transition flex items-center justify-between cursor-pointer group"
+        >
+          <div className="flex items-center gap-3 text-left">
+            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
+              <ClipboardList className="w-5 h-5 text-emerald-700" />
+            </div>
+            <div>
+              <span className="block text-sm font-black text-slate-900 leading-tight">
+                Review selection
+              </span>
+              <span className="block text-[11px] text-slate-500 font-medium mt-0.5">
+                Check or adjust your answers on the questionnaire
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1 text-emerald-700 font-bold text-xs shrink-0 pl-2">
+            <span>Edit responses</span>
+            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+          </div>
+        </motion.button>
       </motion.div>
 
       {/* Share / Print / Retake Utilities */}

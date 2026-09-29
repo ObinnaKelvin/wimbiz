@@ -1,15 +1,21 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Article, ScreenId } from '../types';
-import { X, ShieldCheck, Clock, CheckCircle2, ArrowRight, Share2, CalendarCheck, BookOpen } from 'lucide-react';
+import { X, ShieldCheck, Clock, CheckCircle2, ArrowRight, Share2, CalendarCheck, BookOpen, ArrowLeft } from 'lucide-react';
 
 interface ArticleModalProps {
   article: Article | null;
   onClose: () => void;
   onNavigate: (screen: ScreenId) => void;
+  hasCompletedCheck?: boolean;
 }
 
-export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, onNavigate }) => {
+export const ArticleModal: React.FC<ArticleModalProps> = ({
+  article,
+  onClose,
+  onNavigate,
+  hasCompletedCheck,
+}) => {
   if (!article) return null;
 
   const handleShare = () => {
@@ -28,14 +34,17 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, on
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 overflow-y-auto"
+        onClick={(e) => {
+          if (e.target === e.currentTarget) onClose();
+        }}
+        className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 backdrop-blur-xs p-3 sm:p-4 pb-20 overflow-y-auto"
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.94, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.94, y: 15 }}
           transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full max-w-lg rounded-3xl bg-slate-50 p-5 sm:p-7 shadow-2xl border border-slate-200 text-slate-900 max-h-[92vh] overflow-y-auto relative text-left"
+          className="w-full max-w-lg rounded-3xl bg-slate-50 p-5 sm:p-7 shadow-2xl border border-slate-200 text-slate-900 max-h-[85vh] overflow-y-auto relative text-left my-auto"
         >
           {/* Header Bar */}
           <div className="flex items-center justify-between pb-3 border-b border-slate-200/80">
@@ -134,6 +143,21 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({ article, onClose, on
               >
                 <span>{article.screenIdTarget === 'screening-guide' ? 'View Recommended Screenings' : 'Book a Consultation with Iwosan'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
+              </motion.button>
+            )}
+
+            {hasCompletedCheck && (
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  onClose();
+                  onNavigate('summary');
+                }}
+                className="w-full py-2.5 px-4 rounded-full bg-emerald-50 border border-emerald-300 text-emerald-800 font-bold text-xs hover:bg-emerald-100 transition cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Return to Health Awareness Summary</span>
               </motion.button>
             )}
 

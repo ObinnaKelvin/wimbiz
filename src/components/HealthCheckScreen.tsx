@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Question, ScreenId } from '../types';
 import { HEALTH_QUESTIONS } from '../data/questions';
-import { HelpCircle, ChevronLeft, ArrowRight, Check, X, Sparkles } from 'lucide-react';
+import { HelpCircle, ChevronLeft, ChevronRight, ArrowRight, Check, X, Sparkles, ClipboardList, CheckCircle2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface HealthCheckScreenProps {
@@ -10,6 +10,7 @@ interface HealthCheckScreenProps {
   onAnswerChange: (questionId: string, optionId: string) => void;
   onFinishCheck: () => void;
   onNavigate: (screen: ScreenId) => void;
+  hasCompletedCheck?: boolean;
 }
 
 export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
@@ -17,9 +18,11 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
   onAnswerChange,
   onFinishCheck,
   onNavigate,
+  hasCompletedCheck = false,
 }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [showWhyModal, setShowWhyModal] = useState(false);
+  const [showOverview, setShowOverview] = useState(false);
 
   const currentQuestion: Question = HEALTH_QUESTIONS[currentStepIndex];
   const selectedOptionId = answers[currentQuestion.id];
@@ -31,7 +34,9 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
     // Auto-advance smoothly after short selection cue if user prefers fast flow
     setTimeout(() => {
       if (isLastQuestion) {
-        triggerCompletionConfetti();
+        if (!hasCompletedCheck) {
+          triggerCompletionConfetti();
+        }
         onFinishCheck();
       } else {
         setCurrentStepIndex((prev) => prev + 1);
@@ -42,7 +47,9 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
   const handleSkip = () => {
     onAnswerChange(currentQuestion.id, 'skipped');
     if (isLastQuestion) {
-      triggerCompletionConfetti();
+      if (!hasCompletedCheck) {
+        triggerCompletionConfetti();
+      }
       onFinishCheck();
     } else {
       setCurrentStepIndex((prev) => prev + 1);
@@ -53,7 +60,15 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
     if (currentStepIndex > 0) {
       setCurrentStepIndex((prev) => prev - 1);
     } else {
-      onNavigate('welcome');
+      onNavigate(hasCompletedCheck ? 'summary' : 'welcome');
+    }
+  };
+
+  const handleNext = () => {
+    if (isLastQuestion) {
+      onFinishCheck();
+    } else {
+      setCurrentStepIndex((prev) => prev + 1);
     }
   };
 
@@ -72,47 +87,131 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
 
   return (
     <div className="space-y-5 pb-24 pt-2 text-left max-w-md mx-auto">
-      {/* Top Multi-segment Progress Bar */}
+      {/* Review Banner if user returned to review selections */}
+      {hasCompletedCheck && (
+        <div className="bg-emerald-50/90 border border-emerald-200/80 rounded-2xl p-2.5 px-3 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
+            <span className="font-bold text-emerald-900">Reviewing form selections</span>
+          </div>
+          <button
+            onClick={onFinishCheck}
+            className="font-bold text-emerald-700 hover:text-emerald-950 bg-white border border-emerald-300 px-3 py-1 rounded-full shadow-2xs flex items-center gap-1 transition cursor-pointer"
+          >
+            <span>Done · Return to Summary</span>
+            <ArrowRight className="w-3 h-3" />
+          </button>
+        </div>
+      )}
+
+      {/* Top Multi-segment Progress Bar with click-to-jump */}
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-1.5 px-0.5">
           {HEALTH_QUESTIONS.map((q, idx) => {
-            const isCompleted = idx < currentStepIndex || (idx === currentStepIndex && !!selectedOptionId);
+            const isCompleted = !!answers[q.id];
             const isCurrent = idx === currentStepIndex;
 
             return (
-              <motion.div
+              <button
                 key={q.id}
-                layout
-                className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
-                  isCompleted && !isCurrent
-                    ? 'bg-emerald-600'
-                    : isCurrent
-                    ? 'bg-slate-900'
-                    : 'bg-slate-200'
+                type="button"
+                onClick={() => setCurrentStepIndex(idx)}
+                title={`Question ${idx + 1}: ${q.categoryLabel}`}
+                className={`h-2 flex-1 rounded-full transition-all cursor-pointer ${
+                  isCurrent
+                    ? 'bg-slate-900 ring-2 ring-slate-900/30 ring-offset-1'
+                    : isCompleted
+                    ? 'bg-emerald-600 hover:bg-emerald-700'
+                    : 'bg-slate-200 hover:bg-slate-300'
                 }`}
               />
             );
           })}
         </div>
 
-        {/* Category Tracker */}
+        {/* Category Tracker & Quick Jump Toggle */}
         <div className="flex items-center justify-between text-xs font-bold text-sky-800 tracking-wider uppercase pt-1">
-          <span>
-            {currentQuestion.categoryLabel} · {currentQuestion.stepNumber} OF {currentQuestion.totalSteps}
-          </span>
-          {currentStepIndex > 0 && (
-            <motion.button
-              whileHover={{ x: -2 }}
-              whileTap={{ scale: 0.96 }}
-              onClick={handlePrevious}
-              className="flex items-center gap-0.5 text-slate-500 hover:text-slate-900 transition text-[11px] font-semibold cursor-pointer"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" />
-              <span>Back</span>
-            </motion.button>
-          )}
+          <button
+            onClick={() => setShowOverview(!showOverview)}
+            className="flex items-center gap-1 text-slate-700 hover:text-emerald-800 transition cursor-pointer"
+            title="Click to view all question steps"
+          >
+            <ClipboardList className="w-3.5 h-3.5 text-emerald-700" />
+            <span>
+              {currentQuestion.categoryLabel} · {currentQuestion.stepNumber} OF {currentQuestion.totalSteps}
+            </span>
+          </button>
+
+          <div className="flex items-center gap-2">
+            {currentStepIndex > 0 && (
+              <motion.button
+                whileHover={{ x: -2 }}
+                whileTap={{ scale: 0.96 }}
+                onClick={handlePrevious}
+                className="flex items-center gap-0.5 text-slate-500 hover:text-slate-900 transition text-[11px] font-semibold cursor-pointer"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+                <span>Back</span>
+              </motion.button>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Overview Accordion Dropdown to jump directly to any question */}
+      <AnimatePresence>
+        {showOverview && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden bg-white border border-slate-200 rounded-2xl p-3 shadow-xs space-y-1.5"
+          >
+            <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                All 10 Screening Questions
+              </span>
+              <button
+                onClick={() => setShowOverview(false)}
+                className="text-[11px] font-bold text-slate-400 hover:text-slate-700"
+              >
+                Close
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto pt-1">
+              {HEALTH_QUESTIONS.map((q, idx) => {
+                const answerId = answers[q.id];
+                const matchedOption = q.options.find((opt) => opt.id === answerId);
+                const isCurrent = idx === currentStepIndex;
+
+                return (
+                  <button
+                    key={q.id}
+                    onClick={() => {
+                      setCurrentStepIndex(idx);
+                      setShowOverview(false);
+                    }}
+                    className={`text-left p-2 rounded-xl border text-[11px] transition cursor-pointer flex flex-col justify-between ${
+                      isCurrent
+                        ? 'border-slate-900 bg-slate-900 text-white font-bold'
+                        : answerId
+                        ? 'border-emerald-200 bg-emerald-50/60 text-slate-800'
+                        : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <span className="font-semibold truncate">
+                      {idx + 1}. {q.categoryLabel}
+                    </span>
+                    <span className={`text-[10px] truncate mt-0.5 ${isCurrent ? 'text-emerald-300' : 'text-slate-500'}`}>
+                      {matchedOption ? matchedOption.label : 'Not answered'}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main Question & Options Container with AnimatePresence */}
       <AnimatePresence mode="wait">
@@ -198,14 +297,44 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
             })}
           </div>
 
-          {/* Skip Question Link */}
-          <div className="pt-2 text-center">
+          {/* Navigation Controls row between questions */}
+          <div className="pt-2 flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={handlePrevious}
+              className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 flex items-center gap-1 cursor-pointer transition shadow-2xs"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+              <span>{currentStepIndex === 0 ? (hasCompletedCheck ? 'Back to Summary' : 'Back') : 'Previous'}</span>
+            </button>
+
+            {/* Skip Question Link */}
             <button
               onClick={handleSkip}
-              className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition cursor-pointer"
+              className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition cursor-pointer px-2"
             >
-              {currentQuestion.skipText || 'Skip this question'}
+              {currentQuestion.skipText || 'Skip'}
             </button>
+
+            {currentStepIndex < HEALTH_QUESTIONS.length - 1 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-800 hover:text-slate-950 bg-white border border-slate-200 flex items-center gap-1 cursor-pointer transition shadow-2xs"
+              >
+                <span>Next</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={onFinishCheck}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1 cursor-pointer transition shadow-xs"
+              >
+                <span>{hasCompletedCheck ? 'View Summary' : 'Complete'}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </motion.div>
       </AnimatePresence>

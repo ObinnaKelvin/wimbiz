@@ -8,6 +8,7 @@ interface WelcomeScreenProps {
   onNavigate: (screen: ScreenId) => void;
   hasCompletedCheck: boolean;
   onOpenQR: () => void;
+  onRetakeCheck?: () => void;
 }
 
 const containerVariants = {
@@ -34,6 +35,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   onNavigate,
   hasCompletedCheck,
   onOpenQR,
+  onRetakeCheck,
 }) => {
   return (
     <motion.div
@@ -83,7 +85,13 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           id="btn-start-health-check"
-          onClick={() => onNavigate('check')}
+          onClick={() => {
+            if (hasCompletedCheck && onRetakeCheck) {
+              onRetakeCheck();
+            } else {
+              onNavigate('check');
+            }
+          }}
           className="w-full py-4 px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-base shadow-sm hover:shadow-md transition-shadow flex items-center justify-center gap-2 cursor-pointer group"
         >
           <span>{hasCompletedCheck ? 'Retake my health check' : 'Start my health check'}</span>

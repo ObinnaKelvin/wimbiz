@@ -7,9 +7,10 @@ interface HeaderProps {
   currentScreen: ScreenId;
   onNavigate: (screen: ScreenId) => void;
   onOpenQR: () => void;
+  hasCompletedCheck?: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ currentScreen, onNavigate, onOpenQR }) => {
+export const Header: React.FC<HeaderProps> = ({ currentScreen, onNavigate, onOpenQR, hasCompletedCheck }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleNavClick = (screen: ScreenId) => {
@@ -95,17 +96,45 @@ export const Header: React.FC<HeaderProps> = ({ currentScreen, onNavigate, onOpe
               <span>Home & Welcome</span>
             </button>
 
-            <button
-              onClick={() => handleNavClick('check')}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-left transition ${
-                currentScreen === 'check'
-                  ? 'bg-emerald-600 text-white'
-                  : 'text-slate-800 hover:bg-slate-200/70'
-              }`}
-            >
-              <Activity className="w-4 h-4" />
-              <span>3-Min Health Awareness Check</span>
-            </button>
+            {hasCompletedCheck ? (
+              <>
+                <button
+                  onClick={() => handleNavClick('summary')}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-left transition ${
+                    currentScreen === 'summary'
+                      ? 'bg-emerald-600 text-white'
+                      : 'text-slate-800 hover:bg-slate-200/70'
+                  }`}
+                >
+                  <Activity className="w-4 h-4" />
+                  <span>Your Health Awareness Summary</span>
+                </button>
+
+                <button
+                  onClick={() => handleNavClick('check')}
+                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-left transition ${
+                    currentScreen === 'check'
+                      ? 'bg-emerald-600 text-white font-bold'
+                      : 'text-slate-600 hover:bg-slate-200/70'
+                  }`}
+                >
+                  <ShieldCheck className="w-4 h-4 text-emerald-700" />
+                  <span>Review / Retake Check</span>
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => handleNavClick('check')}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-left transition ${
+                  currentScreen === 'check'
+                    ? 'bg-emerald-600 text-white'
+                    : 'text-slate-800 hover:bg-slate-200/70'
+                }`}
+              >
+                <Activity className="w-4 h-4" />
+                <span>3-Min Health Awareness Check</span>
+              </button>
+            )}
 
             <button
               onClick={() => handleNavClick('numbers')}

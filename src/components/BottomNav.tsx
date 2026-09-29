@@ -10,7 +10,7 @@ interface BottomNavProps {
 }
 
 export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate, hasCompletedCheck }) => {
-  // We can show the summary tab if she has completed check
+  // When check is completed, "Check" nav tab returns back to "Your Health Awareness Summary"
   const navItems = [
     {
       id: 'welcome' as ScreenId,
@@ -18,10 +18,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate,
       icon: Sparkles,
     },
     {
-      id: (hasCompletedCheck && currentScreen === 'summary' ? 'summary' : 'check') as ScreenId,
-      label: hasCompletedCheck ? 'Check' : 'Check',
+      id: (hasCompletedCheck ? 'summary' : 'check') as ScreenId,
+      label: 'Check',
       icon: ClipboardCheck,
       highlight: true,
+      isActive: currentScreen === 'check' || currentScreen === 'summary',
     },
     {
       id: 'womens-health' as ScreenId,
@@ -47,7 +48,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate,
   ];
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 py-1.5 px-2 safe-area-bottom shadow-lg">
+    <nav className="fixed bottom-0 inset-x-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-200/90 py-1.5 px-2 safe-area-bottom shadow-lg">
       <div className="max-w-md mx-auto grid grid-cols-6 gap-0.5">
         {navItems.map((item) => {
           const isSelected = item.isActive !== undefined ? item.isActive : currentScreen === item.id;

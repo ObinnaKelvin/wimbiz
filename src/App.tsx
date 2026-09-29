@@ -30,6 +30,7 @@ export default function App() {
   const [numbers, setNumbers] = useState<HealthNumbers>(() => loadNumbersFromLocal());
   const [activeArticleId, setActiveArticleId] = useState<string | null>(null);
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [checkSessionKey, setCheckSessionKey] = useState(0);
   const [hasCompletedCheck, setHasCompletedCheck] = useState<boolean>(() => {
     const saved = loadAnswersFromLocal();
     return Object.keys(saved).length >= 5;
@@ -48,7 +49,13 @@ export default function App() {
 
   const handleFinishCheck = () => {
     setHasCompletedCheck(true);
+    setActiveArticleId(null);
     setCurrentScreen('summary');
+  };
+
+  const handleNavigate = (screen: ScreenId) => {
+    setActiveArticleId(null);
+    setCurrentScreen(screen);
   };
 
   const handleNumbersChange = (newNumbers: HealthNumbers) => {
@@ -65,6 +72,11 @@ export default function App() {
   };
 
   const handleRetakeCheck = () => {
+    setActiveArticleId(null);
+    setAnswers({});
+    saveAnswersToLocal({});
+    setHasCompletedCheck(false);
+    setCheckSessionKey((prev) => prev + 1);
     setCurrentScreen('check');
   };
 
@@ -78,6 +90,8 @@ export default function App() {
       unitSystem: 'metric',
     });
     setHasCompletedCheck(false);
+    setActiveArticleId(null);
+    setCheckSessionKey((prev) => prev + 1);
     setCurrentScreen('welcome');
   };
 
@@ -102,8 +116,9 @@ export default function App() {
         {/* Persistent Brand Header */}
         <Header
           currentScreen={currentScreen}
-          onNavigate={(screen) => setCurrentScreen(screen)}
+          onNavigate={handleNavigate}
           onOpenQR={() => setIsQRModalOpen(true)}
+          hasCompletedCheck={hasCompletedCheck}
         />
 
         {/* Dynamic Screen View with Smooth Page Transition */}
@@ -119,25 +134,28 @@ export default function App() {
             >
               {currentScreen === 'welcome' && (
                 <WelcomeScreen
-                  onNavigate={(screen) => setCurrentScreen(screen)}
+                  onNavigate={handleNavigate}
                   hasCompletedCheck={hasCompletedCheck}
                   onOpenQR={() => setIsQRModalOpen(true)}
+                  onRetakeCheck={handleRetakeCheck}
                 />
               )}
 
               {currentScreen === 'privacy' && (
                 <PrivacyConsentScreen
-                  onNavigate={(screen) => setCurrentScreen(screen)}
-                  onProceedToCheck={() => setCurrentScreen('check')}
+                  onNavigate={handleNavigate}
+                  onProceedToCheck={() => handleNavigate('check')}
                 />
               )}
 
               {currentScreen === 'check' && (
                 <HealthCheckScreen
+                  key={checkSessionKey}
                   answers={answers}
                   onAnswerChange={handleAnswerChange}
                   onFinishCheck={handleFinishCheck}
-                  onNavigate={(screen) => setCurrentScreen(screen)}
+                  onNavigate={handleNavigate}
+                  hasCompletedCheck={hasCompletedCheck}
                 />
               )}
 
@@ -145,7 +163,7 @@ export default function App() {
                 <NumbersScreen
                   numbers={numbers}
                   onNumbersChange={handleNumbersChange}
-                  onNavigate={(screen) => setCurrentScreen(screen)}
+                  onNavigate={handleNavigate}
                 />
               )}
 
@@ -153,42 +171,43 @@ export default function App() {
                 <SummaryScreen
                   answers={answers}
                   numbers={numbers}
-                  onNavigate={(screen) => setCurrentScreen(screen)}
+                  onNavigate={handleNavigate}
                   onOpenArticle={handleOpenArticle}
                   onRetakeCheck={handleRetakeCheck}
+                  onReviewSelections={() => handleNavigate('check')}
                 />
               )}
 
               {currentScreen === 'womens-health' && (
                 <WomensHealthHub
                   onOpenArticle={handleOpenArticle}
-                  onNavigate={(screen) => setCurrentScreen(screen)}
+                  onNavigate={handleNavigate}
                 />
               )}
 
               {currentScreen === 'lifestyle' && (
                 <LifestyleHub
                   onOpenArticle={handleOpenArticle}
-                  onNavigate={(screen) => setCurrentScreen(screen)}
+                  onNavigate={handleNavigate}
                 />
               )}
 
               {currentScreen === 'screening-guide' && (
                 <ScreeningGuideScreen
-                  onNavigate={(screen) => setCurrentScreen(screen)}
+                  onNavigate={handleNavigate}
                   userAgeBand={ageBandLabel}
                 />
               )}
 
               {currentScreen === 'contact' && (
                 <ContactBookingScreen
-                  onNavigate={(screen) => setCurrentScreen(screen)}
+                  onNavigate={handleNavigate}
                 />
               )}
 
               {currentScreen === 'about' && (
                 <AboutSafetyScreen
-                  onNavigate={(screen) => setCurrentScreen(screen)}
+                  onNavigate={handleNavigate}
                   onDataReset={handleDataReset}
                 />
               )}
@@ -199,7 +218,7 @@ export default function App() {
         {/* Bottom Persistent Navigation for Quick Exploration */}
         <BottomNav
           currentScreen={currentScreen}
-          onNavigate={(screen) => setCurrentScreen(screen)}
+          onNavigate={handleNavigate}
           hasCompletedCheck={hasCompletedCheck}
         />
       </div>
@@ -208,7 +227,8 @@ export default function App() {
       <ArticleModal
         article={activeArticle}
         onClose={handleCloseArticle}
-        onNavigate={(screen) => setCurrentScreen(screen)}
+        onNavigate={handleNavigate}
+        hasCompletedCheck={hasCompletedCheck}
       />
 
       {/* Conference QR Code Modal */}
