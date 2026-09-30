@@ -22,6 +22,7 @@ import {
   saveAnswersToLocal,
   loadNumbersFromLocal,
   saveNumbersToLocal,
+  DEFAULT_EMPTY_NUMBERS,
 } from './utils/healthLogic';
 
 export default function App() {
@@ -75,6 +76,9 @@ export default function App() {
     setActiveArticleId(null);
     setAnswers({});
     saveAnswersToLocal({});
+    const resetNumbers: HealthNumbers = { ...DEFAULT_EMPTY_NUMBERS };
+    setNumbers(resetNumbers);
+    saveNumbersToLocal(resetNumbers);
     setHasCompletedCheck(false);
     setCheckSessionKey((prev) => prev + 1);
     setCurrentScreen('check');
@@ -82,13 +86,10 @@ export default function App() {
 
   const handleDataReset = () => {
     setAnswers({});
-    setNumbers({
-      sugarType: 'fasting',
-      sugarUnit: 'mg/dL',
-      height: 165,
-      weight: 65,
-      unitSystem: 'metric',
-    });
+    saveAnswersToLocal({});
+    const resetNumbers: HealthNumbers = { ...DEFAULT_EMPTY_NUMBERS };
+    setNumbers(resetNumbers);
+    saveNumbersToLocal(resetNumbers);
     setHasCompletedCheck(false);
     setActiveArticleId(null);
     setCheckSessionKey((prev) => prev + 1);
@@ -161,6 +162,7 @@ export default function App() {
 
               {currentScreen === 'numbers' && (
                 <NumbersScreen
+                  key={checkSessionKey}
                   numbers={numbers}
                   onNumbersChange={handleNumbersChange}
                   onNavigate={handleNavigate}

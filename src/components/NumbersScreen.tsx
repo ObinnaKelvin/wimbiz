@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { HealthNumbers, ScreenId } from '../types';
 import { calculateBMI, analyzeBloodPressure, analyzeBloodSugar, saveNumbersToLocal } from '../utils/healthLogic';
@@ -41,9 +41,21 @@ export const NumbersScreen: React.FC<NumbersScreenProps> = ({
   const [sugarType, setSugarType] = useState<'fasting' | 'random'>(numbers.sugarType || 'fasting');
   const [sugarUnit, setSugarUnit] = useState<'mg/dL' | 'mmol/L'>(numbers.sugarUnit || 'mg/dL');
   const [unitSystem, setUnitSystem] = useState<'metric' | 'imperial'>(numbers.unitSystem || 'metric');
-  const [height, setHeight] = useState<string>(numbers.height ? String(numbers.height) : '165');
-  const [weight, setWeight] = useState<string>(numbers.weight ? String(numbers.weight) : '65');
+  const [height, setHeight] = useState<string>(numbers.height ? String(numbers.height) : '');
+  const [weight, setWeight] = useState<string>(numbers.weight ? String(numbers.weight) : '');
   const [savedSuccess, setSavedSuccess] = useState(false);
+
+  // Sync internal state when numbers prop changes externally (e.g. on Retake reset)
+  useEffect(() => {
+    setSystolic(numbers.systolic ? String(numbers.systolic) : '');
+    setDiastolic(numbers.diastolic ? String(numbers.diastolic) : '');
+    setBloodSugar(numbers.bloodSugar ? String(numbers.bloodSugar) : '');
+    setSugarType(numbers.sugarType || 'fasting');
+    setSugarUnit(numbers.sugarUnit || 'mg/dL');
+    setUnitSystem(numbers.unitSystem || 'metric');
+    setHeight(numbers.height ? String(numbers.height) : '');
+    setWeight(numbers.weight ? String(numbers.weight) : '');
+  }, [numbers]);
 
   // Real-time calculations
   const numSystolic = systolic ? Number(systolic) : undefined;
@@ -58,19 +70,39 @@ export const NumbersScreen: React.FC<NumbersScreenProps> = ({
 
   const handleSaveAndSync = () => {
     const updated: HealthNumbers = {
-      systolic: numSystolic,
-      diastolic: numDiastolic,
-      bloodSugar: numSugar,
+      systolic: numSystolic && numSystolic > 0 ? numSystolic : undefined,
+      diastolic: numDiastolic && numDiastolic > 0 ? numDiastolic : undefined,
+      bloodSugar: numSugar && numSugar > 0 ? numSugar : undefined,
       sugarType,
       sugarUnit,
-      height: numHeight,
-      weight: numWeight,
+      height: numHeight > 0 ? numHeight : undefined,
+      weight: numWeight > 0 ? numWeight : undefined,
       unitSystem,
     };
     onNumbersChange(updated);
     saveNumbersToLocal(updated);
     setSavedSuccess(true);
     setTimeout(() => setSavedSuccess(false), 2500);
+  };
+
+  const handleResetNumbers = () => {
+    setSystolic('');
+    setDiastolic('');
+    setBloodSugar('');
+    setHeight('');
+    setWeight('');
+    const reset: HealthNumbers = {
+      sugarType,
+      sugarUnit,
+      unitSystem,
+      systolic: undefined,
+      diastolic: undefined,
+      bloodSugar: undefined,
+      height: undefined,
+      weight: undefined,
+    };
+    onNumbersChange(reset);
+    saveNumbersToLocal(reset);
   };
 
   const handleQuickPreset = (type: 'healthy' | 'review') => {

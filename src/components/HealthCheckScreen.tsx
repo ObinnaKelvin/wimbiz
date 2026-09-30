@@ -1,8 +1,23 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Question, ScreenId } from '../types';
-import { HEALTH_QUESTIONS } from '../data/questions';
-import { HelpCircle, ChevronLeft, ChevronRight, ArrowRight, Check, X, Sparkles, ClipboardList, CheckCircle2 } from 'lucide-react';
+import { getHealthQuestions } from '../data/questions';
+import {
+  Calendar,
+  HelpCircle,
+  ChevronLeft,
+  ChevronRight,
+  ArrowRight,
+  Check,
+  X,
+  Sparkles,
+  ClipboardList,
+  CheckCircle2,
+  HeartHandshake,
+  PhoneCall,
+  ShieldAlert,
+  Stethoscope,
+} from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface HealthCheckScreenProps {
@@ -23,13 +38,22 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [showWhyModal, setShowWhyModal] = useState(false);
   const [showOverview, setShowOverview] = useState(false);
+  const [showSafetyModal, setShowSafetyModal] = useState(false);
 
-  const currentQuestion: Question = HEALTH_QUESTIONS[currentStepIndex];
+  const questions = getHealthQuestions(answers);
+  const safeStepIndex = Math.min(currentStepIndex, Math.max(0, questions.length - 1));
+  const currentQuestion: Question = questions[safeStepIndex] || questions[0];
   const selectedOptionId = answers[currentQuestion.id];
-  const isLastQuestion = currentStepIndex === HEALTH_QUESTIONS.length - 1;
+  const isLastQuestion = safeStepIndex === questions.length - 1;
 
   const handleSelectOption = (optionId: string) => {
     onAnswerChange(currentQuestion.id, optionId);
+
+    // Immediate compassionate safety pathway trigger
+    if (currentQuestion.id === 'q_self_harm_thoughts' && optionId === 'yes') {
+      setShowSafetyModal(true);
+      return;
+    }
 
     // Auto-advance smoothly after short selection cue if user prefers fast flow
     setTimeout(() => {
@@ -39,7 +63,7 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
         }
         onFinishCheck();
       } else {
-        setCurrentStepIndex((prev) => prev + 1);
+        setCurrentStepIndex((prev) => Math.min(prev + 1, questions.length - 1));
       }
     }, 280);
   };
@@ -52,12 +76,12 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
       }
       onFinishCheck();
     } else {
-      setCurrentStepIndex((prev) => prev + 1);
+      setCurrentStepIndex((prev) => Math.min(prev + 1, questions.length - 1));
     }
   };
 
   const handlePrevious = () => {
-    if (currentStepIndex > 0) {
+    if (safeStepIndex > 0) {
       setCurrentStepIndex((prev) => prev - 1);
     } else {
       onNavigate(hasCompletedCheck ? 'summary' : 'welcome');
@@ -68,7 +92,7 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
     if (isLastQuestion) {
       onFinishCheck();
     } else {
-      setCurrentStepIndex((prev) => prev + 1);
+      setCurrentStepIndex((prev) => Math.min(prev + 1, questions.length - 1));
     }
   };
 
@@ -107,9 +131,9 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
       {/* Top Multi-segment Progress Bar with click-to-jump */}
       <div className="space-y-2">
         <div className="flex items-center justify-between gap-1.5 px-0.5">
-          {HEALTH_QUESTIONS.map((q, idx) => {
+          {questions.map((q, idx) => {
             const isCompleted = !!answers[q.id];
-            const isCurrent = idx === currentStepIndex;
+            const isCurrent = idx === safeStepIndex;
 
             return (
               <button
@@ -143,7 +167,7 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
           </button>
 
           <div className="flex items-center gap-2">
-            {currentStepIndex > 0 && (
+            {safeStepIndex > 0 && (
               <motion.button
                 whileHover={{ x: -2 }}
                 whileTap={{ scale: 0.96 }}
@@ -169,20 +193,29 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
           >
             <div className="flex items-center justify-between pb-1 border-b border-slate-100">
               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                All 10 Screening Questions
+                All {questions.length} Screening Questions
               </span>
               <button
                 onClick={() => setShowOverview(false)}
-                className="text-[11px] font-bold text-slate-400 hover:text-slate-700"
+                className="text-[11px] font-bold text-slate-400 hover:text-slate-700 cursor-pointer"
               >
                 Close
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-1.5 max-h-48 overflow-y-auto pt-1">
-              {HEALTH_QUESTIONS.map((q, idx) => {
+            <div className="grid grid-cols-2 gap-1.5 max-h-56 overflow-y-auto pt-1">
+              {questions.map((q, idx) => {
                 const answerId = answers[q.id];
+                const isDate = answerId && (answerId.startsWith('date:') || /^\d{4}-\d{2}-\d{2}$/.test(answerId));
                 const matchedOption = q.options.find((opt) => opt.id === answerId);
-                const isCurrent = idx === currentStepIndex;
+                const isCurrent = idx === safeStepIndex;
+
+                let answerText = 'Not answered';
+                if (isDate) {
+                  const rawDate = answerId.replace('date:', '');
+                  answerText = `Date: ${rawDate}`;
+                } else if (matchedOption) {
+                  answerText = matchedOption.label;
+                }
 
                 return (
                   <button
@@ -203,7 +236,7 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
                       {idx + 1}. {q.categoryLabel}
                     </span>
                     <span className={`text-[10px] truncate mt-0.5 ${isCurrent ? 'text-emerald-300' : 'text-slate-500'}`}>
-                      {matchedOption ? matchedOption.label : 'Not answered'}
+                      {answerText}
                     </span>
                   </button>
                 );
@@ -242,6 +275,82 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
               <span>Why we ask this</span>
             </motion.button>
           </div>
+
+          {/* Date Picker Input for LMP Question */}
+          {currentQuestion.hasDatePicker && (
+            <div className="bg-white rounded-2xl p-4 border border-emerald-200/90 shadow-2xs space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                    <Calendar className="w-4 h-4 text-emerald-700" />
+                  </div>
+                  <div>
+                    <label htmlFor="lmp-date-input" className="text-xs font-bold text-slate-900 block leading-tight">
+                      {currentQuestion.datePickerLabel || 'Select date of last menstrual period'}
+                    </label>
+                    <span className="text-[11px] text-slate-500">Pick exact date from calendar</span>
+                  </div>
+                </div>
+                {selectedOptionId && (selectedOptionId.startsWith('date:') || /^\d{4}-\d{2}-\d{2}$/.test(selectedOptionId)) && (
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                    Date Picked
+                  </span>
+                )}
+              </div>
+
+              <div className="space-y-2.5">
+                <input
+                  id="lmp-date-input"
+                  type="date"
+                  max={new Date().toISOString().split('T')[0]}
+                  value={
+                    selectedOptionId && selectedOptionId.startsWith('date:')
+                      ? selectedOptionId.replace('date:', '')
+                      : selectedOptionId && /^\d{4}-\d{2}-\d{2}$/.test(selectedOptionId)
+                      ? selectedOptionId
+                      : ''
+                  }
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      handleSelectOption(`date:${e.target.value}`);
+                    }
+                  }}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm font-bold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50 cursor-pointer shadow-2xs"
+                />
+
+                {selectedOptionId && (selectedOptionId.startsWith('date:') || /^\d{4}-\d{2}-\d{2}$/.test(selectedOptionId)) && (
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-xs font-bold text-emerald-800 flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>
+                        {new Date(
+                          selectedOptionId.replace('date:', '') + 'T00:00:00'
+                        ).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                      </span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleNext}
+                      className="text-xs font-bold px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center gap-1 shadow-2xs cursor-pointer"
+                    >
+                      <span>Continue</span>
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {currentQuestion.hasDatePicker && currentQuestion.options.length > 0 && (
+            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center pt-1">
+              — Or choose an approximate timeframe —
+            </div>
+          )}
 
           {/* Question Options List */}
           <div className="space-y-3 pt-1">
@@ -305,7 +414,7 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
               className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 flex items-center gap-1 cursor-pointer transition shadow-2xs"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
-              <span>{currentStepIndex === 0 ? (hasCompletedCheck ? 'Back to Summary' : 'Back') : 'Previous'}</span>
+              <span>{safeStepIndex === 0 ? (hasCompletedCheck ? 'Back to Summary' : 'Back') : 'Previous'}</span>
             </button>
 
             {/* Skip Question Link */}
@@ -316,7 +425,7 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
               {currentQuestion.skipText || 'Skip'}
             </button>
 
-            {currentStepIndex < HEALTH_QUESTIONS.length - 1 ? (
+            {safeStepIndex < questions.length - 1 ? (
               <button
                 type="button"
                 onClick={handleNext}
@@ -394,6 +503,118 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
               >
                 Continue Check
               </motion.button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Immediate Compassionate Safety Pathway Modal */}
+      <AnimatePresence>
+        {showSafetyModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 14 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 14 }}
+              className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-rose-100 text-left space-y-4 max-h-[90vh] overflow-y-auto"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 flex items-center justify-center shrink-0">
+                  <HeartHandshake className="w-6 h-6 text-rose-600" />
+                </div>
+                <div>
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-rose-700 block">
+                    Immediate Support Pathway
+                  </span>
+                  <h3 className="text-lg font-black text-slate-900 leading-tight">
+                    You are not alone. Support is here.
+                  </h3>
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-700 leading-relaxed">
+                Thank you for your courage in sharing this with us. Going through intense emotional pain or thoughts of not wanting to be alive can feel overwhelming, but you do not have to carry this alone. Compassionate, trained professionals are standing by to listen confidentially and help right now.
+              </p>
+
+              {/* Helpline Contact Cards */}
+              <div className="space-y-2 pt-1">
+                <a
+                  href="tel:+2348091116264"
+                  className="w-full p-3.5 rounded-2xl bg-rose-50 hover:bg-rose-100/80 border border-rose-200 transition flex items-center justify-between group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <PhoneCall className="w-5 h-5 text-rose-700 shrink-0" />
+                    <div>
+                      <span className="text-xs font-black text-slate-900 block">
+                        MANI Mental Health Crisis Line (24/7)
+                      </span>
+                      <span className="text-[11px] text-slate-600 block">
+                        +234 809 111 6264 · Free & Confidential
+                      </span>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-rose-700 bg-white px-2.5 py-1 rounded-full border border-rose-200 shadow-2xs group-hover:bg-rose-700 group-hover:text-white transition">
+                    Call Now
+                  </span>
+                </a>
+
+                <a
+                  href="tel:112"
+                  className="w-full p-3 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition flex items-center justify-between group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <ShieldAlert className="w-5 h-5 text-amber-700 shrink-0" />
+                    <div>
+                      <span className="text-xs font-bold text-slate-900 block">
+                        Emergency Medical Services
+                      </span>
+                      <span className="text-[11px] text-slate-500 block">
+                        Dial 112 or 767 (Toll-Free Nationwide)
+                      </span>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-slate-700 bg-white px-2.5 py-1 rounded-full border border-slate-200 shadow-2xs group-hover:bg-slate-900 group-hover:text-white transition">
+                    Call 112
+                  </span>
+                </a>
+
+                <a
+                  href="tel:+234700496726"
+                  className="w-full p-3 rounded-2xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 transition flex items-center justify-between group cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    <Stethoscope className="w-5 h-5 text-emerald-700 shrink-0" />
+                    <div>
+                      <span className="text-xs font-bold text-slate-900 block">
+                        Iwosan Lagoon Hospitals Urgent Care
+                      </span>
+                      <span className="text-[11px] text-slate-600 block">
+                        0700-IWOSAN (0700 496726) · 24/7 Clinical Care
+                      </span>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-emerald-800 bg-white px-2.5 py-1 rounded-full border border-emerald-200 shadow-2xs group-hover:bg-emerald-700 group-hover:text-white transition">
+                    Call Clinic
+                  </span>
+                </a>
+              </div>
+
+              <div className="pt-2 flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowSafetyModal(false);
+                    if (isLastQuestion) {
+                      onFinishCheck();
+                    } else {
+                      setCurrentStepIndex((prev) => Math.min(prev + 1, questions.length - 1));
+                    }
+                  }}
+                  className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition cursor-pointer text-center"
+                >
+                  I am in a safe space, continue with questionnaire
+                </button>
+              </div>
             </motion.div>
           </div>
         )}

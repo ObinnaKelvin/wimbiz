@@ -17,6 +17,9 @@ import {
   Check,
   Stethoscope,
   ClipboardList,
+  HeartHandshake,
+  PhoneCall,
+  ShieldAlert,
 } from 'lucide-react';
 
 interface SummaryScreenProps {
@@ -118,6 +121,62 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
           This summary provides supportive health literacy and preventive milestones. A licensed clinician provides clinical diagnoses and individualized medical treatment.
         </p>
       </motion.div>
+
+      {/* Immediate Compassionate Crisis Support Safety Pathway (if triggered) */}
+      {summary.crisisSupport?.triggered && (
+        <motion.div
+          variants={itemVariants}
+          className="bg-gradient-to-br from-rose-50 to-amber-50/50 border-2 border-rose-300 rounded-3xl p-5 shadow-sm space-y-3.5 text-left"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-2xl bg-rose-100 text-rose-700 flex items-center justify-center shrink-0">
+              <HeartHandshake className="w-5 h-5 text-rose-600" />
+            </div>
+            <div>
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-rose-700 block">
+                Immediate Safety Pathway
+              </span>
+              <h2 className="text-base font-black text-slate-900 leading-tight">
+                {summary.crisisSupport.title}
+              </h2>
+            </div>
+          </div>
+
+          <p className="text-xs text-slate-800 leading-relaxed">
+            {summary.crisisSupport.message}
+          </p>
+
+          {/* Quick Helpline Call Cards */}
+          <div className="space-y-2 pt-1">
+            {summary.crisisSupport.hotlines.map((hotline) => (
+              <a
+                key={hotline.number}
+                href={`tel:${hotline.number.replace(/\s+/g, '')}`}
+                className="p-3 rounded-2xl bg-white border border-rose-200/90 hover:border-rose-400 hover:shadow-xs transition flex items-center justify-between group cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <PhoneCall className="w-4 h-4 text-rose-700 shrink-0" />
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 block">
+                      {hotline.name}
+                    </span>
+                    <span className="text-[11px] text-slate-600 block">
+                      {hotline.number} · {hotline.description}
+                    </span>
+                  </div>
+                </div>
+                <span className="text-xs font-bold text-rose-700 bg-rose-50 px-2.5 py-1 rounded-full group-hover:bg-rose-700 group-hover:text-white transition shrink-0">
+                  Call Now
+                </span>
+              </a>
+            ))}
+          </div>
+
+          <div className="text-[11px] text-slate-600 pt-1 font-medium">
+            Remember: Reaching out is an act of profound courage. You are worthy of care, safety, and understanding.
+          </div>
+        </motion.div>
+      )}
 
       {/* SECTION 1: "KEEP DOING" (What she's already doing well) */}
       <motion.div variants={itemVariants} className="space-y-3">

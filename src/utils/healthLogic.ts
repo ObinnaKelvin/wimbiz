@@ -1,4 +1,4 @@
-import { HealthNumbers, SummaryResults, SummaryInsight } from '../types';
+import { HealthNumbers, SummaryResults, SummaryInsight, CrisisSupportInfo } from '../types';
 
 // Local storage keys for privacy-first client-only persistence
 const STORAGE_KEY_ANSWERS = 'iwosan_herhealth_answers_v1';
@@ -22,6 +22,17 @@ export function loadAnswersFromLocal(): Record<string, string> {
   }
 }
 
+export const DEFAULT_EMPTY_NUMBERS: HealthNumbers = {
+  sugarType: 'fasting',
+  sugarUnit: 'mg/dL',
+  unitSystem: 'metric',
+  systolic: undefined,
+  diastolic: undefined,
+  bloodSugar: undefined,
+  height: undefined,
+  weight: undefined,
+};
+
 export function saveNumbersToLocal(numbers: HealthNumbers) {
   try {
     localStorage.setItem(STORAGE_KEY_NUMBERS, JSON.stringify(numbers));
@@ -33,23 +44,9 @@ export function saveNumbersToLocal(numbers: HealthNumbers) {
 export function loadNumbersFromLocal(): HealthNumbers {
   try {
     const data = localStorage.getItem(STORAGE_KEY_NUMBERS);
-    return data
-      ? JSON.parse(data)
-      : {
-          sugarType: 'fasting',
-          sugarUnit: 'mg/dL',
-          height: 165,
-          weight: 65,
-          unitSystem: 'metric',
-        };
+    return data ? JSON.parse(data) : { ...DEFAULT_EMPTY_NUMBERS };
   } catch {
-    return {
-      sugarType: 'fasting',
-      sugarUnit: 'mg/dL',
-      height: 165,
-      weight: 65,
-      unitSystem: 'metric',
-    };
+    return { ...DEFAULT_EMPTY_NUMBERS };
   }
 }
 
@@ -478,6 +475,355 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
     });
   }
 
+  // 10. Midlife & Perimenopause (specifically tailored for 40–49 age band)
+  const is40to49 = answers['q1_age'] === '40_49';
+  if (is40to49) {
+    // Cycles & LMP
+    const irregular = answers['q40_periods_irregular'];
+    const lmp = answers['q40_last_period'];
+    if (irregular === 'yes_irregular') {
+      worthChecking.push({
+        id: 'perimeno_irregular',
+        title: 'Perimenopausal Cycle Tracking',
+        description: 'Cycle length shifts are often the earliest indicator of natural estrogen fluctuations in your 40s. Keeping a simple period diary helps your doctor evaluate patterns.',
+        articleId: 'menopause-midlife',
+        actionText: 'Midlife Guide',
+        actionScreen: 'womens-health',
+      });
+    } else if (irregular === 'no_regular') {
+      keepDoing.push({
+        id: 'perimeno_regular',
+        title: 'Predictable Cycle Health',
+        description: 'Maintaining consistent cycles in your 40s reflects steady ovarian hormonal function.',
+        articleId: 'menopause-midlife',
+      });
+    } else if (irregular === 'stopped') {
+      discussWithDoctor.push({
+        id: 'perimeno_stopped',
+        title: 'Cycle Cessation & Menopause Milestone',
+        description: 'If periods have completely stopped, a clinician can confirm your transition phase and check bone density (DEXA) and lipid profiles.',
+        articleId: 'menopause-midlife',
+        actionText: 'Consult Iwosan Doctor',
+        actionScreen: 'contact',
+      });
+    }
+
+    if (lmp) {
+      const isDate = lmp.startsWith('date:') || /^\d{4}-\d{2}-\d{2}$/.test(lmp);
+      const formattedDate = isDate
+        ? new Date(lmp.replace('date:', '') + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+        : null;
+
+      if (lmp === 'over_12_months') {
+        discussWithDoctor.push({
+          id: 'lmp_postmenopausal',
+          title: 'Post-Menopause Verification (12+ Months)',
+          description: 'Having no period for 12 full months is the clinical milestone of menopause. Prioritizing bone density, cardiovascular lipid profiles, and pelvic strength is recommended.',
+          articleId: 'menopause-midlife',
+          actionText: 'Schedule Review',
+          actionScreen: 'contact',
+        });
+      } else if (formattedDate) {
+        keepDoing.push({
+          id: 'lmp_recorded',
+          title: `Recorded LMP: ${formattedDate}`,
+          description: 'Documenting your Last Menstrual Period date is helpful for accurate gynaecological and hormonal timeline assessment.',
+          articleId: 'menopause-midlife',
+        });
+      }
+    }
+
+    // Vasomotor (Hot flushes & night sweats)
+    const hotFlushes = answers['q40_hot_flushes'];
+    const nightSweats = answers['q40_night_sweats'];
+    if (hotFlushes === 'yes_frequent' || nightSweats === 'yes_frequent') {
+      discussWithDoctor.push({
+        id: 'vasomotor_support',
+        title: 'Vasomotor Symptom Relief (Hot Flushes & Night Sweats)',
+        description: 'Frequent hot flushes and night sweats are highly treatable. Modern evidence-based options (including HRT and non-hormonal prescription therapies) can quickly restore comfort and sleep.',
+        articleId: 'menopause-midlife',
+        actionText: 'Discuss Treatment with Iwosan',
+        actionScreen: 'contact',
+      });
+    } else if (hotFlushes === 'mild_occasional' || nightSweats === 'mild_occasional') {
+      worthChecking.push({
+        id: 'vasomotor_mild',
+        title: 'Managing Mild Temperature Changes',
+        description: 'Layering breathable natural fabrics, maintaining a cool bedroom, and limiting caffeine or spicy foods helps buffer mild hot flashes.',
+        articleId: 'menopause-midlife',
+      });
+    } else if (hotFlushes === 'no_none' && nightSweats === 'no_none') {
+      keepDoing.push({
+        id: 'vasomotor_clear',
+        title: 'Free of Vasomotor Symptoms',
+        description: 'You are currently not experiencing hot flushes or night sweats, supporting steady daily focus and energy.',
+        articleId: 'menopause-midlife',
+      });
+    }
+
+    // Genitourinary & Pelvic Health
+    const dryness = answers['q40_vaginal_dryness'];
+    const leakage = answers['q40_urinary_leakage'];
+    if (dryness === 'yes_discomfort' || leakage === 'yes_leakage_uti') {
+      discussWithDoctor.push({
+        id: 'gsm_care',
+        title: 'Intimate Comfort & Pelvic Floor Support',
+        description: 'Genitourinary tissue changes and urinary urgency respond exceptionally well to localized estrogen moisturization and gentle pelvic physiotherapy.',
+        articleId: 'menopause-midlife',
+        actionText: 'Book Women’s Health Visit',
+        actionScreen: 'contact',
+      });
+    } else if (dryness === 'no_discomfort' && leakage === 'no_symptoms') {
+      keepDoing.push({
+        id: 'pelvic_healthy',
+        title: 'Healthy Pelvic & Tissue Tone',
+        description: 'No genitourinary discomfort or bladder issues noted. Continuing regular pelvic floor exercises helps preserve this strength.',
+        articleId: 'menopause-midlife',
+      });
+    }
+
+    // Mood & Sleep & Cognitive
+    const mood = answers['q40_anxiety_irritability'];
+    const brainFog = answers['q40_memory_concentration'];
+    if (mood === 'yes_noticeable') {
+      discussWithDoctor.push({
+        id: 'perimeno_mood',
+        title: 'Emotional Resilience & Hormonal Mood Support',
+        description: 'Sudden irritability or heightened anxiety during your 40s is often a neuro-chemical response to estrogen dips. A clinician can provide safe, supportive balance.',
+        articleId: 'menopause-midlife',
+        actionText: 'Ask Iwosan Clinician',
+        actionScreen: 'contact',
+      });
+    }
+
+    if (brainFog === 'yes_brain_fog') {
+      worthChecking.push({
+        id: 'brain_fog_support',
+        title: 'Navigating Midlife Brain Fog',
+        description: 'Word-finding pauses and multitasking fatigue during perimenopause are temporary. Prioritizing magnesium, Omega-3s, and steady sleep brings noticeable clarity.',
+        articleId: 'menopause-midlife',
+        actionText: 'Read Midlife Guide',
+        actionScreen: 'womens-health',
+      });
+    }
+
+    // HRT Discussion
+    const hrt = answers['q40_hrt_discussion'];
+    if (hrt === 'yes_active' || hrt === 'discussed_waiting') {
+      keepDoing.push({
+        id: 'hrt_empowered',
+        title: 'Active Menopause & Hormonal Health Awareness',
+        description: 'Having informed discussions about menopause therapies with your doctor protects long-term cardiovascular and bone health.',
+        articleId: 'menopause-midlife',
+      });
+    } else if (hrt === 'want_to_learn' || hrt === 'never_discussed') {
+      worthChecking.push({
+        id: 'hrt_explore',
+        title: 'Explore Modern Menopause Therapies (HRT)',
+        description: 'Women in their 40s benefit most from early discussions on Hormone Replacement Therapy (HRT) to understand personal benefits and symptom management.',
+        articleId: 'menopause-midlife',
+        actionText: 'Ask Iwosan About HRT',
+        actionScreen: 'contact',
+      });
+    }
+  }
+
+  // 11. Menstrual Health (20–49)
+  const heavyBleeding = answers['q2049_bleed_heaviness'];
+  const severePain = answers['q2049_period_pain'];
+  const largeClots = answers['q2049_large_clots'];
+  const bleedAfterSex = answers['q2049_bleed_after_sex'];
+  const bleedBetween = answers['q2049_bleed_between'];
+
+  if (heavyBleeding === 'heavy' || largeClots === 'frequent_large') {
+    discussWithDoctor.push({
+      id: 'menorrhagia_evaluation',
+      title: 'Heavy Menstrual Flow & Anemia Screening',
+      description: 'Soaking through pads rapidly or passing large clots can lead to chronic iron deficiency. A pelvic ultrasound and ferritin check identify treatable causes like uterine fibroids.',
+      articleId: 'menstrual-health',
+      actionText: 'Consult Gynaecologist',
+      actionScreen: 'contact',
+    });
+  }
+
+  if (severePain === 'severe') {
+    discussWithDoctor.push({
+      id: 'dysmenorrhea_support',
+      title: 'Debilitating Period Pain (Dysmenorrhea)',
+      description: 'Severe cramps that interfere with work or school warrant investigation for endometriosis or adenomyosis; gentle, modern pain relief options are readily available.',
+      articleId: 'menstrual-health',
+      actionText: 'Book Women’s Consultation',
+      actionScreen: 'contact',
+    });
+  }
+
+  if (bleedAfterSex === 'frequent') {
+    discussWithDoctor.push({
+      id: 'post_coital_check',
+      title: 'Post-Coital Bleeding Evaluation',
+      description: 'Repeated bleeding after intimacy should always be checked with a gentle speculum exam and cervical Pap/HPV screening.',
+      articleId: 'cervical-cancer-hpv',
+      actionText: 'Schedule Cervical Check',
+      actionScreen: 'contact',
+    });
+  } else if (bleedBetween === 'frequent') {
+    worthChecking.push({
+      id: 'intermenstrual_check',
+      title: 'Intermenstrual Bleeding Review',
+      description: 'Spotting between periods can be linked to cervical inflammation, polyps, or hormonal shifts; an in-person assessment provides complete clarity.',
+      articleId: 'menstrual-health',
+    });
+  }
+
+  // 12. Fertility, Pregnancy & Reproductive Health (20–50)
+  const fibroidsPcos = answers['q2050_fibroids_endo_pcos'];
+  const pregComplications = answers['q2050_pregnancy_complications'];
+  const tryingPregnancy = answers['q2050_trying_pregnancy'];
+
+  if (fibroidsPcos === 'fibroids' || fibroidsPcos === 'endometriosis' || fibroidsPcos === 'pcos' || fibroidsPcos === 'multiple') {
+    worthChecking.push({
+      id: 'gynae_condition_care',
+      title: 'Active Gynaecological Condition Management',
+      description: 'Managing diagnosed fibroids, endometriosis, or PCOS with regular pelvic ultrasounds and hormonal reviews preserves vitality and reproductive options.',
+      articleId: 'menstrual-health',
+      actionText: 'Read Condition Guide',
+      actionScreen: 'womens-health',
+    });
+  }
+
+  if (pregComplications === 'gestational_diabetes' || pregComplications === 'preeclampsia_htn') {
+    discussWithDoctor.push({
+      id: 'post_pregnancy_cardiometabolic',
+      title: 'Post-Pregnancy Cardiometabolic Monitoring',
+      description: 'A history of pre-eclampsia or gestational diabetes calls for annual blood pressure, lipid, and fasting blood sugar monitoring.',
+      articleId: 'heart-health-women',
+      actionText: 'Book Wellness Review',
+      actionScreen: 'contact',
+    });
+  }
+
+  if (tryingPregnancy === 'yes_trying') {
+    keepDoing.push({
+      id: 'preconception_optimization',
+      title: 'Preconception Planning & Folate Support',
+      description: 'Taking 400mcg of folic acid daily and checking baseline rubella, hemoglobin, and thyroid levels provides optimal foundation for pregnancy.',
+      articleId: 'reproductive-health',
+      actionText: 'Preconception Guide',
+      actionScreen: 'womens-health',
+    });
+  }
+
+  // 13. Breast & Gynaecological Health (20–60+)
+  const newLump = answers['q_breast_lump'];
+  const nippleDischarge = answers['q_nipple_discharge'];
+  const skinChanges = answers['q_nipple_skin_changes'];
+  const cervicalScreen = answers['q_last_cervical_screen'];
+  const mammogram = answers['q_last_mammogram'];
+
+  if (newLump === 'yes_new_lump' || nippleDischarge === 'spontaneous_bloody' || skinChanges === 'dimpling_puckering' || skinChanges === 'newly_inverted_nipple') {
+    discussWithDoctor.push({
+      id: 'urgent_breast_evaluation',
+      title: 'Prompt Clinical Breast Evaluation Recommended',
+      description: 'Any new, firm breast lump, skin dimpling, or spontaneous clear/bloody discharge warrants clinical palpation and an urgent breast ultrasound or mammogram.',
+      articleId: 'breast-health',
+      actionText: 'Schedule Breast Clinic Visit',
+      actionScreen: 'contact',
+    });
+  }
+
+  if (cervicalScreen === 'more_than_5_years' || cervicalScreen === 'never') {
+    discussWithDoctor.push({
+      id: 'cervical_screening_due',
+      title: 'Cervical Pap Smear / HPV Screening Due',
+      description: 'Cervical screening every 3–5 years prevents up to 90% of cervical cancers by detecting precancerous cells years in advance.',
+      articleId: 'cervical-cancer-hpv',
+      actionText: 'Book Pap / HPV Test',
+      actionScreen: 'contact',
+    });
+  }
+
+  if (mammogram === 'never_over_40' || mammogram === 'over_2_years') {
+    worthChecking.push({
+      id: 'mammogram_due',
+      title: 'Screening Mammogram Due for Age Band',
+      description: 'Routine digital mammograms every 1–2 years catch microscopic breast changes long before they can be felt.',
+      articleId: 'breast-health',
+      actionText: 'Schedule Mammogram',
+      actionScreen: 'contact',
+    });
+  }
+
+  // 14. Bone, Muscle & Mobility (20–60+)
+  const minorFracture = answers['q_bone_minor_fracture'];
+  const heightLoss = answers['q_height_loss'];
+  const boneDensityTest = answers['q_bone_density_test'];
+
+  if (minorFracture === 'minor_fall_fracture' || heightLoss === 'marked_loss' || boneDensityTest === 'yes_low_density') {
+    discussWithDoctor.push({
+      id: 'bone_density_review',
+      title: 'Bone Mineral Density (DEXA) Evaluation',
+      description: 'A minor-fall fracture, significant height reduction, or osteopenia highlights the need for bone density testing and medical bone-strengthening therapy.',
+      articleId: 'preventive-care-matrix',
+      actionText: 'Book DEXA Scan',
+      actionScreen: 'contact',
+    });
+  }
+
+  // 15. Mental & Emotional Health (20–60+)
+  const mood = answers['q_current_mood'];
+  const anxiety = answers['q_anxious_overwhelmed'];
+  const exhaustion = answers['q_exhausted_responsibilities'];
+  const stress = answers['q_current_stress'];
+
+  if (mood === 'low' || anxiety === 'often' || exhaustion === 'often' || stress === 'high') {
+    worthChecking.push({
+      id: 'mental_wellness_support',
+      title: 'Emotional Wellbeing & Restorative Support',
+      description: 'High daily stress, burnout, and persistent low mood are recognized medical health markers. Dedicated therapy, boundary setting, and mental wellness consultations bring profound relief.',
+      articleId: 'sleep-stress',
+      actionText: 'Mental Wellness Guide',
+      actionScreen: 'lifestyle',
+    });
+  }
+
+  // 16. Compassionate Immediate Safety Pathway (CRITICAL)
+  // For question "Have you had thoughts of hurting yourself or not wanting to be alive?",
+  // a "yes" MUST NOT be scored like an ordinary health-risk item.
+  // It triggers an immediate, compassionate safety pathway and dedicated support resources.
+  const selfHarm = answers['q_self_harm_thoughts'];
+  let crisisSupport: CrisisSupportInfo | undefined = undefined;
+
+  if (selfHarm === 'yes') {
+    crisisSupport = {
+      triggered: true,
+      title: 'Immediate Confidential Support & Safety Pathway',
+      message: 'You indicated having thoughts of hurting yourself or not wanting to be alive. Your life, safety, and emotional wellbeing are deeply valuable. Please connect with compassionate, trained professionals right away.',
+      hotlines: [
+        {
+          name: 'MANI Mental Health Crisis Line (24/7)',
+          number: '+234 809 111 6264',
+          description: 'Free, compassionate, confidential mental health counselling',
+        },
+        {
+          name: 'MANI Secondary Crisis Line',
+          number: '+234 811 160 1444',
+          description: '24/7 toll-free confidential mental health support',
+        },
+        {
+          name: 'Emergency Medical Services',
+          number: '112',
+          description: 'Toll-free emergency line (112 or 767 in Lagos)',
+          isEmergency: true,
+        },
+        {
+          name: 'Iwosan Lagoon Hospitals Urgent Care',
+          number: '+234 700 496726',
+          description: '24/7 urgent medical & clinical psychiatric care',
+        },
+      ],
+    };
+  }
+
   // Optional numbers incorporation if provided
   if (numbers && numbers.systolic && numbers.diastolic) {
     const bpAnalysis = analyzeBloodPressure(numbers.systolic, numbers.diastolic);
@@ -527,6 +873,7 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
     keepDoing,
     worthChecking,
     discussWithDoctor,
+    crisisSupport,
     ageGroup: ageLabel,
     completionDate: new Date().toLocaleDateString('en-GB', {
       day: 'numeric',

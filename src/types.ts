@@ -19,7 +19,13 @@ export type QuestionCategory =
   | 'PHYSICAL ACTIVITY'
   | 'NUTRITION'
   | 'SLEEP & REST'
-  | 'WOMEN’S SCREENING';
+  | 'WOMEN’S SCREENING'
+  | 'MIDLIFE & PERIMENOPAUSE'
+  | 'MENSTRUAL HEALTH'
+  | 'FERTILITY & PREGNANCY'
+  | 'BREAST & GYNAECOLOGICAL HEALTH'
+  | 'BONE, MUSCLE & MOBILITY'
+  | 'MENTAL & EMOTIONAL HEALTH';
 
 export interface QuestionOption {
   id: string;
@@ -38,6 +44,9 @@ export interface Question {
   whyWeAsk: string;
   options: QuestionOption[];
   skipText?: string;
+  hasDatePicker?: boolean;
+  datePickerLabel?: string;
+  isSafetyQuestion?: boolean;
 }
 
 export interface HealthNumbers {
@@ -46,8 +55,8 @@ export interface HealthNumbers {
   bloodSugar?: number;
   sugarType: 'fasting' | 'random';
   sugarUnit: 'mg/dL' | 'mmol/L';
-  height: number; // in cm or inches depending on unit
-  weight: number; // in kg or lbs depending on unit
+  height?: number; // in cm or inches depending on unit
+  weight?: number; // in kg or lbs depending on unit
   unitSystem: 'metric' | 'imperial';
 }
 
@@ -89,10 +98,18 @@ export interface SummaryInsight {
   relatedHub?: 'womens' | 'lifestyle' | 'screening-guide' | 'numbers' | 'contact';
 }
 
+export interface CrisisSupportInfo {
+  triggered: boolean;
+  title: string;
+  message: string;
+  hotlines: { name: string; number: string; description: string; isEmergency?: boolean }[];
+}
+
 export interface SummaryResults {
   keepDoing: SummaryInsight[];
   worthChecking: SummaryInsight[];
   discussWithDoctor: SummaryInsight[];
+  crisisSupport?: CrisisSupportInfo;
   ageGroup?: string;
   completionDate: string;
 }
