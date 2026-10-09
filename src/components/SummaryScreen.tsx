@@ -108,6 +108,39 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
         </p>
       </motion.div>
 
+      {/* Profile Overview (Occupation & Age Stage) */}
+      {(summary.occupationCategory || summary.ageGroup) && (
+        <motion.div
+          variants={itemVariants}
+          className="bg-slate-50 border border-slate-200/90 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2.5 text-xs"
+        >
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Profile:
+            </span>
+            {summary.occupationCategory && (
+              <span className="font-extrabold text-slate-900 bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs">
+                💼 {summary.occupationCategory}
+              </span>
+            )}
+            {summary.ageGroup && (
+              <span className="font-bold text-slate-700 bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs">
+                🌸 {summary.ageGroup}
+              </span>
+            )}
+          </div>
+          {onReviewSelections && (
+            <button
+              onClick={onReviewSelections}
+              className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 transition flex items-center gap-1 cursor-pointer"
+            >
+              <ClipboardList className="w-3.5 h-3.5" />
+              <span>Review answers</span>
+            </button>
+          )}
+        </motion.div>
+      )}
+
       {/* Prominent Disclaimer Badge */}
       <motion.div
         variants={itemVariants}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ScreenId } from '../types';
 import { PWAInstallButton } from './PWAInstallButton';
-import { QrCode, ShieldCheck, Heart, Stethoscope, Menu, X, BookOpen, Activity, PhoneCall, Info } from 'lucide-react';
+import { QrCode, ShieldCheck, Heart, Stethoscope, Menu, X, BookOpen, Activity, PhoneCall, Info, Lock } from 'lucide-react';
 
 interface HeaderProps {
   currentScreen: ScreenId;
@@ -207,6 +207,28 @@ export const Header: React.FC<HeaderProps> = ({ currentScreen, onNavigate, onOpe
               <Info className="w-4 h-4" />
               <span>About, Safety & Privacy</span>
             </button>
+
+            {/* Administrator Staff Portal Button */}
+            <div className="pt-2 mt-1 border-t border-slate-200/90">
+              <button
+                onClick={() => handleNavClick('admin')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-left transition cursor-pointer ${
+                  currentScreen === 'admin'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'text-slate-800 hover:bg-slate-200/70'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                    <Lock className="w-3.5 h-3.5" />
+                  </div>
+                  <span>Administrator</span>
+                </div>
+                <span className="text-[10px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded-md bg-slate-200 text-slate-700">
+                  Staff Login
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       )}

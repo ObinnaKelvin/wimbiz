@@ -13,10 +13,12 @@ import { LifestyleHub } from './components/LifestyleHub';
 import { ScreeningGuideScreen } from './components/ScreeningGuideScreen';
 import { ContactBookingScreen } from './components/ContactBookingScreen';
 import { AboutSafetyScreen } from './components/AboutSafetyScreen';
+import { AdminDashboardScreen } from './components/AdminDashboardScreen';
 import { ArticleModal } from './components/ArticleModal';
 import { ConferenceQRModal } from './components/ConferenceQRModal';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { CLINICAL_ARTICLES } from './data/clinicalLibrary';
+import { submitAnonymousRecord } from './utils/adminApi';
 import {
   loadAnswersFromLocal,
   saveAnswersToLocal,
@@ -52,6 +54,11 @@ export default function App() {
     setHasCompletedCheck(true);
     setActiveArticleId(null);
     setCurrentScreen('summary');
+    submitAnonymousRecord({
+      answers,
+      numbers,
+      completedCheck: true,
+    });
   };
 
   const handleNavigate = (screen: ScreenId) => {
@@ -62,6 +69,13 @@ export default function App() {
   const handleNumbersChange = (newNumbers: HealthNumbers) => {
     setNumbers(newNumbers);
     saveNumbersToLocal(newNumbers);
+    if (Object.keys(answers).length > 0) {
+      submitAnonymousRecord({
+        answers,
+        numbers: newNumbers,
+        completedCheck: hasCompletedCheck,
+      });
+    }
   };
 
   const handleOpenArticle = (articleId: string) => {
@@ -113,7 +127,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col items-center justify-start antialiased selection:bg-emerald-100 selection:text-emerald-900">
       {/* Centered Mobile App Canvas Frame */}
-      <div className="w-full max-w-md min-h-screen bg-slate-50 flex flex-col relative sm:shadow-xl sm:border-x sm:border-slate-200/80">
+      <div className={`w-full ${currentScreen === 'admin' ? 'max-w-4xl' : 'max-w-md'} min-h-screen bg-slate-50 flex flex-col relative sm:shadow-xl sm:border-x sm:border-slate-200/80 transition-all duration-300`}>
         {/* Persistent Brand Header */}
         <Header
           currentScreen={currentScreen}
@@ -213,16 +227,24 @@ export default function App() {
                   onDataReset={handleDataReset}
                 />
               )}
+
+              {currentScreen === 'admin' && (
+                <AdminDashboardScreen
+                  onNavigate={handleNavigate}
+                />
+              )}
             </motion.div>
           </AnimatePresence>
         </main>
 
-        {/* Bottom Persistent Navigation for Quick Exploration */}
-        <BottomNav
-          currentScreen={currentScreen}
-          onNavigate={handleNavigate}
-          hasCompletedCheck={hasCompletedCheck}
-        />
+        {/* Bottom Persistent Navigation for Quick Exploration (hidden in Admin mode) */}
+        {currentScreen !== 'admin' && (
+          <BottomNav
+            currentScreen={currentScreen}
+            onNavigate={handleNavigate}
+            hasCompletedCheck={hasCompletedCheck}
+          />
+        )}
       </div>
 
       {/* Global Clinical Article Modal Reader */}

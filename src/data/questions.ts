@@ -2,6 +2,29 @@ import { Question } from '../types';
 
 export const CORE_HEALTH_QUESTIONS: Question[] = [
   {
+    id: 'q0_occupation',
+    category: 'OCCUPATION',
+    categoryLabel: 'OCCUPATION & WORK',
+    stepNumber: 1,
+    totalSteps: 10,
+    title: 'What category do you fall under?',
+    whyWeAsk: 'Understanding your work rhythm and daily structure helps tailor lifestyle, occupational ergonomics, and preventive screening recommendations to fit your life.',
+    options: [
+      { id: 'full_time', label: 'Full-Time Employee', detail: 'Works for an employer on a full-time schedule.', type: 'neutral' },
+      { id: 'part_time', label: 'Part-Time Employee', detail: 'Works fewer hours than a full-time employee.', type: 'neutral' },
+      { id: 'self_employed', label: 'Self-Employed Woman', detail: 'Works for herself rather than as an employee.', type: 'neutral' },
+      { id: 'freelancer', label: 'Freelancer', detail: 'Offers professional services to multiple clients independently.', type: 'neutral' },
+      { id: 'contract_worker', label: 'Contract Worker', detail: 'Works under a fixed-term or project-based contract.', type: 'neutral' },
+      { id: 'casual_worker', label: 'Casual Worker', detail: 'Works irregularly or when needed.', type: 'neutral' },
+      { id: 'unemployed_professional', label: 'Unemployed Professional', detail: 'Has professional skills but is currently without employment.', type: 'neutral' },
+      { id: 'job_seeker', label: 'Job Seeker', detail: 'Actively looking for employment.', type: 'neutral' },
+      { id: 'retired_professional', label: 'Retired Professional', detail: 'Has retired from her primary career.', type: 'neutral' },
+      { id: 'student', label: 'Student', detail: 'Currently pursuing an education or professional qualification.', type: 'neutral' },
+      { id: 'stay_at_home', label: 'Stay-at-Home Woman', detail: 'Primarily manages household responsibilities and may or may not engage in paid work', type: 'neutral' },
+    ],
+    skipText: 'Skip this question',
+  },
+  {
     id: 'q1_age',
     category: 'AGE',
     categoryLabel: 'AGE BAND',

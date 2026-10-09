@@ -8,9 +8,11 @@ export type ScreenId =
   | 'lifestyle'
   | 'screening-guide'
   | 'contact'
-  | 'about';
+  | 'about'
+  | 'admin';
 
 export type QuestionCategory =
+  | 'OCCUPATION'
   | 'AGE'
   | 'ROUTINE CHECK'
   | 'BLOOD PRESSURE'
@@ -111,6 +113,7 @@ export interface SummaryResults {
   discussWithDoctor: SummaryInsight[];
   crisisSupport?: CrisisSupportInfo;
   ageGroup?: string;
+  occupationCategory?: string;
   completionDate: string;
 }
 

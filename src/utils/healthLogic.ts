@@ -271,6 +271,121 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
   else if (age === '50_59') ageLabel = '50s';
   else if (age === '60_plus') ageLabel = '60+';
 
+  // 1b. Occupation Profile context
+  const occupation = answers['q0_occupation'];
+  let occupationLabel = 'Your occupation profile';
+  if (occupation === 'full_time') {
+    occupationLabel = 'Full-Time Employee';
+    keepDoing.push({
+      id: 'occ_full_time',
+      title: 'Workplace Health & Ergonomics',
+      description: 'As a full-time professional, taking regular posture micro-breaks, scheduling active screen timeouts, and protecting daily restorative sleep creates lasting metabolic stamina.',
+      articleId: 'healthy-daily-rhythms',
+      actionText: 'Read Daily Rhythms Guide',
+      actionScreen: 'lifestyle',
+    });
+  } else if (occupation === 'part_time') {
+    occupationLabel = 'Part-Time Employee';
+    keepDoing.push({
+      id: 'occ_part_time',
+      title: 'Balanced Schedule & Preventive Care',
+      description: 'Your part-time structure provides opportunities to schedule dedicated physical movement and preventive health screenings during weekday hours.',
+      articleId: 'preventive-care-matrix',
+      actionText: 'View Screening Matrix',
+      actionScreen: 'screening-guide',
+    });
+  } else if (occupation === 'self_employed') {
+    occupationLabel = 'Self-Employed Woman';
+    worthChecking.push({
+      id: 'occ_self_employed',
+      title: 'Entrepreneurial Wellness & Boundary Setting',
+      description: 'Building and leading your own business is intensely rewarding, but founder burnout is real. Protect dedicated rest days, ergonomic seating, and annual health checkup appointments.',
+      articleId: 'nourishing-stress-recovery',
+      actionText: 'Read Stress Recovery Guide',
+      actionScreen: 'lifestyle',
+    });
+  } else if (occupation === 'freelancer') {
+    occupationLabel = 'Freelancer';
+    worthChecking.push({
+      id: 'occ_freelancer',
+      title: 'Independent Professional Ergonomics & Rest',
+      description: 'Independent client work requires intentional physical boundaries: set dedicated work hours, stretch to prevent wrist and neck strain, and maintain consistent meal times.',
+      articleId: 'healthy-daily-rhythms',
+      actionText: 'Read Daily Rhythms',
+      actionScreen: 'lifestyle',
+    });
+  } else if (occupation === 'contract_worker') {
+    occupationLabel = 'Contract Worker';
+    worthChecking.push({
+      id: 'occ_contract_worker',
+      title: 'Project Transitions & Steady Vitality',
+      description: 'Contract timelines can bring sprint cycles and transition periods. Keeping a steady hydration, movement, and sleep routine maintains your resilience between deliverables.',
+      articleId: 'nourishing-stress-recovery',
+      actionText: 'Read Stress Management',
+      actionScreen: 'lifestyle',
+    });
+  } else if (occupation === 'casual_worker') {
+    occupationLabel = 'Casual Worker';
+    worthChecking.push({
+      id: 'occ_casual_worker',
+      title: 'Adaptive Rhythms & Regular Checkups',
+      description: 'With varying shift hours, anchor your days with fixed sleep cues and balanced meals, and ensure you keep up with annual wellness checkups.',
+      articleId: 'healthy-daily-rhythms',
+      actionText: 'Read Daily Rhythms',
+      actionScreen: 'lifestyle',
+    });
+  } else if (occupation === 'unemployed_professional') {
+    occupationLabel = 'Unemployed Professional';
+    worthChecking.push({
+      id: 'occ_unemployed_professional',
+      title: 'Nervous System Care & Self-Compassion',
+      description: 'Professional transitions can be emotionally demanding. Prioritizing daily gentle walking, nervous system grounding, and supportive social connection preserves your health and optimism.',
+      articleId: 'nourishing-stress-recovery',
+      actionText: 'Nervous System Recovery',
+      actionScreen: 'lifestyle',
+    });
+  } else if (occupation === 'job_seeker') {
+    occupationLabel = 'Job Seeker';
+    worthChecking.push({
+      id: 'occ_job_seeker',
+      title: 'Job Search Resilience & Wellness Routine',
+      description: 'Actively searching for roles takes significant mental energy. Set a daily cutoff time for job applications, take outdoor breathwork walks, and safeguard restful sleep.',
+      articleId: 'nourishing-stress-recovery',
+      actionText: 'Explore Recovery Tips',
+      actionScreen: 'lifestyle',
+    });
+  } else if (occupation === 'retired_professional') {
+    occupationLabel = 'Retired Professional';
+    keepDoing.push({
+      id: 'occ_retired_professional',
+      title: 'Longevity & Active Mobility Milestones',
+      description: 'Retirement is a prime decade for proactive vitality: prioritize bone density scans, cardiovascular fitness, muscle-preserving resistance movement, and social enrichment.',
+      articleId: 'bone-joint-longevity',
+      actionText: 'Read Longevity Guide',
+      actionScreen: 'womens-health',
+    });
+  } else if (occupation === 'student') {
+    occupationLabel = 'Student';
+    worthChecking.push({
+      id: 'occ_student',
+      title: 'Study Ergonomics, Screen Breaks & Nutrition',
+      description: 'Long study hours can strain vision, posture, and sleep. Use the 20-20-20 screen rule, drink plenty of water, and nourish your brain with protein-rich meals.',
+      articleId: 'healthy-daily-rhythms',
+      actionText: 'Daily Health Rhythms',
+      actionScreen: 'lifestyle',
+    });
+  } else if (occupation === 'stay_at_home') {
+    occupationLabel = 'Stay-at-Home Woman';
+    keepDoing.push({
+      id: 'occ_stay_at_home',
+      title: 'Household Energy & Dedicated Self-Care Time',
+      description: 'Managing a home is physically and emotionally demanding around the clock. Carve out dedicated time for your own preventive screening appointments and personal rejuvenation.',
+      articleId: 'healthy-daily-rhythms',
+      actionText: 'Explore Daily Rhythms',
+      actionScreen: 'lifestyle',
+    });
+  }
+
   // 2. Routine check
   const checkup = answers['q2_checkup'];
   if (checkup === 'within_year') {
@@ -875,6 +990,7 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
     discussWithDoctor,
     crisisSupport,
     ageGroup: ageLabel,
+    occupationCategory: occupation ? occupationLabel : undefined,
     completionDate: new Date().toLocaleDateString('en-GB', {
       day: 'numeric',
       month: 'short',
