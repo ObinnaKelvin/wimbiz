@@ -254,7 +254,7 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
         <div className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-emerald-700" />
           <h2 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide">
-            Iwosan Lagoon Hospitals Locations
+            Hospital & Medical Specialist Locations
           </h2>
         </div>
 

@@ -50,8 +50,31 @@ export const IWOSAN_LOCATIONS: IwosanLocation[] = [
     hours: '24/7 Specialized Cardiac Emergencies & Interventional Care',
     specialties: ['Women’s Heart Program', 'Echocardiography & Stress Testing', 'Holter Blood Pressure Monitoring', 'Hypertension Clinic'],
     mapLink: 'https://maps.google.com/?q=Iwosan+Lagoon+Center+for+Cardiovascular+Care+Lagos',
+  },
+  {
+    id: 'paelon-memorial-vi',
+    name: 'Paelon Memorial Hospital',
+    address: '1221 Ahmadu Bello Way, Victoria Island, Lagos',
+    area: 'Victoria Island',
+    phone: '+234 1 454 4455 / +234 809 308 0000',
+    hours: '24/7 Full Emergency & Specialist Clinics',
+    specialties: ['Well-Woman Checkups & Gynaecology', 'Family Medicine & Executive Screening', 'Diagnostic Laboratory & Imaging', 'Maternity & Paediatrics'],
+    mapLink: 'https://maps.google.com/?q=Paelon+Memorial+Hospital+Victoria+Island+Lagos',
+  },
+  {
+    id: 'euracare-vi',
+    name: 'Euracare Multi-Specialist Hospital',
+    address: '293B Younis Bashorun Street, Off Sinari Daranijo Street, Victoria Island, Lagos',
+    area: 'Victoria Island',
+    phone: '+234 700 387 22273 / +234 1 277 8700',
+    hours: '24/7 Multi-Specialty, Advanced Diagnostics & Surgery',
+    specialties: ['Advanced Diagnostic Radiology (MRI & CT)', 'Cardiology & Interventional Suite', 'Women’s Preventive Health & Gynaecology', 'Minimally Invasive Surgery'],
+    mapLink: 'https://maps.google.com/?q=Euracare+Multi-Specialist+Hospital+Lagos',
   }
 ];
+
+export const HOSPITAL_LOCATIONS = IWOSAN_LOCATIONS;
+
 
 export const IWOSAN_CONTACT_INFO = {
   generalHotline: '+234 700 524666 (0700 LAGOON)',

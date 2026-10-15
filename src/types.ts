@@ -127,3 +127,6 @@ export interface IwosanLocation {
   specialties: string[];
   mapLink: string;
 }
+
+export type HospitalLocation = IwosanLocation;
+
