@@ -28,7 +28,7 @@ interface WelcomeScreenProps {
 // 7 Planetary Icons orbiting like celestial bodies
 const ORBIT_PLANETS = [
   { id: 'heart', icon: Heart, angle: 325, label: 'Heart & Breast Health' },
-  { id: 'pulse', icon: HeartPulse, angle: 35, label: 'Vitals & Blood Pressure' },
+  { id: 'pulse', icon: HeartPulse, angle: 325, label: 'Vitals & Blood Pressure' },
   { id: 'shield', icon: ShieldCheck, angle: 70, label: 'Preventive Screenings' },
   { id: 'leaf', icon: Leaf, angle: 125, label: 'Nutrition & Lifestyle' },
   { id: 'moon', icon: MoonStar, angle: 180, label: 'Sleep & Recovery' },
@@ -77,7 +77,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             </div>
             <div>
               <div className="text-sm font-extrabold tracking-wide text-white leading-tight">
-                <span className="text-cyan-400">i</span>WOSAN
+                <span className="text-cyan-400">i</span>Wellness Passport
               </div>
               <div className="text-[8px] font-bold tracking-[0.18em] text-slate-400 uppercase leading-none">
                 Healthcare Systems
