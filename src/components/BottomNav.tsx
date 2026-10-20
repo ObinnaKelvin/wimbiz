@@ -48,7 +48,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   ];
 
   return (
-    <nav className="fixed bottom-4 inset-x-0 z-50 px-4 pointer-events-none">
+    <nav className="fixed bottom-4 inset-x-0 z-50 px-4 pointer-events-none print:hidden">
       <div className="max-w-[340px] sm:max-w-[360px] mx-auto bg-white/95 backdrop-blur-md rounded-full border border-slate-200/90 shadow-[0_8px_30px_rgb(0,0,0,0.14)] p-1.5 flex items-center justify-between pointer-events-auto">
         {navItems.map((item) => {
           const isSelected = item.isActive;
