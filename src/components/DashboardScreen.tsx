@@ -345,7 +345,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
               <div className="flex items-center gap-3">
                 <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-slate-200 flex-shrink-0">
                   <img
-                    src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=240&q=80"
+                    src="/assets/aistudio/image_572b6d90.png"
                     alt="Heart health"
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                     loading="lazy"
@@ -518,8 +518,8 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
             {/* Image Header with 4 min read pill */}
             <div className="relative h-44 sm:h-48 w-full bg-slate-200 overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80"
-                alt="Breast awareness"
+                src="/assets/aistudio/image_a986066b.png"
+                alt="Knowing what's normal for you"
                 className="w-full h-full object-cover group-hover:scale-102 transition duration-500"
                 loading="lazy"
               />
