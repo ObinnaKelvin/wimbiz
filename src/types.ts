@@ -1,5 +1,6 @@
 export type ScreenId =
   | 'welcome'
+  | 'dashboard'
   | 'privacy'
   | 'check'
   | 'numbers'

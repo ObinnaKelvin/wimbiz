@@ -4,6 +4,7 @@ import { ScreenId, HealthNumbers, Article } from './types';
 import { Header } from './components/Header';
 import { BottomNav } from './components/BottomNav';
 import { WelcomeScreen } from './components/WelcomeScreen';
+import { DashboardScreen } from './components/DashboardScreen';
 import { PrivacyConsentScreen } from './components/PrivacyConsentScreen';
 import { HealthCheckScreen } from './components/HealthCheckScreen';
 import { NumbersScreen } from './components/NumbersScreen';
@@ -28,7 +29,6 @@ import {
 } from './utils/healthLogic';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<ScreenId>('welcome');
   const [answers, setAnswers] = useState<Record<string, string>>(() => loadAnswersFromLocal());
   const [numbers, setNumbers] = useState<HealthNumbers>(() => loadNumbersFromLocal());
   const [activeArticleId, setActiveArticleId] = useState<string | null>(null);
@@ -38,6 +38,15 @@ export default function App() {
     const saved = loadAnswersFromLocal();
     return Object.keys(saved).length >= 5;
   });
+
+  // If user has filled in assessment questions, initial screen is dashboard; otherwise welcome
+  const [currentScreen, setCurrentScreen] = useState<ScreenId>(() => {
+    const saved = loadAnswersFromLocal();
+    return Object.keys(saved).length > 0 ? 'dashboard' : 'welcome';
+  });
+
+  // Track if user has answered any assessment questions
+  const hasFilledAssessment = Object.keys(answers).length > 0;
 
   // Keep scroll position reset on screen navigation
   useEffect(() => {
@@ -53,7 +62,7 @@ export default function App() {
   const handleFinishCheck = () => {
     setHasCompletedCheck(true);
     setActiveArticleId(null);
-    setCurrentScreen('summary');
+    setCurrentScreen('dashboard');
     submitAnonymousRecord({
       answers,
       numbers,
@@ -125,21 +134,22 @@ export default function App() {
   else if (ageAnswer === '60_plus') ageBandLabel = '60+';
 
   return (
-    <div className={`min-h-screen ${currentScreen === 'welcome' ? 'bg-[#030611]' : 'bg-slate-100'} text-slate-900 flex flex-col items-center justify-start antialiased selection:bg-emerald-100 selection:text-emerald-900`}>
+    <div className={`min-h-screen ${currentScreen === 'welcome' || currentScreen === 'dashboard' ? 'bg-[#030611]' : 'bg-slate-100'} text-slate-900 flex flex-col items-center justify-start antialiased selection:bg-emerald-100 selection:text-emerald-900`}>
       {/* Centered Mobile App Canvas Frame */}
-      <div className={`w-full ${currentScreen === 'admin' ? 'max-w-4xl' : 'max-w-md'} min-h-screen ${currentScreen === 'welcome' ? 'bg-[#050b18] sm:border-slate-800/60' : 'bg-slate-50 sm:border-slate-200/80'} flex flex-col relative sm:shadow-2xl sm:border-x transition-all duration-300`}>
-        {/* Persistent Brand Header on non-welcome screens */}
-        {currentScreen !== 'welcome' && (
+      <div className={`w-full ${currentScreen === 'admin' ? 'max-w-4xl' : 'max-w-md'} min-h-screen ${currentScreen === 'welcome' || currentScreen === 'dashboard' ? 'bg-[#050b18] sm:border-slate-800/60' : 'bg-slate-50 sm:border-slate-200/80'} flex flex-col relative sm:shadow-2xl sm:border-x transition-all duration-300`}>
+        {/* Persistent Brand Header on non-welcome and non-dashboard screens */}
+        {currentScreen !== 'welcome' && currentScreen !== 'dashboard' && (
           <Header
             currentScreen={currentScreen}
             onNavigate={handleNavigate}
             onOpenQR={() => setIsQRModalOpen(true)}
             hasCompletedCheck={hasCompletedCheck}
+            hasFilledAssessment={hasFilledAssessment}
           />
         )}
 
         {/* Dynamic Screen View with Smooth Page Transition */}
-        <main className={`flex-1 ${currentScreen === 'welcome' ? 'p-0' : 'px-4 sm:px-5 py-4'} overflow-hidden`}>
+        <main className={`flex-1 ${currentScreen === 'welcome' || currentScreen === 'dashboard' ? 'p-0' : 'px-4 sm:px-5 py-4'} overflow-hidden`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={currentScreen}
@@ -155,6 +165,17 @@ export default function App() {
                   hasCompletedCheck={hasCompletedCheck}
                   onOpenQR={() => setIsQRModalOpen(true)}
                   onRetakeCheck={handleRetakeCheck}
+                />
+              )}
+
+              {currentScreen === 'dashboard' && (
+                <DashboardScreen
+                  answers={answers}
+                  numbers={numbers}
+                  onNavigate={handleNavigate}
+                  onOpenArticle={handleOpenArticle}
+                  onRetakeCheck={handleRetakeCheck}
+                  onOpenQR={() => setIsQRModalOpen(true)}
                 />
               )}
 
@@ -245,6 +266,7 @@ export default function App() {
             currentScreen={currentScreen}
             onNavigate={handleNavigate}
             hasCompletedCheck={hasCompletedCheck}
+            hasFilledAssessment={hasFilledAssessment}
           />
         )}
       </div>

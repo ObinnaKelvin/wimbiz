@@ -1,79 +1,83 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { ScreenId } from '../types';
-import { Sparkles, ClipboardCheck, BookOpen, Calculator, CalendarCheck, Shield } from 'lucide-react';
+import { Home, BookOpen, ShieldCheck, Info } from 'lucide-react';
 
 interface BottomNavProps {
   currentScreen: ScreenId;
   onNavigate: (screen: ScreenId) => void;
   hasCompletedCheck: boolean;
+  hasFilledAssessment?: boolean;
 }
 
-export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate, hasCompletedCheck }) => {
-  // When check is completed, "Check" nav tab returns back to "Your Health Awareness Summary"
+export const BottomNav: React.FC<BottomNavProps> = ({
+  currentScreen,
+  onNavigate,
+  hasCompletedCheck,
+  hasFilledAssessment = false,
+}) => {
+  // If the user has filled in assessment questions, Home routes to 'dashboard'
+  // If no assessment or cleared out, Home routes to 'welcome'
+  const homeTarget: ScreenId = hasFilledAssessment ? 'dashboard' : 'welcome';
+
   const navItems = [
     {
-      id: 'welcome' as ScreenId,
+      id: homeTarget,
       label: 'Home',
-      icon: Sparkles,
-    },
-    {
-      id: (hasCompletedCheck ? 'summary' : 'check') as ScreenId,
-      label: 'Check',
-      icon: ClipboardCheck,
-      highlight: true,
-      isActive: currentScreen === 'check' || currentScreen === 'summary',
+      icon: Home,
+      isActive: currentScreen === 'dashboard' || currentScreen === 'welcome',
     },
     {
       id: 'womens-health' as ScreenId,
-      label: 'Library',
+      label: 'Learn',
       icon: BookOpen,
       isActive: currentScreen === 'womens-health' || currentScreen === 'lifestyle',
     },
     {
-      id: 'numbers' as ScreenId,
-      label: 'Numbers',
-      icon: Calculator,
-    },
-    {
       id: 'screening-guide' as ScreenId,
       label: 'Screening',
-      icon: Shield,
+      icon: ShieldCheck,
+      isActive: currentScreen === 'screening-guide',
     },
     {
-      id: 'contact' as ScreenId,
-      label: 'Iwosan',
-      icon: CalendarCheck,
+      id: 'about' as ScreenId,
+      label: 'About',
+      icon: Info,
+      isActive: currentScreen === 'about',
     },
   ];
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-50 bg-white/95 backdrop-blur-md border-t border-slate-200/90 py-1.5 px-2 safe-area-bottom shadow-lg">
-      <div className="max-w-md mx-auto grid grid-cols-6 gap-0.5">
+    <nav className="fixed bottom-4 inset-x-0 z-50 px-4 pointer-events-none">
+      <div className="max-w-[340px] sm:max-w-[360px] mx-auto bg-white/95 backdrop-blur-md rounded-full border border-slate-200/90 shadow-[0_8px_30px_rgb(0,0,0,0.14)] p-1.5 flex items-center justify-between pointer-events-auto">
         {navItems.map((item) => {
-          const isSelected = item.isActive !== undefined ? item.isActive : currentScreen === item.id;
+          const isSelected = item.isActive;
           const Icon = item.icon;
 
           return (
             <motion.button
               key={item.label}
               id={`nav-btn-${item.label.toLowerCase()}`}
-              whileTap={{ scale: 0.88 }}
+              whileTap={{ scale: 0.92 }}
               onClick={() => onNavigate(item.id)}
-              className={`relative flex flex-col items-center justify-center py-1 px-0.5 rounded-xl transition cursor-pointer ${
-                isSelected
-                  ? 'text-emerald-700 font-bold'
-                  : 'text-slate-500 hover:text-slate-800 font-medium'
-              }`}
+              className="relative flex items-center justify-center cursor-pointer focus:outline-hidden"
+              aria-label={item.label}
             >
-              <div
-                className={`p-1 rounded-lg transition ${
-                  isSelected ? 'bg-emerald-50 text-emerald-700' : 'bg-transparent'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-              </div>
-              <span className="text-[10px] tracking-tight mt-0.5">{item.label}</span>
+              {isSelected ? (
+                <div className="bg-[#0d172a] text-white px-4 py-1.5 rounded-full flex flex-col items-center justify-center gap-0.5 shadow-sm min-w-[68px]">
+                  <Icon className="w-4 h-4 text-white" />
+                  <span className="text-[10px] font-bold tracking-tight leading-none">
+                    {item.label}
+                  </span>
+                </div>
+              ) : (
+                <div className="px-3.5 py-1.5 flex flex-col items-center justify-center text-slate-500 hover:text-slate-900 transition-colors gap-0.5 min-w-[60px]">
+                  <Icon className="w-4 h-4" />
+                  <span className="text-[10px] font-medium tracking-tight leading-none">
+                    {item.label}
+                  </span>
+                </div>
+              )}
             </motion.button>
           );
         })}
@@ -81,3 +85,4 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate,
     </nav>
   );
 };
+

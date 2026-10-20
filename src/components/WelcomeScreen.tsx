@@ -238,14 +238,14 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
           <span>Explore health topics</span>
         </motion.button>
 
-        {/* Previous Summary Quick Link (if user took test previously) */}
+        {/* Previous Summary / Dashboard Quick Link (if user took test previously) */}
         {hasCompletedCheck && (
           <button
-            onClick={() => onNavigate('summary')}
+            onClick={() => onNavigate('dashboard')}
             className="w-full py-1 text-center text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition flex items-center justify-center gap-1 cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-            <span>View your previous health summary</span>
+            <span>Go to your health dashboard</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         )}

@@ -8,10 +8,19 @@ interface HeaderProps {
   onNavigate: (screen: ScreenId) => void;
   onOpenQR: () => void;
   hasCompletedCheck?: boolean;
+  hasFilledAssessment?: boolean;
 }
 
-export const Header: React.FC<HeaderProps> = ({ currentScreen, onNavigate, onOpenQR, hasCompletedCheck }) => {
+export const Header: React.FC<HeaderProps> = ({
+  currentScreen,
+  onNavigate,
+  onOpenQR,
+  hasCompletedCheck,
+  hasFilledAssessment = false,
+}) => {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const homeTarget: ScreenId = hasFilledAssessment ? 'dashboard' : 'welcome';
 
   const handleNavClick = (screen: ScreenId) => {
     onNavigate(screen);
@@ -23,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({ currentScreen, onNavigate, onOpe
       <div className="max-w-md mx-auto flex items-center justify-between">
         {/* Brand Icon & Title */}
         <button
-          onClick={() => handleNavClick('welcome')}
+          onClick={() => handleNavClick(homeTarget)}
           className="flex items-center gap-2.5 text-left group cursor-pointer focus:outline-hidden"
         >
           {/* Logo container */}
@@ -85,15 +94,15 @@ export const Header: React.FC<HeaderProps> = ({ currentScreen, onNavigate, onOpe
             </p>
 
             <button
-              onClick={() => handleNavClick('welcome')}
+              onClick={() => handleNavClick(homeTarget)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-left transition ${
-                currentScreen === 'welcome'
+                currentScreen === homeTarget
                   ? 'bg-emerald-600 text-white'
                   : 'text-slate-800 hover:bg-slate-200/70'
               }`}
             >
               <Heart className="w-4 h-4" />
-              <span>Home & Welcome</span>
+              <span>{hasFilledAssessment ? 'Home (Dashboard)' : 'Home (Welcome)'}</span>
             </button>
 
             {hasCompletedCheck ? (
