@@ -27,14 +27,21 @@ interface WelcomeScreenProps {
 
 // 7 Planetary Icons orbiting like celestial bodies
 const ORBIT_PLANETS = [
-  { id: 'heart', icon: Heart, angle: 325, label: 'Heart & Breast Health' },
-  { id: 'pulse', icon: HeartPulse, angle: 325, label: 'Vitals & Blood Pressure' },
-  { id: 'shield', icon: ShieldCheck, angle: 70, label: 'Preventive Screenings' },
-  { id: 'leaf', icon: Leaf, angle: 125, label: 'Nutrition & Lifestyle' },
-  { id: 'moon', icon: MoonStar, angle: 180, label: 'Sleep & Recovery' },
-  { id: 'stethoscope', icon: Stethoscope, angle: 235, label: 'Doctor Review' },
-  { id: 'lab', icon: FlaskConical, angle: 290, label: 'Laboratory Diagnostics' },
+  { id: 'heart', icon: Heart, label: 'Heart & Breast Health' },
+  { id: 'pulse', icon: HeartPulse, label: 'Vitals & Blood Pressure' },
+  { id: 'shield', icon: ShieldCheck, label: 'Preventive Screenings' },
+  { id: 'leaf', icon: Leaf, label: 'Nutrition & Lifestyle' },
+  { id: 'moon', icon: MoonStar, label: 'Sleep & Recovery' },
+  { id: 'stethoscope', icon: Stethoscope, label: 'Doctor Review' },
+  { id: 'lab', icon: FlaskConical, label: 'Laboratory Diagnostics' },
 ];
+
+// Exact orbital radius and equal angular spacing (360 / 7 ≈ 51.42857° each)
+const ORBIT_RADIUS = 114;
+const TOTAL_PLANETS = ORBIT_PLANETS.length;
+const ANGLE_STEP = 360 / TOTAL_PLANETS;
+// Heart icon is the anchor at 325°
+const HEART_ANCHOR_ANGLE = 325;
 
 export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
   onNavigate,
@@ -59,7 +66,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
 
       {/* TOP SECTION: Brand Header */}
       <div className="w-full relative z-20">
-        {/* Top Header: Iwosan Logo + Info Button */}
+        {/* Top Header: Brand Logo + Info Button */}
         <div className="flex items-center justify-between">
           {/* Brand Logo */}
           <div className="flex items-center gap-2.5">
@@ -77,7 +84,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             </div>
             <div>
               <div className="text-sm font-extrabold tracking-wide text-white leading-tight">
-                <span className="text-cyan-400">i</span>Wellness Passport
+                <span className="text-cyan-400">Wellness</span> Passport
               </div>
               <div className="text-[8px] font-bold tracking-[0.18em] text-slate-400 uppercase leading-none">
                 Healthcare Systems
@@ -98,11 +105,19 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
 
       {/* CENTER SECTION: Planetary Orbit Graphic with Circular Animation */}
       <div className="relative my-auto flex flex-col items-center justify-center py-2 z-10">
-        <div className="relative w-[280px] h-[280px] sm:w-[300px] sm:h-[300px] flex items-center justify-center">
+        <div className="relative w-[280px] h-[280px] flex items-center justify-center">
           {/* Concentric Stationary Ring Tracks */}
-          <div className="absolute inset-0 rounded-full border border-slate-700/40 pointer-events-none" />
-          <div className="absolute inset-[30px] rounded-full border border-slate-800/70 pointer-events-none" />
-          <div className="absolute inset-[65px] rounded-full border border-slate-800/50 pointer-events-none" />
+          {/* Outer subtle guide ring */}
+          <div className="absolute w-[276px] h-[276px] rounded-full border border-slate-700/25 pointer-events-none" />
+
+          {/* MAIN CELESTIAL ORBIT TRACK: The exact circular line shared by the Heart icon and all 6 planetary icons */}
+          <div
+            style={{ width: `${ORBIT_RADIUS * 2}px`, height: `${ORBIT_RADIUS * 2}px` }}
+            className="absolute rounded-full border border-cyan-400/40 shadow-[0_0_15px_rgba(6,182,212,0.18)] pointer-events-none"
+          />
+
+          {/* Inner subtle guide ring */}
+          <div className="absolute w-[160px] h-[160px] rounded-full border border-slate-800/60 pointer-events-none" />
 
           {/* STATIONARY CENTRAL CORE */}
           <div className="relative z-10 flex items-center justify-center pointer-events-none">
@@ -140,19 +155,20 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             }}
             className="absolute inset-0 w-full h-full pointer-events-auto"
           >
-            {ORBIT_PLANETS.map((planet) => {
-              // Mathematical polar coordinate mapping (R = 118px on a 280px container, centered at 140, 140)
-              const radius = 118;
-              const rad = (planet.angle * Math.PI) / 180;
-              const x = 140 + radius * Math.cos(rad) - 18;
-              const y = 140 + radius * Math.sin(rad) - 18;
+            {ORBIT_PLANETS.map((planet, index) => {
+              // 7 Planetary icons with exact equal spacing (360 / 7 ≈ 51.42857° each)
+              // All situated on the EXACT same orbital line/track as the 'heart' icon (ORBIT_RADIUS = 114px)
+              const angle = (HEART_ANCHOR_ANGLE + index * ANGLE_STEP) % 360;
+              const rad = (angle * Math.PI) / 180;
+              const x = ORBIT_RADIUS * Math.cos(rad);
+              const y = ORBIT_RADIUS * Math.sin(rad);
 
               return (
                 <div
                   key={planet.id}
                   style={{
-                    left: `${x}px`,
-                    top: `${y}px`,
+                    left: `calc(50% + ${x}px - 18px)`,
+                    top: `calc(50% + ${y}px - 18px)`,
                   }}
                   className="absolute w-9 h-9"
                   title={planet.label}
