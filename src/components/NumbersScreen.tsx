@@ -1,60 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { HealthNumbers, ScreenId } from '../types';
-import { calculateBMI, analyzeBloodPressure, analyzeBloodSugar, saveNumbersToLocal } from '../utils/healthLogic';
-import { Stethoscope, Activity, Scale, Heart, Info, ArrowRight, Check, Sparkles, RotateCcw } from 'lucide-react';
+import { calculateBMI, saveNumbersToLocal } from '../utils/healthLogic';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Heart,
+  Droplet,
+  Ruler,
+  Scale,
+  Calculator,
+  Plus,
+} from 'lucide-react';
 
 interface NumbersScreenProps {
   numbers: HealthNumbers;
   onNumbersChange: (numbers: HealthNumbers) => void;
   onNavigate: (screen: ScreenId) => void;
+  hasFilledAssessment?: boolean;
+  hasCompletedCheck?: boolean;
 }
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.04,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 14 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
-  },
-};
 
 export const NumbersScreen: React.FC<NumbersScreenProps> = ({
   numbers,
   onNumbersChange,
   onNavigate,
+  hasFilledAssessment = false,
+  hasCompletedCheck = false,
 }) => {
   const [systolic, setSystolic] = useState<string>(numbers.systolic ? String(numbers.systolic) : '');
   const [diastolic, setDiastolic] = useState<string>(numbers.diastolic ? String(numbers.diastolic) : '');
   const [bloodSugar, setBloodSugar] = useState<string>(numbers.bloodSugar ? String(numbers.bloodSugar) : '');
-  const [sugarType, setSugarType] = useState<'fasting' | 'random'>(numbers.sugarType || 'fasting');
-  const [sugarUnit, setSugarUnit] = useState<'mg/dL' | 'mmol/L'>(numbers.sugarUnit || 'mg/dL');
-  const [unitSystem, setUnitSystem] = useState<'metric' | 'imperial'>(numbers.unitSystem || 'metric');
   const [height, setHeight] = useState<string>(numbers.height ? String(numbers.height) : '');
   const [weight, setWeight] = useState<string>(numbers.weight ? String(numbers.weight) : '');
-  const [savedSuccess, setSavedSuccess] = useState(false);
+  const [sugarUnit, setSugarUnit] = useState<'mg/dL' | 'mmol/L'>(numbers.sugarUnit || 'mg/dL');
 
-  // Sync internal state when numbers prop changes externally (e.g. on Retake reset)
+  // Sync internal state when numbers prop changes externally
   useEffect(() => {
     setSystolic(numbers.systolic ? String(numbers.systolic) : '');
     setDiastolic(numbers.diastolic ? String(numbers.diastolic) : '');
     setBloodSugar(numbers.bloodSugar ? String(numbers.bloodSugar) : '');
-    setSugarType(numbers.sugarType || 'fasting');
-    setSugarUnit(numbers.sugarUnit || 'mg/dL');
-    setUnitSystem(numbers.unitSystem || 'metric');
     setHeight(numbers.height ? String(numbers.height) : '');
     setWeight(numbers.weight ? String(numbers.weight) : '');
+    setSugarUnit(numbers.sugarUnit || 'mg/dL');
   }, [numbers]);
 
   // Real-time calculations
@@ -64,25 +52,33 @@ export const NumbersScreen: React.FC<NumbersScreenProps> = ({
   const numHeight = height ? Number(height) : 0;
   const numWeight = weight ? Number(weight) : 0;
 
-  const bpAnalysis = analyzeBloodPressure(numSystolic, numDiastolic);
-  const sugarAnalysis = analyzeBloodSugar(numSugar, sugarType, sugarUnit);
-  const bmiAnalysis = calculateBMI(numWeight, numHeight, unitSystem);
+  const bmiAnalysis = calculateBMI(numWeight, numHeight, 'metric');
 
-  const handleSaveAndSync = () => {
+  const hasAnyNumbers = Boolean(
+    (numSystolic && numSystolic > 0) ||
+      (numDiastolic && numDiastolic > 0) ||
+      (numSugar && numSugar > 0) ||
+      numHeight > 0 ||
+      numWeight > 0
+  );
+
+  const handleSaveAndContinue = () => {
     const updated: HealthNumbers = {
+      ...numbers,
       systolic: numSystolic && numSystolic > 0 ? numSystolic : undefined,
       diastolic: numDiastolic && numDiastolic > 0 ? numDiastolic : undefined,
       bloodSugar: numSugar && numSugar > 0 ? numSugar : undefined,
-      sugarType,
-      sugarUnit,
+      sugarType: numbers.sugarType || 'fasting',
+      sugarUnit: sugarUnit || 'mg/dL',
       height: numHeight > 0 ? numHeight : undefined,
       weight: numWeight > 0 ? numWeight : undefined,
-      unitSystem,
+      unitSystem: 'metric',
     };
     onNumbersChange(updated);
     saveNumbersToLocal(updated);
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 2500);
+
+    // If user has completed check, navigate to summary (or dashboard if from dashboard)
+    onNavigate('summary');
   };
 
   const handleResetNumbers = () => {
@@ -92,9 +88,9 @@ export const NumbersScreen: React.FC<NumbersScreenProps> = ({
     setHeight('');
     setWeight('');
     const reset: HealthNumbers = {
-      sugarType,
-      sugarUnit,
-      unitSystem,
+      sugarType: 'fasting',
+      sugarUnit: 'mg/dL',
+      unitSystem: 'metric',
       systolic: undefined,
       diastolic: undefined,
       bloodSugar: undefined,
@@ -105,388 +101,256 @@ export const NumbersScreen: React.FC<NumbersScreenProps> = ({
     saveNumbersToLocal(reset);
   };
 
-  const handleQuickPreset = (type: 'healthy' | 'review') => {
-    if (type === 'healthy') {
-      setSystolic('118');
-      setDiastolic('76');
-      setBloodSugar(sugarUnit === 'mg/dL' ? '88' : '4.9');
-      setHeight(unitSystem === 'metric' ? '165' : '65');
-      setWeight(unitSystem === 'metric' ? '62' : '136');
+  const handleBack = () => {
+    if (hasFilledAssessment) {
+      onNavigate('dashboard');
     } else {
-      setSystolic('134');
-      setDiastolic('86');
-      setBloodSugar(sugarUnit === 'mg/dL' ? '112' : '6.2');
-      setHeight(unitSystem === 'metric' ? '160' : '63');
-      setWeight(unitSystem === 'metric' ? '74' : '163');
+      onNavigate('check');
     }
   };
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="space-y-6 pb-28 pt-2 text-left max-w-md mx-auto"
-    >
-      {/* Category header */}
-      <motion.div variants={itemVariants} className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-sky-800">
-          <Stethoscope className="w-4 h-4" />
-          <span>Optional Vitals & BMI</span>
-        </div>
-        <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium">
-          <span>Booth & Home numbers</span>
-        </div>
-      </motion.div>
+    <div className="w-full min-h-screen bg-[#fafbfe] text-slate-900 px-5 pt-4 pb-16 flex flex-col justify-start select-none max-w-md mx-auto">
+      {/* 1. TOP NAVIGATION BAR */}
+      <div className="flex items-center gap-3.5 mb-6">
+        <button
+          onClick={handleBack}
+          aria-label="Go back"
+          className="w-10 h-10 rounded-full bg-[#f1f4f9] hover:bg-slate-200 active:bg-slate-300 flex items-center justify-center text-slate-800 transition active:scale-95 cursor-pointer shadow-2xs"
+        >
+          <ArrowLeft className="w-5 h-5 stroke-[2.2]" />
+        </button>
+        <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+          Add your numbers
+        </h2>
+      </div>
 
-      <motion.div variants={itemVariants} className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-          Add Your Numbers
+      {/* 2. OPTIONAL KICKER BADGE */}
+      <div className="mb-3">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#e8efff] text-slate-700 text-xs font-semibold">
+          <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+          <span>Optional</span>
+        </span>
+      </div>
+
+      {/* 3. HEADLINE & VALUE PROPOSITION */}
+      <div className="space-y-2 mb-6">
+        <h1 className="text-2xl sm:text-[28px] font-extrabold text-slate-900 tracking-tight leading-[1.2]">
+          If you have any <span className="font-serif italic font-normal text-[#1e4d75]">numbers</span>, add them here.
         </h1>
-        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-          Got your blood pressure, sugar, or measurements from a check or our conference booth? Enter them for instant, friendly educational context.
+        <p className="text-xs sm:text-[13px] text-slate-500 leading-relaxed max-w-sm">
+          Only fill in what you already know. Nothing here is required, and nothing is sent anywhere.
         </p>
-      </motion.div>
+      </div>
 
-      {/* Quick Demo Presets */}
-      <motion.div variants={itemVariants} className="flex items-center gap-2 pt-0.5">
-        <span className="text-[11px] font-bold text-slate-500">Quick Demo:</span>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => handleQuickPreset('healthy')}
-          className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 transition cursor-pointer"
-        >
-          Optimal Range
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => handleQuickPreset('review')}
-          className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 transition cursor-pointer"
-        >
-          Worth Discussing
-        </motion.button>
-      </motion.div>
-
-      {/* SECTION 1: BLOOD PRESSURE */}
-      <motion.div
-        variants={itemVariants}
-        className="bg-white rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-3"
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-rose-50 text-rose-800 flex items-center justify-center">
-              <Heart className="w-4 h-4" />
+      {/* 4. THE 5 NUMBER INPUT CARDS */}
+      <div className="space-y-3 mb-4">
+        {/* Card 1: Systolic */}
+        <div className="bg-white rounded-[22px] border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-xs p-4 flex items-center justify-between transition focus-within:border-sky-300 focus-within:ring-2 focus-within:ring-sky-100/60">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-[#f0f6ff] flex items-center justify-center flex-shrink-0 text-slate-800 shadow-2xs">
+              <Heart className="w-5 h-5 stroke-[1.8]" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Blood Pressure</h3>
-              <p className="text-[11px] text-slate-500">Systolic / Diastolic (mmHg)</p>
+              <div className="text-sm font-bold text-slate-900">Systolic</div>
+              <div className="text-[11px] text-slate-400 mt-0.5">The top number</div>
             </div>
           </div>
-          <span className="text-[11px] font-semibold text-slate-400">Standard cuff</span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 pt-1">
-          <div>
-            <label className="text-[11px] font-bold text-slate-600 block mb-1">
-              Top (Systolic)
-            </label>
+          <div className="flex items-center gap-1.5 justify-end">
             <input
               type="number"
-              placeholder="e.g. 118"
+              inputMode="numeric"
+              placeholder="120"
               value={systolic}
               onChange={(e) => setSystolic(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50"
+              className="w-16 sm:w-20 text-right font-extrabold text-base sm:text-lg text-slate-800 placeholder:text-slate-300 placeholder:font-normal focus:outline-hidden bg-transparent"
             />
+            <span className="text-xs font-semibold text-slate-400 min-w-[38px] text-left">
+              mmHg
+            </span>
           </div>
-          <div>
-            <label className="text-[11px] font-bold text-slate-600 block mb-1">
-              Bottom (Diastolic)
-            </label>
+        </div>
+
+        {/* Card 2: Diastolic */}
+        <div className="bg-white rounded-[22px] border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-xs p-4 flex items-center justify-between transition focus-within:border-sky-300 focus-within:ring-2 focus-within:ring-sky-100/60">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-[#f0f6ff] flex items-center justify-center flex-shrink-0 text-slate-800 shadow-2xs">
+              <Heart className="w-5 h-5 fill-slate-800 stroke-0" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-slate-900">Diastolic</div>
+              <div className="text-[11px] text-slate-400 mt-0.5">The bottom number</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 justify-end">
             <input
               type="number"
-              placeholder="e.g. 78"
+              inputMode="numeric"
+              placeholder="80"
               value={diastolic}
               onChange={(e) => setDiastolic(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50"
+              className="w-16 sm:w-20 text-right font-extrabold text-base sm:text-lg text-slate-800 placeholder:text-slate-300 placeholder:font-normal focus:outline-hidden bg-transparent"
             />
+            <span className="text-xs font-semibold text-slate-400 min-w-[38px] text-left">
+              mmHg
+            </span>
           </div>
         </div>
 
-        {/* Real-time BP Feedback */}
-        <AnimatePresence mode="wait">
-          {bpAnalysis && (
-            <motion.div
-              key={bpAnalysis.category}
-              initial={{ opacity: 0, scale: 0.98, y: 6 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-              className={`p-3 rounded-xl border ${bpAnalysis.badgeBg} ${bpAnalysis.borderClass}`}
-            >
-              <div className="flex items-center justify-between">
-                <span className={`text-xs font-black ${bpAnalysis.badgeText}`}>
-                  {bpAnalysis.category}
-                </span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                  AHA / NHF Guide
-                </span>
-              </div>
-              <p className="text-xs text-slate-700 mt-1 leading-relaxed font-medium">
-                {bpAnalysis.guidance}
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-
-      {/* SECTION 2: BLOOD SUGAR */}
-      <motion.div
-        variants={itemVariants}
-        className="bg-white rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-3"
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-sky-50 text-sky-800 flex items-center justify-center">
-              <Activity className="w-4 h-4" />
+        {/* Card 3: Fasting sugar */}
+        <div className="bg-white rounded-[22px] border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-xs p-4 flex items-center justify-between transition focus-within:border-sky-300 focus-within:ring-2 focus-within:ring-sky-100/60">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-[#f0f6ff] flex items-center justify-center flex-shrink-0 text-slate-800 shadow-2xs">
+              <Droplet className="w-5 h-5 stroke-[1.8]" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-900">Blood Sugar (Glucose)</h3>
-              <p className="text-[11px] text-slate-500">Fasting or Random reading</p>
+              <div className="text-sm font-bold text-slate-900">Fasting sugar</div>
+              <div className="text-[11px] text-slate-400 mt-0.5">If you know it</div>
             </div>
           </div>
-        </div>
-
-        {/* Toggles */}
-        <div className="grid grid-cols-2 gap-2 pt-1">
-          <div className="bg-slate-100 p-1 rounded-xl flex">
-            <button
-              onClick={() => setSugarType('fasting')}
-              className={`flex-1 py-1 text-xs font-bold rounded-lg transition ${
-                sugarType === 'fasting' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'
-              }`}
-            >
-              Fasting
-            </button>
-            <button
-              onClick={() => setSugarType('random')}
-              className={`flex-1 py-1 text-xs font-bold rounded-lg transition ${
-                sugarType === 'random' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'
-              }`}
-            >
-              Random
-            </button>
-          </div>
-
-          <div className="bg-slate-100 p-1 rounded-xl flex">
-            <button
-              onClick={() => setSugarUnit('mg/dL')}
-              className={`flex-1 py-1 text-xs font-bold rounded-lg transition ${
-                sugarUnit === 'mg/dL' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'
-              }`}
-            >
-              mg/dL
-            </button>
-            <button
-              onClick={() => setSugarUnit('mmol/L')}
-              className={`flex-1 py-1 text-xs font-bold rounded-lg transition ${
-                sugarUnit === 'mmol/L' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500'
-              }`}
-            >
-              mmol/L
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <label className="text-[11px] font-bold text-slate-600 block mb-1">
-            Glucose Value ({sugarUnit})
-          </label>
-          <input
-            type="number"
-            step="0.1"
-            placeholder={sugarUnit === 'mg/dL' ? 'e.g. 92' : 'e.g. 5.1'}
-            value={bloodSugar}
-            onChange={(e) => setBloodSugar(e.target.value)}
-            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50"
-          />
-        </div>
-
-        <AnimatePresence mode="wait">
-          {sugarAnalysis && (
-            <motion.div
-              key={sugarAnalysis.category}
-              initial={{ opacity: 0, scale: 0.98, y: 6 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-              className={`p-3 rounded-xl border ${sugarAnalysis.badgeBg}`}
-            >
-              <div className="flex items-center justify-between">
-                <span className={`text-xs font-black ${sugarAnalysis.badgeText}`}>
-                  {sugarAnalysis.category}
-                </span>
-                <span className="text-[10px] font-bold text-slate-500 uppercase">
-                  {sugarType}
-                </span>
-              </div>
-              <p className="text-xs text-slate-700 mt-1 leading-relaxed font-medium">
-                {sugarAnalysis.guidance}
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-
-      {/* SECTION 3: HEIGHT, WEIGHT & AUTO-BMI */}
-      <motion.div
-        variants={itemVariants}
-        className="bg-white rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-3"
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-800 flex items-center justify-center">
-              <Scale className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold text-slate-900">Height & Weight (BMI)</h3>
-              <p className="text-[11px] text-slate-500">Auto-calculated BMI band</p>
-            </div>
-          </div>
-
-          <div className="bg-slate-100 p-0.5 rounded-lg flex text-[11px] font-bold">
-            <button
-              onClick={() => setUnitSystem('metric')}
-              className={`px-2 py-0.5 rounded-md transition ${
-                unitSystem === 'metric' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'
-              }`}
-            >
-              Metric
-            </button>
-            <button
-              onClick={() => setUnitSystem('imperial')}
-              className={`px-2 py-0.5 rounded-md transition ${
-                unitSystem === 'imperial' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-500'
-              }`}
-            >
-              Imperial
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 pt-1">
-          <div>
-            <label className="text-[11px] font-bold text-slate-600 block mb-1">
-              Height ({unitSystem === 'metric' ? 'cm' : 'inches'})
-            </label>
+          <div className="flex items-center gap-1.5 justify-end">
             <input
               type="number"
-              placeholder={unitSystem === 'metric' ? '165' : '65'}
+              inputMode="numeric"
+              step="any"
+              placeholder="90"
+              value={bloodSugar}
+              onChange={(e) => setBloodSugar(e.target.value)}
+              className="w-16 sm:w-20 text-right font-extrabold text-base sm:text-lg text-slate-800 placeholder:text-slate-300 placeholder:font-normal focus:outline-hidden bg-transparent"
+            />
+            <button
+              type="button"
+              onClick={() => setSugarUnit(sugarUnit === 'mg/dL' ? 'mmol/L' : 'mg/dL')}
+              title="Tap to toggle mg/dL and mmol/L"
+              className="text-xs font-semibold text-slate-400 hover:text-slate-700 min-w-[38px] text-left cursor-pointer"
+            >
+              {sugarUnit}
+            </button>
+          </div>
+        </div>
+
+        {/* Card 4: Height */}
+        <div className="bg-white rounded-[22px] border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-xs p-4 flex items-center justify-between transition focus-within:border-sky-300 focus-within:ring-2 focus-within:ring-sky-100/60">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-[#f0f6ff] flex items-center justify-center flex-shrink-0 text-slate-800 shadow-2xs">
+              <Ruler className="w-5 h-5 stroke-[1.8]" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-slate-900">Height</div>
+              <div className="text-[11px] text-slate-400 mt-0.5">For your BMI</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 justify-end">
+            <input
+              type="number"
+              inputMode="numeric"
+              placeholder="165"
               value={height}
               onChange={(e) => setHeight(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50"
+              className="w-16 sm:w-20 text-right font-extrabold text-base sm:text-lg text-slate-800 placeholder:text-slate-300 placeholder:font-normal focus:outline-hidden bg-transparent"
             />
-          </div>
-          <div>
-            <label className="text-[11px] font-bold text-slate-600 block mb-1">
-              Weight ({unitSystem === 'metric' ? 'kg' : 'lbs'})
-            </label>
-            <input
-              type="number"
-              placeholder={unitSystem === 'metric' ? '65' : '143'}
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-bold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50"
-            />
+            <span className="text-xs font-semibold text-slate-400 min-w-[38px] text-left">
+              cm
+            </span>
           </div>
         </div>
 
-        {/* BMI Results Box */}
-        <AnimatePresence mode="wait">
-          {bmiAnalysis && (
-            <motion.div
-              key={bmiAnalysis.category}
-              initial={{ opacity: 0, scale: 0.98, y: 6 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.2 }}
-              className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/90 space-y-2"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
-                    Body Mass Index
-                  </span>
-                  <span className="text-xl font-black text-slate-900">
-                    {bmiAnalysis.bmi} <span className="text-xs font-semibold text-slate-500">kg/m²</span>
-                  </span>
-                </div>
-                <span className={`text-xs font-bold px-3 py-1 rounded-full border ${bmiAnalysis.badgeBg}`}>
-                  {bmiAnalysis.category}
-                </span>
-              </div>
-
-              {/* Visual indicator bar */}
-              <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{
-                    width: `${Math.min(100, Math.max(10, ((bmiAnalysis.bmi - 14) / 26) * 100))}%`,
-                  }}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                  className={`h-full ${bmiAnalysis.progressColor}`}
-                />
-              </div>
-
-              <p className="text-xs text-slate-600 leading-relaxed pt-1">
-                {bmiAnalysis.guidance}
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-
-      {/* Action CTA Bar */}
-      <motion.div variants={itemVariants} className="space-y-2.5 pt-2">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={handleSaveAndSync}
-          className="w-full py-3.5 px-6 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2 cursor-pointer"
-        >
-          {savedSuccess ? (
-            <motion.div
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              className="flex items-center gap-2"
-            >
-              <Check className="w-4 h-4" />
-              <span>Numbers Saved on Device!</span>
-            </motion.div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4" />
-              <span>Save & Include in My Summary</span>
+        {/* Card 5: Weight */}
+        <div className="bg-white rounded-[22px] border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-xs p-4 flex items-center justify-between transition focus-within:border-sky-300 focus-within:ring-2 focus-within:ring-sky-100/60">
+          <div className="flex items-center gap-3.5">
+            <div className="w-11 h-11 rounded-2xl bg-[#f0f6ff] flex items-center justify-center flex-shrink-0 text-slate-800 shadow-2xs">
+              <Scale className="w-5 h-5 stroke-[1.8]" />
             </div>
-          )}
-        </motion.button>
+            <div>
+              <div className="text-sm font-bold text-slate-900">Weight</div>
+              <div className="text-[11px] text-slate-400 mt-0.5">For your BMI</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 justify-end">
+            <input
+              type="number"
+              inputMode="numeric"
+              placeholder="68"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              className="w-16 sm:w-20 text-right font-extrabold text-base sm:text-lg text-slate-800 placeholder:text-slate-300 placeholder:font-normal focus:outline-hidden bg-transparent"
+            />
+            <span className="text-xs font-semibold text-slate-400 min-w-[38px] text-left">
+              kg
+            </span>
+          </div>
+        </div>
+      </div>
 
-        <motion.button
-          whileHover={{ scale: 1.015 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => onNavigate('summary')}
-          className="w-full py-3 px-6 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-900 font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer"
+      {/* 5. YOUR BMI CARD */}
+      <div className="bg-[#edf6ff] border border-sky-100 rounded-[22px] p-5 mb-6 shadow-2xs relative overflow-hidden">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 uppercase tracking-wider">
+            <Calculator className="w-3.5 h-3.5 text-slate-700" />
+            <span>Your BMI</span>
+          </div>
+          <div className="text-xs text-slate-500 font-normal">
+            worked out for you
+          </div>
+        </div>
+
+        <div className="flex items-end justify-between pt-3">
+          <div>
+            {bmiAnalysis ? (
+              <div>
+                <div className="text-2xl font-extrabold text-slate-900 tracking-tight leading-none">
+                  {bmiAnalysis.bmi}
+                </div>
+                <div className="text-xs font-bold text-sky-800 mt-1">
+                  {bmiAnalysis.category}
+                </div>
+                <p className="text-[11px] text-slate-500 mt-1 max-w-[200px] leading-relaxed">
+                  Calculated from your entered height and weight.
+                </p>
+              </div>
+            ) : (
+              <div>
+                <div className="w-16 h-1 bg-slate-700 rounded-full my-3" />
+                <div className="text-xs text-slate-500 font-medium">
+                  Add height and weight to see it
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Equalizer / Histogram 5-Bar Graphic matching the screenshot */}
+          <div className="flex items-end gap-1.5 pb-1 flex-shrink-0">
+            <div className="w-2.5 h-4 bg-sky-400 rounded-full" />
+            <div className="w-2.5 h-7 bg-sky-400 rounded-full" />
+            <div className="w-2.5 h-12 bg-sky-500 rounded-full" />
+            <div className="w-2.5 h-9 bg-sky-400 rounded-full" />
+            <div className="w-2.5 h-5 bg-sky-400 rounded-full" />
+          </div>
+        </div>
+      </div>
+
+      {/* 6. PRIMARY CTA BUTTON */}
+      <div className="space-y-3">
+        <button
+          onClick={handleSaveAndContinue}
+          className="w-full py-4 px-6 bg-[#0a1124] hover:bg-[#121c38] active:bg-[#19274e] text-white font-bold text-sm sm:text-base rounded-full flex items-center justify-center gap-2 shadow-sm transition active:scale-[0.99] cursor-pointer"
         >
-          <span>View Full Health Summary</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </motion.button>
-      </motion.div>
+          <span>
+            {hasAnyNumbers ? 'Save and see my summary' : 'Skip and see my summary'}
+          </span>
+          <ArrowRight className="w-4 h-4 text-white" />
+        </button>
 
-      {/* Bottom disclaimer */}
-      <motion.div variants={itemVariants} className="text-center text-[11px] text-slate-500 px-2 leading-relaxed">
-        Educational reference values based on Nigerian Heart Foundation & WHO guidelines.
-      </motion.div>
-    </motion.div>
+        {/* 7. CLEAR THESE NUMBERS LINK */}
+        <div className="text-center">
+          <button
+            onClick={handleResetNumbers}
+            className="text-xs font-semibold text-slate-400 hover:text-rose-600 transition cursor-pointer py-1"
+          >
+            Clear these numbers
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };

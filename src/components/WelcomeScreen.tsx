@@ -87,7 +87,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 <span className="text-cyan-400">Wellness</span> Passport
               </div>
               <div className="text-[8px] font-bold tracking-[0.18em] text-slate-400 uppercase leading-none">
-                Healthcare Systems
+                IWOSAN X WIMBIZ
               </div>
             </div>
           </div>

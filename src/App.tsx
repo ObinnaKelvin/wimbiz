@@ -134,11 +134,11 @@ export default function App() {
   else if (ageAnswer === '60_plus') ageBandLabel = '60+';
 
   return (
-    <div className={`min-h-screen ${currentScreen === 'welcome' || currentScreen === 'dashboard' ? 'bg-[#030611]' : 'bg-slate-100'} text-slate-900 flex flex-col items-center justify-start antialiased selection:bg-emerald-100 selection:text-emerald-900`}>
+    <div className={`min-h-screen ${currentScreen === 'welcome' || currentScreen === 'dashboard' ? 'bg-[#030611]' : currentScreen === 'numbers' ? 'bg-[#fafbfe]' : 'bg-slate-100'} text-slate-900 flex flex-col items-center justify-start antialiased selection:bg-emerald-100 selection:text-emerald-900`}>
       {/* Centered Mobile App Canvas Frame */}
-      <div className={`w-full ${currentScreen === 'admin' ? 'max-w-4xl' : 'max-w-md'} min-h-screen ${currentScreen === 'welcome' || currentScreen === 'dashboard' ? 'bg-[#050b18] sm:border-slate-800/60' : 'bg-slate-50 sm:border-slate-200/80'} flex flex-col relative sm:shadow-2xl sm:border-x transition-all duration-300`}>
-        {/* Persistent Brand Header on non-welcome and non-dashboard screens */}
-        {currentScreen !== 'welcome' && currentScreen !== 'dashboard' && (
+      <div className={`w-full ${currentScreen === 'admin' ? 'max-w-4xl' : 'max-w-md'} min-h-screen ${currentScreen === 'welcome' || currentScreen === 'dashboard' ? 'bg-[#050b18] sm:border-slate-800/60' : currentScreen === 'numbers' ? 'bg-[#fafbfe] sm:border-slate-200/80' : 'bg-slate-50 sm:border-slate-200/80'} flex flex-col relative sm:shadow-2xl sm:border-x transition-all duration-300`}>
+        {/* Persistent Brand Header on non-welcome, non-dashboard, and non-numbers screens */}
+        {currentScreen !== 'welcome' && currentScreen !== 'dashboard' && currentScreen !== 'numbers' && (
           <Header
             currentScreen={currentScreen}
             onNavigate={handleNavigate}
@@ -149,7 +149,7 @@ export default function App() {
         )}
 
         {/* Dynamic Screen View with Smooth Page Transition */}
-        <main className={`flex-1 ${currentScreen === 'welcome' || currentScreen === 'dashboard' ? 'p-0' : 'px-4 sm:px-5 py-4'} overflow-hidden`}>
+        <main className={`flex-1 ${currentScreen === 'welcome' || currentScreen === 'dashboard' || currentScreen === 'numbers' ? 'p-0' : 'px-4 sm:px-5 py-4'} overflow-hidden`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={currentScreen}
@@ -203,6 +203,8 @@ export default function App() {
                   numbers={numbers}
                   onNumbersChange={handleNumbersChange}
                   onNavigate={handleNavigate}
+                  hasFilledAssessment={hasFilledAssessment}
+                  hasCompletedCheck={hasCompletedCheck}
                 />
               )}
 
@@ -260,8 +262,8 @@ export default function App() {
           </AnimatePresence>
         </main>
 
-        {/* Bottom Persistent Navigation for Quick Exploration (hidden on Welcome and Admin screens) */}
-        {currentScreen !== 'admin' && currentScreen !== 'welcome' && (
+        {/* Bottom Persistent Navigation (hidden on Welcome, Admin, and Numbers screens) */}
+        {currentScreen !== 'admin' && currentScreen !== 'welcome' && currentScreen !== 'numbers' && (
           <BottomNav
             currentScreen={currentScreen}
             onNavigate={handleNavigate}
