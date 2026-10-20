@@ -183,7 +183,7 @@ apiRouter.get('/admin/export', async (req: Request, res: Response) => {
     const records = await getAllRecords();
     const buffer = generateExcelWorkbook(records);
 
-    const filename = `Iwosan_HerHealth_Participant_Responses_${new Date().toISOString().split('T')[0]}.xlsx`;
+    const filename = `Wellness_Passport_Participant_Responses_${new Date().toISOString().split('T')[0]}.xlsx`;
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);

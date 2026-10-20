@@ -57,7 +57,7 @@ export const PWAInstallButton: React.FC<{ variant?: 'header' | 'banner' | 'pill'
               <Smartphone className="w-5 h-5 text-emerald-300" />
             </div>
             <div>
-              <p className="font-semibold text-sm">Save Iwosan HerHealth on your device</p>
+              <p className="font-semibold text-sm">Save Wellness Passport on your device</p>
               <p className="text-xs text-emerald-200">Open in one tap with zero loading, 100% offline & private.</p>
             </div>
           </div>
@@ -79,7 +79,7 @@ export const PWAInstallButton: React.FC<{ variant?: 'header' | 'banner' | 'pill'
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-bold text-xs">
-                  IH
+                  WP
                 </div>
                 <h3 className="text-base font-bold">Install on Safari (iOS)</h3>
               </div>
@@ -92,7 +92,7 @@ export const PWAInstallButton: React.FC<{ variant?: 'header' | 'banner' | 'pill'
             </div>
 
             <p className="text-xs text-slate-600 mb-4">
-              Add Iwosan HerHealth to your home screen for instant, offline access without opening the browser:
+              Add Wellness Passport to your home screen for instant, offline access without opening the browser:
             </p>
 
             <ol className="space-y-3 text-xs text-slate-800">

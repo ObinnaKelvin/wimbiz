@@ -22,7 +22,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
     if (navigator.share) {
       navigator.share({
         title: article.title,
-        text: `${article.title} — Clinician-reviewed by Iwosan HerHealth`,
+        text: `${article.title} — Clinician-reviewed by Wellness Passport`,
         url: window.location.origin,
       }).catch(() => {});
     }

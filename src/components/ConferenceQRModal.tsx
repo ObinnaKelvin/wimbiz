@@ -8,7 +8,7 @@ interface ConferenceQRModalProps {
 
 export const ConferenceQRModal: React.FC<ConferenceQRModalProps> = ({ isOpen, onClose }) => {
   const [copied, setCopied] = useState(false);
-  const currentUrl = typeof window !== 'undefined' ? window.location.origin : 'https://iwosanherhealth.app';
+  const currentUrl = typeof window !== 'undefined' ? window.location.origin : 'https://wellnesspassport.app';
 
   if (!isOpen) return null;
 
@@ -21,7 +21,7 @@ export const ConferenceQRModal: React.FC<ConferenceQRModalProps> = ({ isOpen, on
   const handleNativeShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: 'Iwosan HerHealth — Women’s Health Awareness & Screening',
+        title: 'Wellness Passport — Women’s Health Awareness & Screening',
         text: 'A 3-5 minute privacy-first health-awareness check and clinician-reviewed library for women by WIMBIZ & Iwosan.',
         url: currentUrl,
       }).catch(() => {});
@@ -45,7 +45,7 @@ export const ConferenceQRModal: React.FC<ConferenceQRModalProps> = ({ isOpen, on
               <QrCode className="w-5 h-5 text-emerald-400" />
             </div>
             <div>
-              <h3 className="text-base font-extrabold leading-tight">Scan & Open HerHealth</h3>
+              <h3 className="text-base font-extrabold leading-tight">Scan & Open Wellness Passport</h3>
               <p className="text-[11px] text-slate-500 font-medium">WIMBIZ × IWOSAN Booth Share</p>
             </div>
           </div>
@@ -62,7 +62,7 @@ export const ConferenceQRModal: React.FC<ConferenceQRModalProps> = ({ isOpen, on
           <div className="w-56 h-56 rounded-xl bg-slate-50 p-2 flex items-center justify-center border border-slate-200 shadow-inner">
             <img
               src={qrCodeUrl}
-              alt="Scan QR Code to open Iwosan HerHealth"
+              alt="Scan QR Code to open Wellness Passport"
               className="w-full h-full object-contain rounded-lg"
               loading="eager"
             />

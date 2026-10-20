@@ -125,19 +125,21 @@ export default function App() {
   else if (ageAnswer === '60_plus') ageBandLabel = '60+';
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col items-center justify-start antialiased selection:bg-emerald-100 selection:text-emerald-900">
+    <div className={`min-h-screen ${currentScreen === 'welcome' ? 'bg-[#030611]' : 'bg-slate-100'} text-slate-900 flex flex-col items-center justify-start antialiased selection:bg-emerald-100 selection:text-emerald-900`}>
       {/* Centered Mobile App Canvas Frame */}
-      <div className={`w-full ${currentScreen === 'admin' ? 'max-w-4xl' : 'max-w-md'} min-h-screen bg-slate-50 flex flex-col relative sm:shadow-xl sm:border-x sm:border-slate-200/80 transition-all duration-300`}>
-        {/* Persistent Brand Header */}
-        <Header
-          currentScreen={currentScreen}
-          onNavigate={handleNavigate}
-          onOpenQR={() => setIsQRModalOpen(true)}
-          hasCompletedCheck={hasCompletedCheck}
-        />
+      <div className={`w-full ${currentScreen === 'admin' ? 'max-w-4xl' : 'max-w-md'} min-h-screen ${currentScreen === 'welcome' ? 'bg-[#050b18] sm:border-slate-800/60' : 'bg-slate-50 sm:border-slate-200/80'} flex flex-col relative sm:shadow-2xl sm:border-x transition-all duration-300`}>
+        {/* Persistent Brand Header on non-welcome screens */}
+        {currentScreen !== 'welcome' && (
+          <Header
+            currentScreen={currentScreen}
+            onNavigate={handleNavigate}
+            onOpenQR={() => setIsQRModalOpen(true)}
+            hasCompletedCheck={hasCompletedCheck}
+          />
+        )}
 
         {/* Dynamic Screen View with Smooth Page Transition */}
-        <main className="flex-1 px-4 sm:px-5 py-4 overflow-hidden">
+        <main className={`flex-1 ${currentScreen === 'welcome' ? 'p-0' : 'px-4 sm:px-5 py-4'} overflow-hidden`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={currentScreen}
@@ -237,8 +239,8 @@ export default function App() {
           </AnimatePresence>
         </main>
 
-        {/* Bottom Persistent Navigation for Quick Exploration (hidden in Admin mode) */}
-        {currentScreen !== 'admin' && (
+        {/* Bottom Persistent Navigation for Quick Exploration (hidden on Welcome and Admin screens) */}
+        {currentScreen !== 'admin' && currentScreen !== 'welcome' && (
           <BottomNav
             currentScreen={currentScreen}
             onNavigate={handleNavigate}

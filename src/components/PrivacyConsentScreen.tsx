@@ -52,7 +52,7 @@ export const PrivacyConsentScreen: React.FC<PrivacyConsentScreenProps> = ({
         </h1>
 
         <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-          Iwosan HerHealth was created by WIMBIZ and Iwosan Lagoon Hospitals to provide fast, reliable health guidance with complete peace of mind.
+          Wellness Passport was created by WIMBIZ and Iwosan Lagoon Hospitals to provide fast, reliable health guidance with complete peace of mind.
         </p>
       </motion.div>
 

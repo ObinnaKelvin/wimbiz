@@ -67,7 +67,7 @@ export const AboutSafetyScreen: React.FC<AboutSafetyScreenProps> = ({ onNavigate
           About, Safety & Privacy
         </h1>
         <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-          Iwosan HerHealth is a joint initiative by WIMBIZ and Iwosan Lagoon Hospitals to champion female health awareness.
+          Wellness Passport is a joint initiative by WIMBIZ and Iwosan Lagoon Hospitals to champion female health awareness.
         </p>
       </motion.div>
 
@@ -82,7 +82,7 @@ export const AboutSafetyScreen: React.FC<AboutSafetyScreenProps> = ({ onNavigate
           <span>Full Clinical Safety Disclaimer</span>
         </div>
         <p className="text-xs text-rose-900 leading-relaxed font-medium">
-          Iwosan HerHealth is strictly an educational self-awareness application. It is <strong>never a substitute for professional clinical judgment, diagnosis, or treatment</strong>.
+          Wellness Passport is strictly an educational self-awareness application. It is <strong>never a substitute for professional clinical judgment, diagnosis, or treatment</strong>.
         </p>
         <p className="text-xs text-rose-900/90 leading-relaxed">
           Always consult a licensed medical professional at Iwosan Lagoon Hospitals or your personal physician if you experience concerning symptoms, persistent pain, unexpected bleeding, or high blood pressure readings.
@@ -175,7 +175,7 @@ export const AboutSafetyScreen: React.FC<AboutSafetyScreenProps> = ({ onNavigate
       {/* Collaboration Note */}
       <motion.div variants={itemVariants} className="text-center pt-2 space-y-1">
         <p className="text-xs font-bold text-slate-700">
-          Iwosan HerHealth · WIMBIZ × IWOSAN
+          Wellness Passport · WIMBIZ × IWOSAN
         </p>
         <p className="text-[11px] text-slate-500">
           Version 1.0.0 (Progressive Web Application)

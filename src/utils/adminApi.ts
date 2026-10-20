@@ -194,7 +194,7 @@ export async function downloadExcelResponses(records?: ClientAnonymousRecord[]) 
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Iwosan_HerHealth_Participant_Responses_${new Date().toISOString().split('T')[0]}.xlsx`;
+      a.download = `Wellness_Passport_Participant_Responses_${new Date().toISOString().split('T')[0]}.xlsx`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -244,7 +244,7 @@ export async function downloadExcelResponses(records?: ClientAnonymousRecord[]) 
   const ws = XLSX.utils.json_to_sheet(flatRows);
   XLSX.utils.book_append_sheet(wb, ws, 'User Responses Data');
 
-  XLSX.writeFile(wb, `Iwosan_HerHealth_Responses_${new Date().toISOString().split('T')[0]}.xlsx`);
+  XLSX.writeFile(wb, `Wellness_Passport_Responses_${new Date().toISOString().split('T')[0]}.xlsx`);
 }
 
 // -------------------------------------------------------------

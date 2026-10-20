@@ -80,7 +80,7 @@ export const IWOSAN_CONTACT_INFO = {
   generalHotline: '+234 700 524666 (0700 LAGOON)',
   emergencyHotline: '+234 1 888 8888',
   whatsappConcierge: '+234 809 396 0000',
-  whatsappDirectUrl: 'https://wa.me/2348093960000?text=Hello%20Iwosan%20HerHealth%20Team%2C%20I%20completed%20the%20WIMBIZ%20Health%20Awareness%20Check%20and%20would%20like%20to%20inquire%20about%20a%20screening%20appointment.',
+  whatsappDirectUrl: 'https://wa.me/2348093960000?text=Hello%20Wellness%20Passport%20Team%2C%20I%20completed%20the%20WIMBIZ%20Health%20Awareness%20Check%20and%20would%20like%20to%20inquire%20about%20a%20screening%20appointment.',
   email: 'wellness@iwosanlagoon.life',
   website: 'https://iwosanlagoon.life',
   wimbizPartnerNote: 'Proudly delivered in partnership with WIMBIZ (Women in Management, Business and Public Service).',

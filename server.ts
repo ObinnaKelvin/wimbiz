@@ -43,7 +43,7 @@ async function startServer() {
   app.get('/api/health', (req, res) => {
     res.json({
       status: 'ok',
-      service: 'Iwosan HerHealth Backend',
+      service: 'Wellness Passport Backend',
       timestamp: new Date().toISOString(),
     });
   });
@@ -76,7 +76,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`[Iwosan HerHealth] Server running on http://0.0.0.0:${PORT}`);
+    console.log(`[Wellness Passport] Server running on http://0.0.0.0:${PORT}`);
   });
 }
 

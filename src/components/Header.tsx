@@ -42,7 +42,7 @@ export const Header: React.FC<HeaderProps> = ({ currentScreen, onNavigate, onOpe
           <div>
             <div className="flex items-center gap-1.5">
               <h1 className="text-base font-extrabold text-slate-900 tracking-tight leading-none">
-                Iwosan HerHealth
+                Wellness Passport
               </h1>
             </div>
             <p className="text-[10px] font-bold text-slate-500 tracking-wider uppercase mt-0.5">

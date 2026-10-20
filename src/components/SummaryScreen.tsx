@@ -69,8 +69,8 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
   const handleShareSummary = () => {
     if (navigator.share) {
       navigator.share({
-        title: 'My Iwosan HerHealth Summary',
-        text: 'I just completed my 3-minute Health Awareness Check on Iwosan HerHealth by WIMBIZ & Iwosan.',
+        title: 'My Wellness Passport Summary',
+        text: 'I just completed my 3-minute Health Awareness Check on Wellness Passport by WIMBIZ & Iwosan.',
         url: window.location.origin,
       }).catch(() => {});
     } else {
