@@ -31,7 +31,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
       id: 'womens-health' as ScreenId,
       label: 'Learn',
       icon: BookOpen,
-      isActive: currentScreen === 'womens-health' || currentScreen === 'lifestyle',
+      isActive: currentScreen === 'womens-health' || currentScreen === 'lifestyle' || currentScreen === 'article',
     },
     {
       id: 'screening-guide' as ScreenId,

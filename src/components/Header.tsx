@@ -178,7 +178,7 @@ export const Header: React.FC<HeaderProps> = ({
               }`}
             >
               <Heart className="w-4 h-4" />
-              <span>Heart, Diabetes & Lifestyle</span>
+              <span>Heart & Lifestyle</span>
             </button>
 
             <button

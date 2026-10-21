@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect } from 'react';
 import { ScreenId } from '../types';
 import {
   Heart,
@@ -20,12 +19,13 @@ import {
   FlaskConical,
 } from 'lucide-react';
 
+export type TabType = 'all' | 'womens' | 'lifestyle';
+
 interface WomensHealthHubProps {
+  initialTab?: TabType;
   onOpenArticle: (articleId: string) => void;
   onNavigate: (screen: ScreenId) => void;
 }
-
-type TabType = 'all' | 'womens' | 'lifestyle';
 
 interface TopicCard {
   id: string;
@@ -38,6 +38,7 @@ interface TopicCard {
 }
 
 const TOPIC_CARDS: TopicCard[] = [
+  // 6 Women's Health Topics
   {
     id: 'breast',
     title: 'Breast health',
@@ -92,6 +93,8 @@ const TOPIC_CARDS: TopicCard[] = [
     icon: Stethoscope,
     image: '/assets/aistudio/image_a4a9cee3.png',
   },
+
+  // 6 Heart, Diabetes & Lifestyle Topics (from Everyday Wellness & Prevention)
   {
     id: 'heart',
     title: 'Heart health',
@@ -148,13 +151,54 @@ const TOPIC_CARDS: TopicCard[] = [
   },
 ];
 
-export const WomensHealthHub: React.FC<WomensHealthHubProps> = ({ onOpenArticle, onNavigate }) => {
-  const [activeTab, setActiveTab] = useState<TabType>('all');
+export const WomensHealthHub: React.FC<WomensHealthHubProps> = ({
+  initialTab = 'all',
+  onOpenArticle,
+  onNavigate,
+}) => {
+  const [activeTab, setActiveTab] = useState<TabType>(initialTab);
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   const filteredTopics = TOPIC_CARDS.filter((card) => {
     if (activeTab === 'all') return true;
     return card.category === activeTab;
   });
+
+  const isLifestyle = activeTab === 'lifestyle';
+
+  const heroTitle = isLifestyle ? (
+    <>
+      Heart &amp; Lifestyle{' '}
+      <span className="font-serif italic font-normal text-slate-950">Hub</span>
+    </>
+  ) : (
+    <>
+      Women's Health{' '}
+      <span className="font-serif italic font-normal text-slate-950">Hub</span>
+    </>
+  );
+
+  const heroDescription = isLifestyle
+    ? 'Cardiovascular health in women, managing cortisol, reversing pre-diabetes, and joyful movement for longevity. Every piece shows who reviewed it and when.'
+    : 'Trusted, plain-language articles on the things women actually want to know. Every piece shows who reviewed it and when.';
+
+  // Featured Read details dynamically adapted to the active tab
+  const featuredArticleId = isLifestyle ? 'heart-health-women' : 'breast-health';
+  const featuredImage = isLifestyle
+    ? '/assets/aistudio/image_572b6d90.png'
+    : '/assets/aistudio/image_a986066b.png';
+  const featuredTitle = isLifestyle
+    ? 'Blood pressure & everyday habits'
+    : "Knowing what's normal for you";
+  const featuredSnippet = isLifestyle
+    ? 'Heart disease manifests differently in women. Learn the subtle cues, blood pressure targets, and everyday preventive habits'
+    : "Breast awareness is not about checking for cancer every morning. It's about knowing how your breasts normally";
+  const featuredDate = isLifestyle ? '10 February 2026' : '14 August 2026';
 
   return (
     <div className="w-full min-h-screen bg-[#fafbfe] text-slate-900 px-4 sm:px-5 pt-3 pb-32 flex flex-col justify-start select-none max-w-md mx-auto">
@@ -169,7 +213,7 @@ export const WomensHealthHub: React.FC<WomensHealthHubProps> = ({ onOpenArticle,
       </div>
 
       {/* 2. CYAN / OCEAN HERO CARD */}
-      <div className="w-full bg-gradient-to-br from-[#0092d0] via-[#00ade8] to-[#00c5ee] rounded-[28px] p-5 sm:p-6 shadow-[0_8px_24px_rgba(0,173,232,0.22)] mb-5 relative overflow-hidden text-left">
+      <div className="w-full bg-gradient-to-br from-[#0092d0] via-[#00ade8] to-[#00c5ee] rounded-[28px] p-5 sm:p-6 shadow-[0_8px_24px_rgba(0,173,232,0.22)] mb-5 relative overflow-hidden text-left transition-all duration-300">
         {/* Subtle radial glow */}
         <div className="absolute top-0 right-0 w-48 h-48 bg-white/15 rounded-full blur-2xl pointer-events-none" />
 
@@ -181,7 +225,7 @@ export const WomensHealthHub: React.FC<WomensHealthHubProps> = ({ onOpenArticle,
 
         {/* Description */}
         <p className="text-white text-xs sm:text-[13px] font-normal leading-relaxed max-w-[94%] drop-shadow-2xs">
-          Trusted, plain-language articles on the things women actually want to know. Every piece shows who reviewed it and when.
+          {heroDescription}
         </p>
 
         {/* Overlapping Avatars & Reviewer Byline */}
@@ -204,7 +248,7 @@ export const WomensHealthHub: React.FC<WomensHealthHubProps> = ({ onOpenArticle,
 
         {/* Large Hub Title */}
         <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight mt-4 sm:mt-5">
-          Women's Health <span className="font-serif italic font-normal text-slate-950">Hub</span>
+          {heroTitle}
         </h2>
       </div>
 
@@ -238,7 +282,7 @@ export const WomensHealthHub: React.FC<WomensHealthHubProps> = ({ onOpenArticle,
               : 'text-slate-600 hover:text-slate-900 bg-transparent'
           }`}
         >
-          Heart & lifestyle
+          Heart &amp; lifestyle
         </button>
       </div>
 
@@ -249,14 +293,14 @@ export const WomensHealthHub: React.FC<WomensHealthHubProps> = ({ onOpenArticle,
         </div>
 
         <div
-          onClick={() => onOpenArticle('breast-health')}
+          onClick={() => onOpenArticle(featuredArticleId)}
           className="bg-white rounded-[26px] border border-slate-100 shadow-[0_2px_14px_rgba(0,0,0,0.04)] overflow-hidden cursor-pointer hover:shadow-md transition active:scale-[0.99] group text-left"
         >
           {/* Card Image */}
           <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-slate-100">
             <img
-              src="/assets/aistudio/image_a986066b.png"
-              alt="Knowing what's normal for you"
+              src={featuredImage}
+              alt={featuredTitle}
               className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
               loading="lazy"
             />
@@ -269,10 +313,10 @@ export const WomensHealthHub: React.FC<WomensHealthHubProps> = ({ onOpenArticle,
           {/* Card Body */}
           <div className="p-4 sm:p-5 space-y-2">
             <h3 className="text-base sm:text-lg font-bold text-slate-900 group-hover:text-cyan-700 transition leading-snug">
-              Knowing what's normal for you
+              {featuredTitle}
             </h3>
             <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
-              Breast awareness is not about checking for cancer every morning. It's about knowing how your breasts normally
+              {featuredSnippet}
             </p>
 
             <div className="pt-2 flex items-center justify-between">
@@ -281,14 +325,14 @@ export const WomensHealthHub: React.FC<WomensHealthHubProps> = ({ onOpenArticle,
                 <span>Clinician reviewed</span>
               </div>
               <span className="text-[11px] font-medium text-slate-400">
-                14 August 2026
+                {featuredDate}
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 5. BROWSE BY SUBJECT GRID (12 TOPICS) */}
+      {/* 5. BROWSE BY SUBJECT GRID */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3 text-left">
           <span className="text-xs font-bold text-slate-400 tracking-wider">

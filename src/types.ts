@@ -10,7 +10,8 @@ export type ScreenId =
   | 'screening-guide'
   | 'contact'
   | 'about'
-  | 'admin';
+  | 'admin'
+  | 'article';
 
 export type QuestionCategory =
   | 'OCCUPATION'
@@ -63,20 +64,41 @@ export interface HealthNumbers {
   unitSystem: 'metric' | 'imperial';
 }
 
+export interface ArticleSection {
+  number: number;
+  title: string;
+  content: string;
+}
+
+export interface RelatedArticleRef {
+  id: string;
+  title: string;
+  readTime: string;
+}
+
 export interface Article {
   id: string;
   hub: 'womens' | 'lifestyle';
   category: string;
+  categoryTag?: string;
   title: string;
+  headline?: string;
   summary: string;
   readTime: string;
+  image?: string;
   reviewerName: string;
   reviewerRole: string;
   reviewerHospital: string;
   reviewDate: string;
+  intro?: string;
+  sections?: ArticleSection[];
   content: string[];
   keyTakeaways: string[];
+  takeawayMessage?: string;
+  disclaimer?: string;
   relatedTopic?: string;
+  relatedArticles?: RelatedArticleRef[];
+  tags?: string[];
   screenIdTarget?: ScreenId;
 }
 

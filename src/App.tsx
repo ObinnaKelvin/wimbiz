@@ -15,7 +15,7 @@ import { ScreeningGuideScreen } from './components/ScreeningGuideScreen';
 import { ContactBookingScreen } from './components/ContactBookingScreen';
 import { AboutSafetyScreen } from './components/AboutSafetyScreen';
 import { AdminDashboardScreen } from './components/AdminDashboardScreen';
-import { ArticleModal } from './components/ArticleModal';
+import { ArticlePostScreen } from './components/ArticlePostScreen';
 import { ConferenceQRModal } from './components/ConferenceQRModal';
 import { OfflineIndicator } from './components/OfflineIndicator';
 import { CLINICAL_ARTICLES } from './data/clinicalLibrary';
@@ -32,6 +32,7 @@ export default function App() {
   const [answers, setAnswers] = useState<Record<string, string>>(() => loadAnswersFromLocal());
   const [numbers, setNumbers] = useState<HealthNumbers>(() => loadNumbersFromLocal());
   const [activeArticleId, setActiveArticleId] = useState<string | null>(null);
+  const [previousScreen, setPreviousScreen] = useState<ScreenId>('womens-health');
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const [checkSessionKey, setCheckSessionKey] = useState(0);
   const [hasCompletedCheck, setHasCompletedCheck] = useState<boolean>(() => {
@@ -71,7 +72,9 @@ export default function App() {
   };
 
   const handleNavigate = (screen: ScreenId) => {
-    setActiveArticleId(null);
+    if (screen !== 'article') {
+      setActiveArticleId(null);
+    }
     setCurrentScreen(screen);
   };
 
@@ -88,11 +91,16 @@ export default function App() {
   };
 
   const handleOpenArticle = (articleId: string) => {
+    if (currentScreen !== 'article') {
+      setPreviousScreen(currentScreen);
+    }
     setActiveArticleId(articleId);
+    setCurrentScreen('article');
   };
 
-  const handleCloseArticle = () => {
+  const handleBackFromArticle = () => {
     setActiveArticleId(null);
+    setCurrentScreen(previousScreen || 'womens-health');
   };
 
   const handleRetakeCheck = () => {
@@ -134,11 +142,11 @@ export default function App() {
   else if (ageAnswer === '60_plus') ageBandLabel = '60+';
 
   return (
-    <div className={`min-h-screen ${currentScreen === 'welcome' || currentScreen === 'dashboard' || currentScreen === 'summary' ? 'bg-[#030611]' : 'bg-[#fafbfe]'} text-slate-900 flex flex-col items-center justify-start antialiased selection:bg-emerald-100 selection:text-emerald-900 print:bg-white print:min-h-0 print:p-0`}>
+    <div className={`min-h-screen ${currentScreen === 'welcome' || currentScreen === 'dashboard' || currentScreen === 'summary' ? 'bg-[#030611]' : currentScreen === 'article' ? 'bg-white' : 'bg-[#fafbfe]'} text-slate-900 flex flex-col items-center justify-start antialiased selection:bg-emerald-100 selection:text-emerald-900 print:bg-white print:min-h-0 print:p-0`}>
       {/* Centered Mobile App Canvas Frame */}
-      <div className={`w-full ${currentScreen === 'admin' ? 'max-w-4xl' : 'max-w-md'} min-h-screen ${currentScreen === 'welcome' || currentScreen === 'dashboard' || currentScreen === 'summary' ? 'bg-[#050b18] sm:border-slate-800/60' : 'bg-[#fafbfe] sm:border-slate-200/80'} flex flex-col relative sm:shadow-2xl sm:border-x transition-all duration-300 print:bg-white print:border-none print:shadow-none print:max-w-[430px] print:mx-auto print:min-h-0`}>
+      <div className={`w-full ${currentScreen === 'admin' ? 'max-w-4xl' : 'max-w-md'} min-h-screen ${currentScreen === 'welcome' || currentScreen === 'dashboard' || currentScreen === 'summary' ? 'bg-[#050b18] sm:border-slate-800/60' : currentScreen === 'article' ? 'bg-white sm:border-slate-200/80' : 'bg-[#fafbfe] sm:border-slate-200/80'} flex flex-col relative sm:shadow-2xl sm:border-x transition-all duration-300 print:bg-white print:border-none print:shadow-none print:max-w-[430px] print:mx-auto print:min-h-0`}>
         {/* Persistent Brand Header on screens without custom hero top bars */}
-        {currentScreen !== 'welcome' && currentScreen !== 'dashboard' && currentScreen !== 'numbers' && currentScreen !== 'summary' && currentScreen !== 'womens-health' && currentScreen !== 'screening-guide' && (
+        {currentScreen !== 'welcome' && currentScreen !== 'dashboard' && currentScreen !== 'numbers' && currentScreen !== 'summary' && currentScreen !== 'womens-health' && currentScreen !== 'lifestyle' && currentScreen !== 'screening-guide' && currentScreen !== 'article' && (
           <Header
             currentScreen={currentScreen}
             onNavigate={handleNavigate}
@@ -149,7 +157,7 @@ export default function App() {
         )}
 
         {/* Dynamic Screen View with Smooth Page Transition */}
-        <main className={`flex-1 ${currentScreen === 'welcome' || currentScreen === 'dashboard' || currentScreen === 'numbers' || currentScreen === 'summary' || currentScreen === 'womens-health' || currentScreen === 'screening-guide' ? 'p-0' : 'px-4 sm:px-5 py-4'} overflow-hidden print:overflow-visible print:p-0`}>
+        <main className={`flex-1 ${currentScreen === 'welcome' || currentScreen === 'dashboard' || currentScreen === 'numbers' || currentScreen === 'summary' || currentScreen === 'womens-health' || currentScreen === 'lifestyle' || currentScreen === 'screening-guide' || currentScreen === 'article' ? 'p-0' : 'px-4 sm:px-5 py-4'} overflow-hidden print:overflow-visible print:p-0`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={currentScreen}
@@ -221,13 +229,15 @@ export default function App() {
 
               {currentScreen === 'womens-health' && (
                 <WomensHealthHub
+                  initialTab="all"
                   onOpenArticle={handleOpenArticle}
                   onNavigate={handleNavigate}
                 />
               )}
 
               {currentScreen === 'lifestyle' && (
-                <LifestyleHub
+                <WomensHealthHub
+                  initialTab="lifestyle"
                   onOpenArticle={handleOpenArticle}
                   onNavigate={handleNavigate}
                 />
@@ -258,6 +268,15 @@ export default function App() {
                   onNavigate={handleNavigate}
                 />
               )}
+
+              {currentScreen === 'article' && (
+                <ArticlePostScreen
+                  article={activeArticle || CLINICAL_ARTICLES[0]}
+                  onNavigate={handleNavigate}
+                  onOpenArticle={handleOpenArticle}
+                  onBack={handleBackFromArticle}
+                />
+              )}
             </motion.div>
           </AnimatePresence>
         </main>
@@ -272,14 +291,6 @@ export default function App() {
           />
         )}
       </div>
-
-      {/* Global Clinical Article Modal Reader */}
-      <ArticleModal
-        article={activeArticle}
-        onClose={handleCloseArticle}
-        onNavigate={handleNavigate}
-        hasCompletedCheck={hasCompletedCheck}
-      />
 
       {/* Conference QR Code Modal */}
       <ConferenceQRModal
