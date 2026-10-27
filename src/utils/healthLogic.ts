@@ -264,12 +264,10 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
   // 1. Age Band context
   const age = answers['q1_age'];
   let ageLabel = 'Your life stage';
-  if (age === 'under_20') ageLabel = 'Under 20';
-  else if (age === '20_29') ageLabel = '20s';
-  else if (age === '30_39') ageLabel = '30s';
-  else if (age === '40_49') ageLabel = '40s';
-  else if (age === '50_59') ageLabel = '50s';
-  else if (age === '60_plus') ageLabel = '60+';
+  if (age === '18_29' || age === '20_29') ageLabel = '18 – 29';
+  else if (age === '30_39') ageLabel = '30 – 39';
+  else if (age === '40_49') ageLabel = '40 – 49';
+  else if (age === '50_plus' || age === '50_59' || age === '60_plus') ageLabel = '50+';
 
   // 1b. Occupation Profile context
   const occupation = answers['q0_occupation'];
@@ -559,33 +557,38 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
     });
   }
 
-  // 9. Women's Screening
-  const screening = answers['q9_screening'];
-  if (screening === 'up_to_date') {
+  // 9. Avoidance of Toxic Substances
+  const toxic = answers['q_toxic_substances'];
+  if (toxic === 'none') {
     keepDoing.push({
-      id: 'screening_champion',
-      title: 'Up-to-Date Cervical & Breast Screenings',
-      description: 'Staying current with recommended women’s health screenings is one of the highest acts of personal care and prevention.',
-      articleId: 'cervical-cancer-hpv',
-      actionText: 'Review Screening Matrix',
-      actionScreen: 'screening-guide',
+      id: 'toxic_none',
+      title: 'Toxin-Free Cellular Health',
+      description: 'Avoiding tobacco and smoking while keeping alcohol to a minimum or zero directly protects your arterial walls, liver, and cellular longevity.',
+      articleId: 'healthy-micro-habits',
     });
-  } else if (screening === 'past_overdue' || screening === 'not_sure') {
+  } else if (toxic === 'occasional_alcohol') {
+    keepDoing.push({
+      id: 'toxic_moderate',
+      title: 'Conscious & Moderate Alcohol Intake',
+      description: 'Keeping alcohol to rare or occasional social occasions supports liver metabolism, hormonal balance, and deep sleep architecture.',
+      articleId: 'healthy-micro-habits',
+    });
+  } else if (toxic === 'regular_alcohol') {
     worthChecking.push({
-      id: 'screening_overdue',
-      title: `Check Recommended Screenings for Your Age (${ageLabel})`,
-      description: 'Discover exactly when your next Cervical Pap/HPV test, Mammogram, or Pelvic check is due based on clinical guidelines.',
-      articleId: 'preventive-care-matrix',
-      actionText: 'Explore Screening Guide',
-      actionScreen: 'screening-guide',
+      id: 'toxic_alcohol_reduction',
+      title: 'Consider Alcohol-Free Reset Days',
+      description: 'Regular alcohol consumption can subtly increase resting blood pressure, breast cancer risk, and sleep fragmentation. Incorporating alcohol-free days brings quick vitality gains.',
+      articleId: 'heart-health-women',
+      actionText: 'Heart & Lifestyle Guide',
+      actionScreen: 'lifestyle',
     });
-  } else if (screening === 'not_discussed') {
+  } else if (toxic === 'smoke_or_vape') {
     discussWithDoctor.push({
-      id: 'screening_initiate',
-      title: 'Initiate a Women’s Screening Conversation with a Doctor',
-      description: 'Gentle screenings like Pap smears, clinical breast exams, and ultrasound take only minutes and provide lifelong peace of mind.',
-      articleId: 'cervical-cancer-hpv',
-      actionText: 'Schedule with Iwosan',
+      id: 'toxic_smoking_cessation',
+      title: 'Cardiovascular & Lung Protection Support',
+      description: 'Smoking or vaping significantly raises arterial stiffness and cardiovascular risk for women. Our clinicians offer warm, evidence-based, compassionate cessation support.',
+      articleId: 'heart-health-women',
+      actionText: 'Speak with an Iwosan Clinician',
       actionScreen: 'contact',
     });
   }
@@ -593,106 +596,49 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
   // 10. Midlife & Perimenopause (specifically tailored for 40–49 age band)
   const is40to49 = answers['q1_age'] === '40_49';
   if (is40to49) {
-    // Cycles & LMP
-    const irregular = answers['q40_periods_irregular'];
-    const lmp = answers['q40_last_period'];
-    if (irregular === 'yes_irregular') {
-      worthChecking.push({
-        id: 'perimeno_irregular',
-        title: 'Perimenopausal Cycle Tracking',
-        description: 'Cycle length shifts are often the earliest indicator of natural estrogen fluctuations in your 40s. Keeping a simple period diary helps your doctor evaluate patterns.',
-        articleId: 'menopause-midlife',
-        actionText: 'Midlife Guide',
-        actionScreen: 'womens-health',
-      });
-    } else if (irregular === 'no_regular') {
-      keepDoing.push({
-        id: 'perimeno_regular',
-        title: 'Predictable Cycle Health',
-        description: 'Maintaining consistent cycles in your 40s reflects steady ovarian hormonal function.',
-        articleId: 'menopause-midlife',
-      });
-    } else if (irregular === 'stopped') {
-      discussWithDoctor.push({
-        id: 'perimeno_stopped',
-        title: 'Cycle Cessation & Menopause Milestone',
-        description: 'If periods have completely stopped, a clinician can confirm your transition phase and check bone density (DEXA) and lipid profiles.',
-        articleId: 'menopause-midlife',
-        actionText: 'Consult Iwosan Doctor',
-        actionScreen: 'contact',
-      });
-    }
-
-    if (lmp) {
-      const isDate = lmp.startsWith('date:') || /^\d{4}-\d{2}-\d{2}$/.test(lmp);
-      const formattedDate = isDate
-        ? new Date(lmp.replace('date:', '') + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-        : null;
-
-      if (lmp === 'over_12_months') {
-        discussWithDoctor.push({
-          id: 'lmp_postmenopausal',
-          title: 'Post-Menopause Verification (12+ Months)',
-          description: 'Having no period for 12 full months is the clinical milestone of menopause. Prioritizing bone density, cardiovascular lipid profiles, and pelvic strength is recommended.',
-          articleId: 'menopause-midlife',
-          actionText: 'Schedule Review',
-          actionScreen: 'contact',
-        });
-      } else if (formattedDate) {
-        keepDoing.push({
-          id: 'lmp_recorded',
-          title: `Recorded LMP: ${formattedDate}`,
-          description: 'Documenting your Last Menstrual Period date is helpful for accurate gynaecological and hormonal timeline assessment.',
-          articleId: 'menopause-midlife',
-        });
-      }
-    }
-
-    // Vasomotor (Hot flushes & night sweats)
+    // Vasomotor (Hot flushes)
     const hotFlushes = answers['q40_hot_flushes'];
-    const nightSweats = answers['q40_night_sweats'];
-    if (hotFlushes === 'yes_frequent' || nightSweats === 'yes_frequent') {
+    if (hotFlushes === 'yes_frequent') {
       discussWithDoctor.push({
         id: 'vasomotor_support',
-        title: 'Vasomotor Symptom Relief (Hot Flushes & Night Sweats)',
-        description: 'Frequent hot flushes and night sweats are highly treatable. Modern evidence-based options (including HRT and non-hormonal prescription therapies) can quickly restore comfort and sleep.',
+        title: 'Vasomotor Symptom Relief (Hot Flushes)',
+        description: 'Frequent hot flushes are highly treatable. Modern evidence-based options (including HRT and non-hormonal prescription therapies) can quickly restore comfort and sleep.',
         articleId: 'menopause-midlife',
         actionText: 'Discuss Treatment with Iwosan',
         actionScreen: 'contact',
       });
-    } else if (hotFlushes === 'mild_occasional' || nightSweats === 'mild_occasional') {
+    } else if (hotFlushes === 'mild_occasional') {
       worthChecking.push({
         id: 'vasomotor_mild',
         title: 'Managing Mild Temperature Changes',
         description: 'Layering breathable natural fabrics, maintaining a cool bedroom, and limiting caffeine or spicy foods helps buffer mild hot flashes.',
         articleId: 'menopause-midlife',
       });
-    } else if (hotFlushes === 'no_none' && nightSweats === 'no_none') {
+    } else if (hotFlushes === 'no_none') {
       keepDoing.push({
         id: 'vasomotor_clear',
         title: 'Free of Vasomotor Symptoms',
-        description: 'You are currently not experiencing hot flushes or night sweats, supporting steady daily focus and energy.',
+        description: 'You are currently not experiencing hot flushes, supporting steady daily focus and energy.',
         articleId: 'menopause-midlife',
       });
     }
 
     // Genitourinary & Pelvic Health
-    const dryness = answers['q40_vaginal_dryness'];
     const leakage = answers['q40_urinary_leakage'];
-    if (dryness === 'yes_discomfort' || leakage === 'yes_leakage_uti') {
+    if (leakage === 'yes_leakage_uti') {
       discussWithDoctor.push({
         id: 'gsm_care',
-        title: 'Intimate Comfort & Pelvic Floor Support',
-        description: 'Genitourinary tissue changes and urinary urgency respond exceptionally well to localized estrogen moisturization and gentle pelvic physiotherapy.',
+        title: 'Pelvic Floor & Bladder Support',
+        description: 'Genitourinary tissue changes and urinary urgency respond exceptionally well to targeted medical care and gentle pelvic physiotherapy.',
         articleId: 'menopause-midlife',
         actionText: 'Book Women’s Health Visit',
         actionScreen: 'contact',
       });
-    } else if (dryness === 'no_discomfort' && leakage === 'no_symptoms') {
+    } else if (leakage === 'no_symptoms') {
       keepDoing.push({
         id: 'pelvic_healthy',
         title: 'Healthy Pelvic & Tissue Tone',
-        description: 'No genitourinary discomfort or bladder issues noted. Continuing regular pelvic floor exercises helps preserve this strength.',
+        description: 'No urinary leakage or discomfort noted. Continuing regular pelvic floor exercises helps preserve this strength.',
         articleId: 'menopause-midlife',
       });
     }
@@ -743,57 +689,37 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
     }
   }
 
-  // 11. Menstrual Health (20–49)
-  const heavyBleeding = answers['q2049_bleed_heaviness'];
-  const severePain = answers['q2049_period_pain'];
-  const largeClots = answers['q2049_large_clots'];
-  const bleedAfterSex = answers['q2049_bleed_after_sex'];
-  const bleedBetween = answers['q2049_bleed_between'];
-
-  if (heavyBleeding === 'heavy' || largeClots === 'frequent_large') {
+  // 11. Menstrual Health (18–49)
+  const periodChanges = answers['q2049_period_changes_2yr'];
+  if (periodChanges === 'heavier_more_painful') {
     discussWithDoctor.push({
-      id: 'menorrhagia_evaluation',
-      title: 'Heavy Menstrual Flow & Anemia Screening',
-      description: 'Soaking through pads rapidly or passing large clots can lead to chronic iron deficiency. A pelvic ultrasound and ferritin check identify treatable causes like uterine fibroids.',
+      id: 'menstrual_changes_review',
+      title: 'Menstrual Flow & Cycle Pattern Changes',
+      description: 'Noticeable increases in period heaviness or cramping can signal developing fibroids or hormonal shifts; a pelvic checkup can provide tailored relief.',
       articleId: 'menstrual-health',
       actionText: 'Consult Gynaecologist',
       actionScreen: 'contact',
     });
-  }
-
-  if (severePain === 'severe') {
-    discussWithDoctor.push({
-      id: 'dysmenorrhea_support',
-      title: 'Debilitating Period Pain (Dysmenorrhea)',
-      description: 'Severe cramps that interfere with work or school warrant investigation for endometriosis or adenomyosis; gentle, modern pain relief options are readily available.',
-      articleId: 'menstrual-health',
-      actionText: 'Book Women’s Consultation',
-      actionScreen: 'contact',
-    });
-  }
-
-  if (bleedAfterSex === 'frequent') {
-    discussWithDoctor.push({
-      id: 'post_coital_check',
-      title: 'Post-Coital Bleeding Evaluation',
-      description: 'Repeated bleeding after intimacy should always be checked with a gentle speculum exam and cervical Pap/HPV screening.',
-      articleId: 'cervical-cancer-hpv',
-      actionText: 'Schedule Cervical Check',
-      actionScreen: 'contact',
-    });
-  } else if (bleedBetween === 'frequent') {
+  } else if (periodChanges === 'irregular_timing' || periodChanges === 'lighter_less_frequent') {
     worthChecking.push({
-      id: 'intermenstrual_check',
-      title: 'Intermenstrual Bleeding Review',
-      description: 'Spotting between periods can be linked to cervical inflammation, polyps, or hormonal shifts; an in-person assessment provides complete clarity.',
+      id: 'menstrual_tracking',
+      title: 'Cycle Rhythm & Timing Observation',
+      description: 'Recent shifts in cycle timing or flow duration are great topics for your next routine wellness checkup.',
+      articleId: 'menstrual-health',
+      actionText: 'Read Menstrual Guide',
+      actionScreen: 'womens-health',
+    });
+  } else if (periodChanges === 'unchanged') {
+    keepDoing.push({
+      id: 'menstrual_steady',
+      title: 'Consistent Menstrual Rhythm',
+      description: 'Predictable and stable menstrual cycles reflect balanced ovarian and endocrine function.',
       articleId: 'menstrual-health',
     });
   }
 
-  // 12. Fertility, Pregnancy & Reproductive Health (20–50)
+  // 12. Fertility, Pregnancy & Reproductive Health (18–49)
   const fibroidsPcos = answers['q2050_fibroids_endo_pcos'];
-  const pregComplications = answers['q2050_pregnancy_complications'];
-  const tryingPregnancy = answers['q2050_trying_pregnancy'];
 
   if (fibroidsPcos === 'fibroids' || fibroidsPcos === 'endometriosis' || fibroidsPcos === 'pcos' || fibroidsPcos === 'multiple') {
     worthChecking.push({
@@ -804,49 +730,46 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       actionText: 'Read Condition Guide',
       actionScreen: 'womens-health',
     });
-  }
-
-  if (pregComplications === 'gestational_diabetes' || pregComplications === 'preeclampsia_htn') {
-    discussWithDoctor.push({
-      id: 'post_pregnancy_cardiometabolic',
-      title: 'Post-Pregnancy Cardiometabolic Monitoring',
-      description: 'A history of pre-eclampsia or gestational diabetes calls for annual blood pressure, lipid, and fasting blood sugar monitoring.',
-      articleId: 'heart-health-women',
-      actionText: 'Book Wellness Review',
-      actionScreen: 'contact',
+  } else if (fibroidsPcos === 'none') {
+    keepDoing.push({
+      id: 'gynae_clear',
+      title: 'Clear Gynaecological Profile',
+      description: 'No history of fibroids, endometriosis, or PCOS noted. Continuing annual checkups supports ongoing reproductive wellness.',
+      articleId: 'reproductive-health',
     });
   }
 
-  if (tryingPregnancy === 'yes_trying') {
+  // 13. Breast & Gynaecological Health (18–50+)
+  const selfCheck = answers['q_breast_self_check'];
+  const cervicalScreen = answers['q_last_cervical_screen'];
+  const mammogram = answers['q_last_mammogram'];
+
+  if (selfCheck === 'yes_monthly') {
     keepDoing.push({
-      id: 'preconception_optimization',
-      title: 'Preconception Planning & Folate Support',
-      description: 'Taking 400mcg of folic acid daily and checking baseline rubella, hemoglobin, and thyroid levels provides optimal foundation for pregnancy.',
-      articleId: 'reproductive-health',
-      actionText: 'Preconception Guide',
+      id: 'breast_self_awareness_habit',
+      title: 'Proactive Monthly Breast Awareness',
+      description: 'Checking your breasts monthly helps you know what is normal for you and spot subtle changes early.',
+      articleId: 'breast-health',
+    });
+  } else if (selfCheck === 'rarely_never' || selfCheck === 'not_sure_how') {
+    worthChecking.push({
+      id: 'breast_self_check_guide',
+      title: 'Learn the 2-Minute Breast Self-Awareness Routine',
+      description: 'Breast self-awareness is simple and empowering. Our clinician guide explains how to feel comfortable checking your tissue.',
+      articleId: 'breast-health',
+      actionText: 'View Breast Guide',
       actionScreen: 'womens-health',
     });
   }
 
-  // 13. Breast & Gynaecological Health (20–60+)
-  const newLump = answers['q_breast_lump'];
-  const nippleDischarge = answers['q_nipple_discharge'];
-  const skinChanges = answers['q_nipple_skin_changes'];
-  const cervicalScreen = answers['q_last_cervical_screen'];
-  const mammogram = answers['q_last_mammogram'];
-
-  if (newLump === 'yes_new_lump' || nippleDischarge === 'spontaneous_bloody' || skinChanges === 'dimpling_puckering' || skinChanges === 'newly_inverted_nipple') {
-    discussWithDoctor.push({
-      id: 'urgent_breast_evaluation',
-      title: 'Prompt Clinical Breast Evaluation Recommended',
-      description: 'Any new, firm breast lump, skin dimpling, or spontaneous clear/bloody discharge warrants clinical palpation and an urgent breast ultrasound or mammogram.',
-      articleId: 'breast-health',
-      actionText: 'Schedule Breast Clinic Visit',
-      actionScreen: 'contact',
+  if (cervicalScreen === 'within_3_years') {
+    keepDoing.push({
+      id: 'cervical_screen_current',
+      title: 'Up-to-Date Cervical Screening',
+      description: 'Staying current with routine cervical Pap or HPV screening provides exceptional lifelong protection.',
+      articleId: 'cervical-cancer-hpv',
     });
-  }
-
-  if (cervicalScreen === 'more_than_5_years' || cervicalScreen === 'never') {
+  } else if (cervicalScreen === 'more_than_5_years' || cervicalScreen === 'never') {
     discussWithDoctor.push({
       id: 'cervical_screening_due',
       title: 'Cervical Pap Smear / HPV Screening Due',
@@ -866,21 +789,45 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       actionText: 'Schedule Mammogram',
       actionScreen: 'contact',
     });
+  } else if (mammogram === 'within_1_to_2_years') {
+    keepDoing.push({
+      id: 'mammogram_current',
+      title: 'Current Breast Imaging / Mammogram',
+      description: 'You are up to date with breast screening recommendations for your life stage.',
+      articleId: 'breast-health',
+    });
   }
 
-  // 14. Bone, Muscle & Mobility (20–60+)
-  const minorFracture = answers['q_bone_minor_fracture'];
-  const heightLoss = answers['q_height_loss'];
+  // 14. Bone, Muscle & Mobility (18–50+)
   const boneDensityTest = answers['q_bone_density_test'];
+  const strength = answers['q_strength_exercise'];
 
-  if (minorFracture === 'minor_fall_fracture' || heightLoss === 'marked_loss' || boneDensityTest === 'yes_low_density') {
+  if (boneDensityTest === 'yes_low_density') {
     discussWithDoctor.push({
       id: 'bone_density_review',
-      title: 'Bone Mineral Density (DEXA) Evaluation',
-      description: 'A minor-fall fracture, significant height reduction, or osteopenia highlights the need for bone density testing and medical bone-strengthening therapy.',
+      title: 'Bone Mineral Density Support',
+      description: 'Diagnosed osteopenia or bone thinning highlights the need for active bone protective therapy, calcium/D3, and resistance movement.',
       articleId: 'preventive-care-matrix',
       actionText: 'Book DEXA Scan',
       actionScreen: 'contact',
+    });
+  }
+
+  if (strength === 'regular_2_plus') {
+    keepDoing.push({
+      id: 'strength_routine_strong',
+      title: 'Strength & Resistance Exercise Habit',
+      description: 'Engaging in regular resistance training 2+ times weekly actively preserves bone density, metabolic rate, and muscle mass.',
+      articleId: 'movement-exercise',
+    });
+  } else if (strength === 'cardio_only' || strength === 'none') {
+    worthChecking.push({
+      id: 'strength_start_guide',
+      title: 'Incorporate 2 Days of Resistance Exercise',
+      description: 'Adding bodyweight squats, resistance bands, or light dumbbells twice a week provides vital bone mineral stimulation.',
+      articleId: 'movement-exercise',
+      actionText: 'Explore Movement Tips',
+      actionScreen: 'lifestyle',
     });
   }
 

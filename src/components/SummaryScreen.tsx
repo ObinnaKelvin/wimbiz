@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { HealthNumbers, ScreenId, SummaryResults } from '../types';
 import { generateSummary, calculateBMI } from '../utils/healthLogic';
+import { getHealthQuestions } from '../data/questions';
 import {
   ArrowLeft,
   ArrowRight,
@@ -46,8 +47,11 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
   const [copiedLink, setCopiedLink] = useState(false);
   const summary: SummaryResults = generateSummary(answers, numbers);
 
-  const answeredCount = Object.keys(answers).length;
-  const totalQuestions = 9;
+  const questions = getHealthQuestions(answers);
+  const totalQuestions = questions.length;
+  const answeredCount = questions.filter(
+    (q) => answers[q.id] !== undefined && answers[q.id] !== ''
+  ).length;
 
   const bmiData =
     numbers.height && numbers.weight
@@ -222,19 +226,22 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
             taken the <span className="font-serif italic font-normal text-emerald-300">first step.</span>
           </h2>
           <p className="text-xs sm:text-[13px] text-slate-300 leading-relaxed mt-2 max-w-sm">
-            You answered {answeredCount > 0 ? answeredCount : 9} of {totalQuestions} questions. Here is what stands out, gently.
+            You answered {answeredCount} of {totalQuestions} questions. Here is what stands out, gently.
           </p>
         </div>
 
         {/* 3 Stat Cards Row */}
         <div className="grid grid-cols-3 gap-2.5 relative z-10">
           {/* Card 1: Answered */}
-          <div className="bg-[#121c32]/80 border border-slate-700/60 rounded-2xl p-3 flex flex-col justify-between min-h-[72px]">
+          <button
+            onClick={onReviewSelections || (() => onNavigate('check'))}
+            className="bg-[#121c32]/80 hover:bg-[#16233d] border border-slate-700/60 rounded-2xl p-3 flex flex-col justify-between text-left transition cursor-pointer min-h-[72px]"
+          >
             <div className="text-xl font-extrabold text-white tracking-tight leading-none">
-              {answeredCount > 0 ? `${answeredCount}/${totalQuestions}` : `9/${totalQuestions}`}
+              {answeredCount}/{totalQuestions}
             </div>
             <div className="text-[11px] text-slate-400 font-medium">Answered</div>
-          </div>
+          </button>
 
           {/* Card 2: BMI */}
           <button

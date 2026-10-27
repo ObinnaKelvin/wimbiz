@@ -134,12 +134,10 @@ export default function App() {
   // Selected Age Band label for context
   const ageAnswer = answers['q1_age'];
   let ageBandLabel: string | undefined = undefined;
-  if (ageAnswer === 'under_20') ageBandLabel = 'Under 20';
-  else if (ageAnswer === '20_29') ageBandLabel = '20 – 29';
+  if (ageAnswer === '18_29' || ageAnswer === '20_29') ageBandLabel = '18 – 29';
   else if (ageAnswer === '30_39') ageBandLabel = '30 – 39';
   else if (ageAnswer === '40_49') ageBandLabel = '40 – 49';
-  else if (ageAnswer === '50_59') ageBandLabel = '50 – 59';
-  else if (ageAnswer === '60_plus') ageBandLabel = '60+';
+  else if (ageAnswer === '50_plus' || ageAnswer === '50_59' || ageAnswer === '60_plus') ageBandLabel = '50+';
 
   return (
     <div className={`min-h-screen ${currentScreen === 'welcome' || currentScreen === 'dashboard' || currentScreen === 'summary' ? 'bg-[#030611]' : currentScreen === 'article' ? 'bg-white' : 'bg-[#fafbfe]'} text-slate-900 flex flex-col items-center justify-start antialiased selection:bg-emerald-100 selection:text-emerald-900 print:bg-white print:min-h-0 print:p-0`}>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ScreenId, HealthNumbers } from '../types';
 import { calculateBMI } from '../utils/healthLogic';
+import { getHealthQuestions } from '../data/questions';
 import {
   Heart,
   HeartPulse,
@@ -72,8 +73,11 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   };
 
   // Metrics calculations
-  const answeredCount = Object.keys(answers).length;
-  const totalQuestions = 9; // Core awareness check questions
+  const questions = getHealthQuestions(answers);
+  const totalQuestions = questions.length;
+  const answeredCount = questions.filter(
+    (q) => answers[q.id] !== undefined && answers[q.id] !== ''
+  ).length;
 
   const bmiData =
     numbers.height && numbers.weight
@@ -173,12 +177,15 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         {/* 3 Metrics Row */}
         <div className="grid grid-cols-3 gap-2.5 mt-3 relative z-10">
           {/* Card 1: Answered */}
-          <div className="bg-[#101b30]/80 border border-slate-700/60 rounded-2xl p-3 flex flex-col justify-between min-h-[72px]">
+          <button
+            onClick={() => onNavigate('check')}
+            className="bg-[#101b30]/80 hover:bg-[#14223d] border border-slate-700/60 rounded-2xl p-3 flex flex-col justify-between text-left transition cursor-pointer min-h-[72px]"
+          >
             <div className="text-xl font-extrabold text-white tracking-tight leading-none">
-              {answeredCount > 0 ? `${answeredCount}/${totalQuestions}` : `0/${totalQuestions}`}
+              {answeredCount}/{totalQuestions}
             </div>
             <div className="text-[11px] text-slate-400 font-medium">Answered</div>
-          </div>
+          </button>
 
           {/* Card 2: BMI */}
           <button
