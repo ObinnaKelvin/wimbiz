@@ -33,7 +33,7 @@ export const CORE_HEALTH_QUESTIONS: Question[] = [
     title: 'Which age band are you in?',
     whyWeAsk: 'Women experience distinct hormonal and physiological milestones across life stages. Your age band helps tailor personalized screening timelines (such as mammograms and bone density) without needing your exact date of birth.',
     options: [
-      { id: '18_29', label: '18 – 29', detail: 'Cervical wellness, reproductive health & baseline vitals', type: 'neutral' },
+      { id: '18_29', label: '18 – 29', detail: 'Social connectedness, mental health, cervical & reproductive wellness', type: 'neutral' },
       { id: '30_39', label: '30 – 39', detail: 'Cardiovascular screening, cervical checks & fertility/fibroid care', type: 'neutral' },
       { id: '40_49', label: '40 – 49', detail: 'Mammography entry, perimenopause & metabolic checks', type: 'neutral' },
       { id: '50_plus', label: '50+', detail: 'Menopause vitality, bone health, heart & colorectal checks', type: 'neutral' },
@@ -627,7 +627,7 @@ const QUESTION_ORDER_WITHIN_CATEGORY: Record<string, number> = {
 };
 
 export function getHealthQuestions(answers?: Record<string, string>): Question[] {
-  const age = answers?.['q1_age'];
+  const age = answers?.['q1_age'] || '18_29';
 
   const rawQuestions: Question[] = [...CORE_HEALTH_QUESTIONS];
 

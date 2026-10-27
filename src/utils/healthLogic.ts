@@ -811,13 +811,43 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
     });
   }
 
-  // 15. Mental & Emotional Health (20–60+)
+  // 15. Social Connectedness & Relationship
+  const lonely = answers['q_feel_lonely'];
+  const confidant = answers['q_have_confidant'];
+
+  if (lonely === 'rarely_never' && confidant === 'yes_confidant') {
+    keepDoing.push({
+      id: 'social_strong',
+      title: 'Strong Social Support & Meaningful Connection',
+      description: 'Having a trusted confidant and feeling closely connected to your circle provides vital psychological and cardiovascular resilience.',
+      articleId: 'healthy-micro-habits',
+    });
+  } else if (lonely === 'often' || confidant === 'no_one') {
+    worthChecking.push({
+      id: 'social_connection_care',
+      title: 'Prioritize Meaningful Community & Support Networks',
+      description: 'Navigating busy life seasons without a safe confidant can feel isolating. Connecting with supportive groups or wellness counsellors brings valuable emotional grounding.',
+      articleId: 'nourishing-stress-recovery',
+      actionText: 'Read Support Guide',
+      actionScreen: 'lifestyle',
+    });
+  }
+
+  // 16. Mental Health & Mindfulness
   const mood = answers['q_current_mood'];
   const anxiety = answers['q_anxious_overwhelmed'];
   const exhaustion = answers['q_exhausted_responsibilities'];
   const stress = answers['q_current_stress'];
+  const joy = answers['q_enjoy_activities'];
 
-  if (mood === 'low' || anxiety === 'often' || exhaustion === 'often' || stress === 'high') {
+  if (mood === 'good' && (anxiety === 'never' || anxiety === 'sometimes') && (stress === 'low' || stress === 'moderate')) {
+    keepDoing.push({
+      id: 'mental_resilience_strong',
+      title: 'Positive Emotional Baseline & Grounded Mindset',
+      description: 'Experiencing consistent daily joy, manageable stress levels, and grounded emotional energy actively protects vascular health and cellular immunity.',
+      articleId: 'nourishing-stress-recovery',
+    });
+  } else if (mood === 'low' || anxiety === 'often' || exhaustion === 'often' || stress === 'high' || joy === 'rarely_not_at_all') {
     worthChecking.push({
       id: 'mental_wellness_support',
       title: 'Emotional Wellbeing & Restorative Support',
