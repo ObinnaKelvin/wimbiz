@@ -20,6 +20,7 @@ export type QuestionCategory =
   | 'BLOOD PRESSURE'
   | 'BLOOD SUGAR'
   | 'FAMILY HISTORY'
+  | 'GENERAL WOMENS HEALTH'
   | 'NUTRITION'
   | 'EXERCISE'
   | 'SLEEP AND REST'

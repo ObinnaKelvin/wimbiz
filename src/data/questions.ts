@@ -58,6 +58,23 @@ export const CORE_HEALTH_QUESTIONS: Question[] = [
     skipText: 'Skip this question',
   },
   {
+    id: 'q_last_cervical_screen',
+    category: 'ROUTINE CHECK',
+    categoryLabel: 'Routine Check',
+    stepNumber: 3,
+    totalSteps: 10,
+    title: 'When was your last cervical screening/Pap or HPV test?',
+    whyWeAsk: 'Cervical Pap smears and HPV DNA testing can prevent up to 90% of cervical cancers by detecting precancerous cells early.',
+    options: [
+      { id: 'within_3_years', label: 'Within the last 3 years', detail: 'Up to date with cervical wellness guidelines', type: 'doing_well' },
+      { id: '3_to_5_years', label: '3 to 5 years ago', detail: 'Screening update may be due soon', type: 'worth_checking' },
+      { id: 'more_than_5_years', label: 'More than 5 years ago', detail: 'Overdue for a routine 5-minute swab', type: 'discuss' },
+      { id: 'never', label: 'Never had a Pap or HPV test', detail: 'A gentle first test provides invaluable lifelong protection', type: 'discuss' },
+      { id: 'not_sure', label: 'Not sure of last screening date', detail: 'Easy to schedule with Iwosan', type: 'worth_checking' },
+    ],
+    skipText: 'Skip this question',
+  },
+  {
     id: 'q3_bp',
     category: 'BLOOD PRESSURE',
     categoryLabel: 'Blood Pressure',
@@ -173,8 +190,8 @@ export const CORE_HEALTH_QUESTIONS: Question[] = [
 export const PERIMENOPAUSE_40_49_QUESTIONS: Question[] = [
   {
     id: 'q40_hot_flushes',
-    category: 'SLEEP AND REST',
-    categoryLabel: 'Sleep and Rest',
+    category: 'GENERAL WOMENS HEALTH',
+    categoryLabel: "General Women's Health",
     stepNumber: 10,
     totalSteps: 20,
     title: 'Have you experienced hot flushes?',
@@ -253,8 +270,8 @@ export const PERIMENOPAUSE_40_49_QUESTIONS: Question[] = [
   },
   {
     id: 'q40_urinary_leakage',
-    category: 'EXERCISE',
-    categoryLabel: 'Exercise',
+    category: 'GENERAL WOMENS HEALTH',
+    categoryLabel: "General Women's Health",
     stepNumber: 15,
     totalSteps: 20,
     title: 'Have you experienced urinary leakage or recurrent UTIs?',
@@ -269,8 +286,8 @@ export const PERIMENOPAUSE_40_49_QUESTIONS: Question[] = [
   },
   {
     id: 'q40_hrt_discussion',
-    category: 'MENTAL HEALTH AND MINDFULNESS',
-    categoryLabel: 'Mental health and Mindfulness',
+    category: 'GENERAL WOMENS HEALTH',
+    categoryLabel: "General Women's Health",
     stepNumber: 16,
     totalSteps: 20,
     title: 'Have you discussed menopause treatment or Hormone Replacement Therapy with a healthcare professional?',
@@ -288,8 +305,8 @@ export const PERIMENOPAUSE_40_49_QUESTIONS: Question[] = [
 export const MENSTRUAL_20_49_QUESTIONS: Question[] = [
   {
     id: 'q2049_period_changes_2yr',
-    category: 'NUTRITION',
-    categoryLabel: 'Nutrition',
+    category: 'GENERAL WOMENS HEALTH',
+    categoryLabel: "General Women's Health",
     stepNumber: 0,
     totalSteps: 0,
     title: 'Have your periods changed significantly in the last two years?',
@@ -307,8 +324,8 @@ export const MENSTRUAL_20_49_QUESTIONS: Question[] = [
 export const PREGNANCY_20_50_QUESTIONS: Question[] = [
   {
     id: 'q2050_fibroids_endo_pcos',
-    category: 'NUTRITION',
-    categoryLabel: 'Nutrition',
+    category: 'GENERAL WOMENS HEALTH',
+    categoryLabel: "General Women's Health",
     stepNumber: 0,
     totalSteps: 0,
     title: 'Have you ever been diagnosed with fibroids, endometriosis or PCOS?',
@@ -328,8 +345,8 @@ export const PREGNANCY_20_50_QUESTIONS: Question[] = [
 export const BREAST_GYNAE_QUESTIONS: Question[] = [
   {
     id: 'q_breast_self_check',
-    category: 'MENTAL HEALTH AND MINDFULNESS',
-    categoryLabel: 'Mental health and Mindfulness',
+    category: 'GENERAL WOMENS HEALTH',
+    categoryLabel: "General Women's Health",
     stepNumber: 0,
     totalSteps: 0,
     title: 'Do you regularly check or notice changes in your breasts?',
@@ -356,23 +373,6 @@ export const BREAST_GYNAE_QUESTIONS: Question[] = [
       { id: 'never_under_40', label: 'Never had one (under 40 years old)', detail: 'Standard guidelines entry at age 40 unless high risk', type: 'neutral' },
       { id: 'never_over_40', label: 'Never had one (40 or older)', detail: 'Recommended to schedule your baseline mammogram', type: 'discuss' },
       { id: 'had_ultrasound_only', label: 'Had breast ultrasound only', detail: 'Great dense-tissue screening', type: 'doing_well' },
-    ],
-    skipText: 'Skip this question',
-  },
-  {
-    id: 'q_last_cervical_screen',
-    category: 'AVOIDANCE OF TOXIC SUBSTANCES',
-    categoryLabel: 'Avoidance of Toxic Substances',
-    stepNumber: 0,
-    totalSteps: 0,
-    title: 'When was your last cervical screening/Pap or HPV test?',
-    whyWeAsk: 'Cervical Pap smears and HPV DNA testing can prevent up to 90% of cervical cancers by detecting precancerous cells early.',
-    options: [
-      { id: 'within_3_years', label: 'Within the last 3 years', detail: 'Up to date with cervical wellness guidelines', type: 'doing_well' },
-      { id: '3_to_5_years', label: '3 to 5 years ago', detail: 'Screening update may be due soon', type: 'worth_checking' },
-      { id: 'more_than_5_years', label: 'More than 5 years ago', detail: 'Overdue for a routine 5-minute swab', type: 'discuss' },
-      { id: 'never', label: 'Never had a Pap or HPV test', detail: 'A gentle first test provides invaluable lifelong protection', type: 'discuss' },
-      { id: 'not_sure', label: 'Not sure of last screening date', detail: 'Easy to schedule with Iwosan', type: 'worth_checking' },
     ],
     skipText: 'Skip this question',
   },
@@ -583,6 +583,7 @@ export const CATEGORY_ORDER: QuestionCategory[] = [
   'BLOOD PRESSURE',
   'BLOOD SUGAR',
   'FAMILY HISTORY',
+  'GENERAL WOMENS HEALTH',
   'NUTRITION',
   'EXERCISE',
   'SLEEP AND REST',
@@ -592,29 +593,34 @@ export const CATEGORY_ORDER: QuestionCategory[] = [
 ];
 
 const QUESTION_ORDER_WITHIN_CATEGORY: Record<string, number> = {
-  // Preserved individual questions
+  // Preserved categories
   q0_occupation: 1,
   q1_age: 1,
   q2_checkup: 1,
+  q_last_cervical_screen: 2,
   q3_bp: 1,
   q4_sugar: 1,
   q5_history: 1,
 
+  // General Women's Health
+  q2049_period_changes_2yr: 1,
+  q2050_fibroids_endo_pcos: 2,
+  q_breast_self_check: 3,
+  q40_urinary_leakage: 4,
+  q40_hot_flushes: 5,
+  q40_hrt_discussion: 6,
+
   // Nutrition
   q7_nutrition: 1,
-  q2049_period_changes_2yr: 2,
-  q2050_fibroids_endo_pcos: 3,
 
   // Exercise
   q6_activity: 1,
   q_strength_exercise: 2,
   q_bone_density_test: 3,
-  q40_urinary_leakage: 4,
 
   // Sleep and Rest
   q8_sleep: 1,
-  q40_hot_flushes: 2,
-  q40_sleep_changed: 3,
+  q40_sleep_changed: 2,
 
   // Social Connectedness and Relationship
   q_feel_lonely: 1,
@@ -629,16 +635,13 @@ const QUESTION_ORDER_WITHIN_CATEGORY: Record<string, number> = {
   q_current_stress: 5,
   q_grief_trauma: 6,
   q_sought_mental_help: 7,
-  q_breast_self_check: 8,
-  q40_anxiety_irritability: 9,
-  q40_memory_concentration: 10,
-  q40_hrt_discussion: 11,
-  q_self_harm_thoughts: 12,
+  q40_anxiety_irritability: 8,
+  q40_memory_concentration: 9,
+  q_self_harm_thoughts: 10,
 
   // Avoidance of Toxic Substances
   q_toxic_substances: 1,
-  q_last_cervical_screen: 2,
-  q_last_mammogram: 3,
+  q_last_mammogram: 2,
 };
 
 export function getHealthQuestions(answers?: Record<string, string>): Question[] {
