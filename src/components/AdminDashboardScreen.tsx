@@ -265,7 +265,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
     if (categoryFilter === 'midlife') return item.questionId.startsWith('q40');
     if (categoryFilter === 'breast') return item.questionId.startsWith('q_breast') || item.questionId.startsWith('q_last_mam') || item.questionId.startsWith('q_cervical') || item.questionId.startsWith('q_hpv');
     if (categoryFilter === 'bone') return item.questionId.startsWith('q_bone') || item.questionId.startsWith('q_height') || item.questionId.startsWith('q_osteop') || item.questionId.startsWith('q_stairs') || item.questionId.startsWith('q_strength');
-    if (categoryFilter === 'mental') return item.questionId.startsWith('q_current_mood') || item.questionId.startsWith('q_anxious') || item.questionId.startsWith('q_stress') || item.questionId.startsWith('q_lonely') || item.questionId.startsWith('q_self_harm');
+    if (categoryFilter === 'mental') return item.questionId.startsWith('phq') || item.questionId.startsWith('q_current_mood') || item.questionId.startsWith('q_anxious') || item.questionId.startsWith('q_stress') || item.questionId.startsWith('q_lonely') || item.questionId.startsWith('q_self_harm');
     return true;
   });
 
@@ -704,7 +704,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
                         {r.answers?.['q_last_mammogram'] || 'N/A'}
                       </td>
                       <td className="py-2.5 px-3.5 capitalize">
-                        {r.answers?.['q_current_mood'] || 'N/A'}
+                        {r.answers?.['phq2_depressed'] || r.answers?.['phq1_interest'] || r.answers?.['q_current_mood'] || 'N/A'}
                       </td>
                     </tr>
                   ))

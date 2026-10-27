@@ -17,6 +17,9 @@ import {
   ArrowRight,
   User,
   FlaskConical,
+  Brain,
+  Wind,
+  Shield,
 } from 'lucide-react';
 
 export type TabType = 'all' | 'womens' | 'lifestyle';
@@ -148,6 +151,33 @@ const TOPIC_CARDS: TopicCard[] = [
     category: 'lifestyle',
     icon: Sprout,
     image: '/assets/aistudio/image_27257c44.png',
+  },
+  {
+    id: 'mental-health',
+    title: 'Mental health',
+    subtitle: 'Burnout, mood & resilience',
+    articleId: 'mental-health-mindfulness',
+    category: 'lifestyle',
+    icon: Brain,
+    image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=480&q=80',
+  },
+  {
+    id: 'mindfulness',
+    title: 'Mindfulness',
+    subtitle: 'Nervous system & daily calm',
+    articleId: 'mindfulness-daily-peace',
+    category: 'lifestyle',
+    icon: Wind,
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=480&q=80',
+  },
+  {
+    id: 'toxins',
+    title: 'Toxin avoidance',
+    subtitle: 'Alcohol, tobacco & clean living',
+    articleId: 'avoidance-toxic-substances',
+    category: 'lifestyle',
+    icon: Shield,
+    image: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=480&q=80',
   },
 ];
 

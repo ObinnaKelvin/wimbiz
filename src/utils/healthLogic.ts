@@ -298,8 +298,8 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'occ_self_employed',
       title: 'Entrepreneurial Wellness & Boundary Setting',
       description: 'Building and leading your own business is intensely rewarding, but founder burnout is real. Protect dedicated rest days, ergonomic seating, and annual health checkup appointments.',
-      articleId: 'nourishing-stress-recovery',
-      actionText: 'Read Stress Recovery Guide',
+      articleId: 'mental-health-mindfulness',
+      actionText: 'Read Burnout Recovery Guide',
       actionScreen: 'lifestyle',
     });
   } else if (occupation === 'freelancer') {
@@ -308,7 +308,7 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'occ_freelancer',
       title: 'Independent Professional Ergonomics & Rest',
       description: 'Independent client work requires intentional physical boundaries: set dedicated work hours, stretch to prevent wrist and neck strain, and maintain consistent meal times.',
-      articleId: 'healthy-daily-rhythms',
+      articleId: 'healthy-micro-habits',
       actionText: 'Read Daily Rhythms',
       actionScreen: 'lifestyle',
     });
@@ -318,8 +318,8 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'occ_contract_worker',
       title: 'Project Transitions & Steady Vitality',
       description: 'Contract timelines can bring sprint cycles and transition periods. Keeping a steady hydration, movement, and sleep routine maintains your resilience between deliverables.',
-      articleId: 'nourishing-stress-recovery',
-      actionText: 'Read Stress Management',
+      articleId: 'mindfulness-daily-peace',
+      actionText: 'Read Mindfulness Guide',
       actionScreen: 'lifestyle',
     });
   } else if (occupation === 'casual_worker') {
@@ -328,7 +328,7 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'occ_casual_worker',
       title: 'Adaptive Rhythms & Regular Checkups',
       description: 'With varying shift hours, anchor your days with fixed sleep cues and balanced meals, and ensure you keep up with annual wellness checkups.',
-      articleId: 'healthy-daily-rhythms',
+      articleId: 'healthy-micro-habits',
       actionText: 'Read Daily Rhythms',
       actionScreen: 'lifestyle',
     });
@@ -338,7 +338,7 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'occ_unemployed_professional',
       title: 'Nervous System Care & Self-Compassion',
       description: 'Professional transitions can be emotionally demanding. Prioritizing daily gentle walking, nervous system grounding, and supportive social connection preserves your health and optimism.',
-      articleId: 'nourishing-stress-recovery',
+      articleId: 'mindfulness-daily-peace',
       actionText: 'Nervous System Recovery',
       actionScreen: 'lifestyle',
     });
@@ -348,7 +348,7 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'occ_job_seeker',
       title: 'Job Search Resilience & Wellness Routine',
       description: 'Actively searching for roles takes significant mental energy. Set a daily cutoff time for job applications, take outdoor breathwork walks, and safeguard restful sleep.',
-      articleId: 'nourishing-stress-recovery',
+      articleId: 'mental-health-mindfulness',
       actionText: 'Explore Recovery Tips',
       actionScreen: 'lifestyle',
     });
@@ -564,22 +564,26 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'toxic_none',
       title: 'Toxin-Free Cellular Health',
       description: 'Avoiding tobacco and smoking while keeping alcohol to a minimum or zero directly protects your arterial walls, liver, and cellular longevity.',
-      articleId: 'healthy-micro-habits',
+      articleId: 'avoidance-toxic-substances',
+      actionText: 'Read Toxin Guide',
+      actionScreen: 'lifestyle',
     });
   } else if (toxic === 'occasional_alcohol') {
     keepDoing.push({
       id: 'toxic_moderate',
       title: 'Conscious & Moderate Alcohol Intake',
       description: 'Keeping alcohol to rare or occasional social occasions supports liver metabolism, hormonal balance, and deep sleep architecture.',
-      articleId: 'healthy-micro-habits',
+      articleId: 'avoidance-toxic-substances',
+      actionText: 'Read Toxin Guide',
+      actionScreen: 'lifestyle',
     });
   } else if (toxic === 'regular_alcohol') {
     worthChecking.push({
       id: 'toxic_alcohol_reduction',
       title: 'Consider Alcohol-Free Reset Days',
       description: 'Regular alcohol consumption can subtly increase resting blood pressure, breast cancer risk, and sleep fragmentation. Incorporating alcohol-free days brings quick vitality gains.',
-      articleId: 'heart-health-women',
-      actionText: 'Heart & Lifestyle Guide',
+      articleId: 'avoidance-toxic-substances',
+      actionText: 'Read Toxin Guide',
       actionScreen: 'lifestyle',
     });
   } else if (toxic === 'smoke_or_vape') {
@@ -587,7 +591,7 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'toxic_smoking_cessation',
       title: 'Cardiovascular & Lung Protection Support',
       description: 'Smoking or vaping significantly raises arterial stiffness and cardiovascular risk for women. Our clinicians offer warm, evidence-based, compassionate cessation support.',
-      articleId: 'heart-health-women',
+      articleId: 'avoidance-toxic-substances',
       actionText: 'Speak with an Iwosan Clinician',
       actionScreen: 'contact',
     });
@@ -827,49 +831,113 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'social_connection_care',
       title: 'Prioritize Meaningful Community & Support Networks',
       description: 'Navigating busy life seasons without a safe confidant can feel isolating. Connecting with supportive groups or wellness counsellors brings valuable emotional grounding.',
-      articleId: 'nourishing-stress-recovery',
+      articleId: 'mental-health-mindfulness',
       actionText: 'Read Support Guide',
       actionScreen: 'lifestyle',
     });
   }
 
-  // 16. Mental Health & Mindfulness
-  const mood = answers['q_current_mood'];
-  const anxiety = answers['q_anxious_overwhelmed'];
-  const exhaustion = answers['q_exhausted_responsibilities'];
-  const stress = answers['q_current_stress'];
-  const joy = answers['q_enjoy_activities'];
+  // 16. Mental Health & Mindfulness (PHQ-9 screening protocol)
+  const phqKeys = [
+    'phq1_interest',
+    'phq2_depressed',
+    'phq3_sleep',
+    'phq4_tired',
+    'phq5_appetite',
+    'phq6_self_worth',
+    'phq7_concentration',
+    'phq8_psychomotor',
+    'phq9_self_harm',
+  ];
 
-  if (mood === 'good' && (anxiety === 'never' || anxiety === 'sometimes') && (stress === 'low' || stress === 'moderate')) {
-    keepDoing.push({
-      id: 'mental_resilience_strong',
-      title: 'Positive Emotional Baseline & Grounded Mindset',
-      description: 'Experiencing consistent daily joy, manageable stress levels, and grounded emotional energy actively protects vascular health and cellular immunity.',
-      articleId: 'nourishing-stress-recovery',
-    });
-  } else if (mood === 'low' || anxiety === 'often' || exhaustion === 'often' || stress === 'high' || joy === 'rarely_not_at_all') {
-    worthChecking.push({
-      id: 'mental_wellness_support',
-      title: 'Emotional Wellbeing & Restorative Support',
-      description: 'High daily stress, burnout, and persistent low mood are recognized medical health markers. Dedicated therapy, boundary setting, and mental wellness consultations bring profound relief.',
-      articleId: 'sleep-stress',
-      actionText: 'Mental Wellness Guide',
-      actionScreen: 'lifestyle',
-    });
+  let phqScore = 0;
+  let phqAnsweredCount = 0;
+
+  phqKeys.forEach((key) => {
+    const val = answers[key];
+    if (val) {
+      phqAnsweredCount++;
+      if (val === 'several_days') phqScore += 1;
+      else if (val === 'more_than_half') phqScore += 2;
+      else if (val === 'nearly_every_day') phqScore += 3;
+    }
+  });
+
+  const legacyMood = answers['q_current_mood'];
+  const legacyAnxiety = answers['q_anxious_overwhelmed'];
+  const legacyExhaustion = answers['q_exhausted_responsibilities'];
+  const legacyStress = answers['q_current_stress'];
+  const legacyJoy = answers['q_enjoy_activities'];
+
+  if (phqAnsweredCount > 0) {
+    if (phqScore <= 4) {
+      keepDoing.push({
+        id: 'mental_resilience_strong',
+        title: 'Positive Emotional Baseline & Mindful Wellbeing',
+        description: 'Your screening responses reflect a grounded emotional baseline and psychological resilience. Maintaining regular mindfulness, sleep hygiene, and personal boundaries nurtures this healthy balance.',
+        articleId: 'mindfulness-daily-peace',
+        actionText: 'Read Mindfulness Guide',
+        actionScreen: 'lifestyle',
+      });
+    } else if (phqScore <= 9) {
+      worthChecking.push({
+        id: 'mental_wellness_mild',
+        title: 'Gentle Restorative Strategies for Emotional Fatigue',
+        description: 'Experiencing intermittent low energy or mild emotional strain is common during demanding life seasons. Gentle daily movement, restorative sleep routines, and dedicated mindfulness breaks can bring relief.',
+        articleId: 'mental-health-mindfulness',
+        actionText: 'Mental Wellness Guide',
+        actionScreen: 'lifestyle',
+      });
+    } else {
+      discussWithDoctor.push({
+        id: 'mental_wellness_clinical',
+        title: 'Proactive Clinical Support for Emotional Wellbeing',
+        description: 'Your responses indicate noticeable mood strain, persistent fatigue, or low spirits. Speaking with a compassionate healthcare professional or counselor provides personalized strategies and effective care.',
+        articleId: 'mental-health-mindfulness',
+        actionText: 'Connect with Iwosan Wellness',
+        actionScreen: 'contact',
+      });
+    }
+  } else if (legacyMood || legacyAnxiety || legacyStress) {
+    if (legacyMood === 'good' && (legacyAnxiety === 'never' || legacyAnxiety === 'sometimes') && (legacyStress === 'low' || legacyStress === 'moderate')) {
+      keepDoing.push({
+        id: 'mental_resilience_strong',
+        title: 'Positive Emotional Baseline & Grounded Mindset',
+        description: 'Experiencing consistent daily joy, manageable stress levels, and grounded emotional energy actively protects vascular health and cellular immunity.',
+        articleId: 'mindfulness-daily-peace',
+        actionText: 'Read Mindfulness Guide',
+        actionScreen: 'lifestyle',
+      });
+    } else if (legacyMood === 'low' || legacyAnxiety === 'often' || legacyExhaustion === 'often' || legacyStress === 'high' || legacyJoy === 'rarely_not_at_all') {
+      worthChecking.push({
+        id: 'mental_wellness_support',
+        title: 'Emotional Wellbeing & Restorative Support',
+        description: 'High daily stress, burnout, and persistent low mood are recognized medical health markers. Dedicated therapy, boundary setting, and mental wellness consultations bring profound relief.',
+        articleId: 'mental-health-mindfulness',
+        actionText: 'Mental Wellness Guide',
+        actionScreen: 'lifestyle',
+      });
+    }
   }
 
-  // 16. Compassionate Immediate Safety Pathway (CRITICAL)
-  // For question "Have you had thoughts of hurting yourself or not wanting to be alive?",
-  // a "yes" MUST NOT be scored like an ordinary health-risk item.
+  // 17. Compassionate Immediate Safety Pathway (CRITICAL)
+  // For question "Thoughts that you would be better off dead, or hurting yourself?",
+  // an affirmative answer MUST NOT be scored like an ordinary health-risk item.
   // It triggers an immediate, compassionate safety pathway and dedicated support resources.
-  const selfHarm = answers['q_self_harm_thoughts'];
+  const selfHarm = answers['phq9_self_harm'] || answers['q_self_harm_thoughts'];
   let crisisSupport: CrisisSupportInfo | undefined = undefined;
 
-  if (selfHarm === 'yes') {
+  if (
+    selfHarm &&
+    selfHarm !== 'not_at_all' &&
+    selfHarm !== 'no' &&
+    selfHarm !== 'skipped' &&
+    selfHarm !== 'prefer_not'
+  ) {
     crisisSupport = {
       triggered: true,
       title: 'Immediate Confidential Support & Safety Pathway',
-      message: 'You indicated having thoughts of hurting yourself or not wanting to be alive. Your life, safety, and emotional wellbeing are deeply valuable. Please connect with compassionate, trained professionals right away.',
+      message: 'You indicated having thoughts that you would be better off dead, or hurting yourself. Your life, safety, and emotional wellbeing are deeply valuable. Please connect with compassionate, trained professionals right away.',
       hotlines: [
         {
           name: 'MANI Mental Health Crisis Line (24/7)',

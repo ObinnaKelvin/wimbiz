@@ -130,6 +130,12 @@ export const ArticlePostScreen: React.FC<ArticlePostScreenProps> = ({
       ? '/assets/aistudio/image_e9ce1814.png'
       : article.id === 'healthy-micro-habits'
       ? '/assets/aistudio/image_27257c44.png'
+      : article.id === 'mental-health-mindfulness'
+      ? 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=800&q=80'
+      : article.id === 'mindfulness-daily-peace'
+      ? 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80'
+      : article.id === 'avoidance-toxic-substances'
+      ? 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80'
       : '/assets/aistudio/image_a986066b.png');
 
   return (

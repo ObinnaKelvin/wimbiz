@@ -1,4 +1,4 @@
-import { Question, QuestionCategory } from '../types';
+import { Question, QuestionCategory, QuestionOption } from '../types';
 
 export const CORE_HEALTH_QUESTIONS: Question[] = [
   {
@@ -220,38 +220,6 @@ export const PERIMENOPAUSE_40_49_QUESTIONS: Question[] = [
     skipText: 'Skip this question',
   },
   {
-    id: 'q40_anxiety_irritability',
-    category: 'MENTAL HEALTH AND MINDFULNESS',
-    categoryLabel: 'Mental health and Mindfulness',
-    stepNumber: 12,
-    totalSteps: 20,
-    title: 'Have you noticed increased anxiety or irritability?',
-    whyWeAsk: 'Estrogen directly modulates serotonin in the brain. Hormonal fluctuations can trigger unexpected irritability, heightened anxiety, or feeling easily overwhelmed.',
-    options: [
-      { id: 'yes_noticeable', label: 'Yes, heightened anxiety, irritability, or mood swings', detail: 'Noticeable shifts in emotional wellbeing', type: 'discuss' },
-      { id: 'mild_overwhelmed', label: 'Mild changes, feeling more easily overwhelmed', detail: 'Noticeable during high-stress periods', type: 'worth_checking' },
-      { id: 'no_stable', label: 'No, mood feels steady and resilient', detail: 'Consistent emotional balance', type: 'doing_well' },
-      { id: 'prefer_not', label: 'Prefer not to say', detail: 'Respecting your personal privacy', type: 'neutral' },
-    ],
-    skipText: 'Skip this question',
-  },
-  {
-    id: 'q40_memory_concentration',
-    category: 'MENTAL HEALTH AND MINDFULNESS',
-    categoryLabel: 'Mental health and Mindfulness',
-    stepNumber: 13,
-    totalSteps: 20,
-    title: 'Have you noticed reduced memory or concentration?',
-    whyWeAsk: 'Known as perimenopausal brain fog, temporary word-finding lapses and multitasking difficulties are biological responses to estrogen shifts in the hippocampus.',
-    options: [
-      { id: 'yes_brain_fog', label: 'Yes, brain fog, forgetfulness, or concentration lapses', detail: 'Very common neuro-hormonal transition symptom', type: 'worth_checking' },
-      { id: 'mild_occasional', label: 'Mild or occasional forgetfulness', detail: 'Occasional slips when busy or tired', type: 'worth_checking' },
-      { id: 'no_sharp', label: 'No, mental focus and recall remain sharp', detail: 'Strong cognitive clarity and focus', type: 'doing_well' },
-      { id: 'not_sure', label: 'Not sure', detail: 'Hard to separate from normal fatigue', type: 'neutral' },
-    ],
-    skipText: 'Skip this question',
-  },
-  {
     id: 'q40_sexual_desire',
     category: 'SOCIAL CONNECTEDNESS AND RELATIONSHIP',
     categoryLabel: 'Social Connectedness and Relationship',
@@ -396,71 +364,7 @@ export const BONE_MOBILITY_QUESTIONS: Question[] = [
   },
 ];
 
-export const MENTAL_EMOTIONAL_QUESTIONS: Question[] = [
-  {
-    id: 'q_current_mood',
-    category: 'MENTAL HEALTH AND MINDFULNESS',
-    categoryLabel: 'Mental health and Mindfulness',
-    stepNumber: 0,
-    totalSteps: 0,
-    title: 'How would you describe your current mood?',
-    whyWeAsk: 'Emotional wellbeing directly impacts immune health, heart health, and sleep architecture.',
-    options: [
-      { id: 'good', label: 'Good (feeling positive, energetic, or content)', detail: 'Positive emotional baseline', type: 'doing_well' },
-      { id: 'okay', label: 'Okay (getting through daily life reasonably well)', detail: 'Stable, functioning baseline', type: 'neutral' },
-      { id: 'low', label: 'Low (feeling persistently sad, flat, or down)', detail: 'Gentle, supportive mental wellness care is available', type: 'discuss' },
-      { id: 'prefer_not', label: 'Prefer not to say', detail: 'Respecting your privacy', type: 'neutral' },
-    ],
-    skipText: 'Skip this question',
-  },
-  {
-    id: 'q_anxious_overwhelmed',
-    category: 'MENTAL HEALTH AND MINDFULNESS',
-    categoryLabel: 'Mental health and Mindfulness',
-    stepNumber: 0,
-    totalSteps: 0,
-    title: 'How often do you feel anxious or overwhelmed?',
-    whyWeAsk: 'Chronic anxiety elevates cortisol and blood pressure. Developing proactive coping strategies protects mind and body.',
-    options: [
-      { id: 'never', label: 'Never or rarely', detail: 'Calm, grounded nervous system', type: 'doing_well' },
-      { id: 'sometimes', label: 'Sometimes (when work or family pressure builds)', detail: 'Manageable situational stress', type: 'worth_checking' },
-      { id: 'often', label: 'Often (frequently feeling on edge or overwhelmed)', detail: 'Professional anxiety support can provide immediate relief', type: 'discuss' },
-      { id: 'prefer_not', label: 'Prefer not to say', detail: 'Respecting your privacy', type: 'neutral' },
-    ],
-    skipText: 'Skip this question',
-  },
-  {
-    id: 'q_exhausted_responsibilities',
-    category: 'MENTAL HEALTH AND MINDFULNESS',
-    categoryLabel: 'Mental health and Mindfulness',
-    stepNumber: 0,
-    totalSteps: 0,
-    title: 'How often do you feel exhausted by everyday responsibilities?',
-    whyWeAsk: 'Burnout from balancing career, family, and eldercare is exceptionally high among women. Recognizing exhaustion is the first step toward self-care.',
-    options: [
-      { id: 'rarely_never', label: 'Rarely or never', detail: 'Sustainable energy balance', type: 'doing_well' },
-      { id: 'sometimes', label: 'Sometimes (busy periods feel tiring)', detail: 'Common workload pressure', type: 'worth_checking' },
-      { id: 'often', label: 'Often (feeling chronically depleted or burnt out)', detail: 'Prioritizing rest and boundaries is medically essential', type: 'discuss' },
-      { id: 'prefer_not', label: 'Prefer not to say', detail: 'Respecting your privacy', type: 'neutral' },
-    ],
-    skipText: 'Skip this question',
-  },
-  {
-    id: 'q_enjoy_activities',
-    category: 'MENTAL HEALTH AND MINDFULNESS',
-    categoryLabel: 'Mental health and Mindfulness',
-    stepNumber: 0,
-    totalSteps: 0,
-    title: 'Do you regularly enjoy things you used to enjoy?',
-    whyWeAsk: 'Anhedonia (losing interest in hobbies or activities that brought joy) is a cardinal indicator of depressive fatigue that responds well to support.',
-    options: [
-      { id: 'yes_regularly', label: 'Yes, regularly find joy and fulfillment', detail: 'Healthy emotional reward connection', type: 'doing_well' },
-      { id: 'sometimes', label: 'Sometimes, but feel less interested recently', detail: 'Early indicator of emotional burnout', type: 'worth_checking' },
-      { id: 'rarely_not_at_all', label: 'Rarely or not at all', detail: 'Speaking with a counsellor or clinician can help rekindle joy', type: 'discuss' },
-      { id: 'prefer_not', label: 'Prefer not to say', detail: 'Respecting your privacy', type: 'neutral' },
-    ],
-    skipText: 'Skip this question',
-  },
+export const SOCIAL_CONNECTEDNESS_QUESTIONS: Question[] = [
   {
     id: 'q_feel_lonely',
     category: 'SOCIAL CONNECTEDNESS AND RELATIONSHIP',
@@ -493,71 +397,126 @@ export const MENTAL_EMOTIONAL_QUESTIONS: Question[] = [
     ],
     skipText: 'Skip this question',
   },
+];
+
+const PHQ9_OPTIONS: QuestionOption[] = [
+  { id: 'not_at_all', label: 'Not at all', type: 'doing_well' },
+  { id: 'several_days', label: 'Several days', type: 'worth_checking' },
+  { id: 'more_than_half', label: 'More than half the days', type: 'discuss' },
+  { id: 'nearly_every_day', label: 'Nearly every day', type: 'discuss' },
+];
+
+const PHQ9_SAFETY_OPTIONS: QuestionOption[] = [
+  { id: 'not_at_all', label: 'Not at all', type: 'doing_well' },
+  { id: 'several_days', label: 'Several days', type: 'discuss' },
+  { id: 'more_than_half', label: 'More than half the days', type: 'discuss' },
+  { id: 'nearly_every_day', label: 'Nearly every day', type: 'discuss' },
+];
+
+export const MENTAL_HEALTH_QUESTIONS: Question[] = [
   {
-    id: 'q_current_stress',
+    id: 'phq1_interest',
     category: 'MENTAL HEALTH AND MINDFULNESS',
     categoryLabel: 'Mental health and Mindfulness',
     stepNumber: 0,
     totalSteps: 0,
-    title: 'How would you rate your current stress?',
-    whyWeAsk: 'Subjective stress perception is one of the strongest modifiers of vascular inflammation and blood sugar control.',
-    options: [
-      { id: 'low', label: 'Low (stress feels manageable and balanced)', detail: 'Healthy nervous system resilience', type: 'doing_well' },
-      { id: 'moderate', label: 'Moderate (noticeable pressures, but coping)', detail: 'Proactive breathwork & rest help buffer stress', type: 'worth_checking' },
-      { id: 'high', label: 'High (stress feels near breaking point)', detail: 'Clinical stress management and wellness support advised', type: 'discuss' },
-      { id: 'prefer_not', label: 'Prefer not to say', detail: 'Respecting your privacy', type: 'neutral' },
-    ],
+    title: 'Little interest or pleasure in doing things?',
+    whyWeAsk: 'Losing interest or pleasure in daily activities (anhedonia) is a core biological indicator of emotional burnout or mood shifts that responds well to gentle support.',
+    options: PHQ9_OPTIONS,
     skipText: 'Skip this question',
   },
   {
-    id: 'q_grief_trauma',
+    id: 'phq2_depressed',
     category: 'MENTAL HEALTH AND MINDFULNESS',
     categoryLabel: 'Mental health and Mindfulness',
     stepNumber: 0,
     totalSteps: 0,
-    title: 'Have you experienced significant grief or trauma recently?',
-    whyWeAsk: 'Bereavement, divorce, medical trauma, or acute life shock requires gentle, unhurried space and specialized emotional care.',
-    options: [
-      { id: 'no', label: 'No, no major recent trauma or bereavement', detail: 'Stable emotional landscape', type: 'doing_well' },
-      { id: 'yes_past_year', label: 'Yes, experienced a major loss or trauma within the past year', detail: 'Grief counselling offers compassionate support', type: 'discuss' },
-      { id: 'past_processing', label: 'Experienced trauma in the past, still processing', detail: 'Ongoing healing journey', type: 'worth_checking' },
-      { id: 'prefer_not', label: 'Prefer not to say', detail: 'Respecting your privacy', type: 'neutral' },
-    ],
+    title: 'Feeling down, depressed or hopeless?',
+    whyWeAsk: 'Persistent sadness or feeling low affects vitality, cardiovascular rhythm, and immunity. Checking in provides compassionate baseline awareness.',
+    options: PHQ9_OPTIONS,
     skipText: 'Skip this question',
   },
   {
-    id: 'q_sought_mental_help',
+    id: 'phq3_sleep',
     category: 'MENTAL HEALTH AND MINDFULNESS',
     categoryLabel: 'Mental health and Mindfulness',
     stepNumber: 0,
     totalSteps: 0,
-    title: 'Have you ever sought professional help for your mental health?',
-    whyWeAsk: 'Seeking therapy or psychiatric consultation is a powerful act of self-advocacy and strength.',
-    options: [
-      { id: 'yes_currently_past', label: 'Yes, currently seeing a professional or have in the past', detail: 'Proactive engagement with mental healthcare', type: 'doing_well' },
-      { id: 'no_interested', label: 'No, but would like to explore speaking with a therapist', detail: 'Our Iwosan mental health team can connect you', type: 'worth_checking' },
-      { id: 'no_not_needed', label: 'No, have not felt the need for professional help', detail: 'Maintaining positive self-care', type: 'doing_well' },
-      { id: 'prefer_not', label: 'Prefer not to say', detail: 'Respecting your privacy', type: 'neutral' },
-    ],
+    title: 'Trouble falling or staying asleep, or sleeping too much?',
+    whyWeAsk: 'Sleep patterns and emotional regulation share neurochemical pathways. Disrupted sleep can reflect underlying nervous system strain.',
+    options: PHQ9_OPTIONS,
     skipText: 'Skip this question',
   },
   {
-    id: 'q_self_harm_thoughts',
+    id: 'phq4_tired',
     category: 'MENTAL HEALTH AND MINDFULNESS',
     categoryLabel: 'Mental health and Mindfulness',
     stepNumber: 0,
     totalSteps: 0,
-    title: 'Have you had thoughts of hurting yourself or not wanting to be alive?',
-    whyWeAsk: 'Your safety and emotional life matter deeply. If you are experiencing dark thoughts, immediate compassionate, confidential support is available right now.',
+    title: 'Feeling tired or having little energy?',
+    whyWeAsk: 'Chronic fatigue can stem from emotional exhaustion, hormonal transitions, or nutrient depletion. Recognizing low energy is the first step toward replenishment.',
+    options: PHQ9_OPTIONS,
+    skipText: 'Skip this question',
+  },
+  {
+    id: 'phq5_appetite',
+    category: 'MENTAL HEALTH AND MINDFULNESS',
+    categoryLabel: 'Mental health and Mindfulness',
+    stepNumber: 0,
+    totalSteps: 0,
+    title: 'Poor appetite or overeating?',
+    whyWeAsk: 'Appetite shifts frequently accompany stress and mood fluctuations due to brain-gut signalling changes.',
+    options: PHQ9_OPTIONS,
+    skipText: 'Skip this question',
+  },
+  {
+    id: 'phq6_self_worth',
+    category: 'MENTAL HEALTH AND MINDFULNESS',
+    categoryLabel: 'Mental health and Mindfulness',
+    stepNumber: 0,
+    totalSteps: 0,
+    title: 'Feeling bad about yourself, or that you have let others down?',
+    whyWeAsk: 'Excessive guilt or feelings of inadequacy often arise during burnout or depression, particularly among women carrying heavy responsibilities.',
+    options: PHQ9_OPTIONS,
+    skipText: 'Skip this question',
+  },
+  {
+    id: 'phq7_concentration',
+    category: 'MENTAL HEALTH AND MINDFULNESS',
+    categoryLabel: 'Mental health and Mindfulness',
+    stepNumber: 0,
+    totalSteps: 0,
+    title: 'Trouble concentrating on reading or work tasks?',
+    whyWeAsk: 'Cognitive fatigue and difficulty focusing are very common when the mind is carrying elevated stress or low mood.',
+    options: PHQ9_OPTIONS,
+    skipText: 'Skip this question',
+  },
+  {
+    id: 'phq8_psychomotor',
+    category: 'MENTAL HEALTH AND MINDFULNESS',
+    categoryLabel: 'Mental health and Mindfulness',
+    stepNumber: 0,
+    totalSteps: 0,
+    title: 'Moving or speaking slowly, or being fidgety and restless?',
+    whyWeAsk: 'Psychomotor changes (slowing down or agitation) reflect how emotional strain directly translates into physical nervous system rhythms.',
+    options: PHQ9_OPTIONS,
+    skipText: 'Skip this question',
+  },
+  {
+    id: 'phq9_self_harm',
+    category: 'MENTAL HEALTH AND MINDFULNESS',
+    categoryLabel: 'Mental health and Mindfulness',
+    stepNumber: 0,
+    totalSteps: 0,
+    title: 'Thoughts that you would be better off dead, or hurting yourself?',
+    whyWeAsk: 'Your safety, life, and emotional wellbeing matter deeply. If you are experiencing dark thoughts, immediate compassionate, confidential support is available right now.',
     isSafetyQuestion: true,
-    options: [
-      { id: 'yes', label: 'Yes', detail: 'Immediate, compassionate safety pathway and confidential support', type: 'discuss' },
-      { id: 'no', label: 'No', detail: 'No thoughts of self-harm', type: 'doing_well' },
-      { id: 'prefer_not', label: 'Prefer not to say', detail: 'Support is always available if ever needed', type: 'neutral' },
-    ],
+    options: PHQ9_SAFETY_OPTIONS,
     skipText: 'Skip this question',
   },
 ];
+
+export const MENTAL_EMOTIONAL_QUESTIONS: Question[] = MENTAL_HEALTH_QUESTIONS;
 
 export const CATEGORY_ORDER: QuestionCategory[] = [
   'OCCUPATION',
@@ -610,16 +569,15 @@ const QUESTION_ORDER_WITHIN_CATEGORY: Record<string, number> = {
   q40_sexual_desire: 3,
 
   // Mental health and Mindfulness
-  q_current_mood: 1,
-  q_anxious_overwhelmed: 2,
-  q_exhausted_responsibilities: 3,
-  q_enjoy_activities: 4,
-  q_current_stress: 5,
-  q_grief_trauma: 6,
-  q_sought_mental_help: 7,
-  q40_anxiety_irritability: 8,
-  q40_memory_concentration: 9,
-  q_self_harm_thoughts: 10,
+  phq1_interest: 1,
+  phq2_depressed: 2,
+  phq3_sleep: 3,
+  phq4_tired: 4,
+  phq5_appetite: 5,
+  phq6_self_worth: 6,
+  phq7_concentration: 7,
+  phq8_psychomotor: 8,
+  phq9_self_harm: 9,
 
   // Avoidance of Toxic Substances
   q_toxic_substances: 1,
@@ -664,9 +622,14 @@ export function getHealthQuestions(answers?: Record<string, string>): Question[]
     rawQuestions.push(...BONE_MOBILITY_QUESTIONS);
   }
 
-  // 6. Mental & Emotional Health (18–50+)
+  // 6. Social Connectedness & Relationship (18–50+)
   if (is18to50Plus) {
-    rawQuestions.push(...MENTAL_EMOTIONAL_QUESTIONS);
+    rawQuestions.push(...SOCIAL_CONNECTEDNESS_QUESTIONS);
+  }
+
+  // 7. Mental & Emotional Health (18–50+)
+  if (is18to50Plus) {
+    rawQuestions.push(...MENTAL_HEALTH_QUESTIONS);
   }
 
   // Strict Category Sequence:

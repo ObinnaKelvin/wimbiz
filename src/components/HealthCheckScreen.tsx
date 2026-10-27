@@ -3,20 +3,29 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Question, ScreenId } from '../types';
 import { getHealthQuestions } from '../data/questions';
 import {
-  Calendar,
-  HelpCircle,
-  ChevronLeft,
-  ChevronRight,
+  ArrowLeft,
   ArrowRight,
   Check,
-  X,
+  Calendar,
+  Users,
+  Briefcase,
+  Stethoscope,
+  Heart,
+  Activity,
   Sparkles,
-  ClipboardList,
-  CheckCircle2,
+  Apple,
+  Dumbbell,
+  Moon,
   HeartHandshake,
+  Brain,
+  Shield,
   PhoneCall,
   ShieldAlert,
-  Stethoscope,
+  CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  X,
+  Layers,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -28,6 +37,16 @@ interface HealthCheckScreenProps {
   hasCompletedCheck?: boolean;
 }
 
+interface SectionSummary {
+  category: string;
+  categoryLabel: string;
+  firstQuestionIndex: number;
+  totalQuestions: number;
+  answeredQuestions: number;
+  isComplete: boolean;
+  isCurrent: boolean;
+}
+
 export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
   answers,
   onAnswerChange,
@@ -36,9 +55,8 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
   hasCompletedCheck = false,
 }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
-  const [showWhyModal, setShowWhyModal] = useState(false);
-  const [showOverview, setShowOverview] = useState(false);
   const [showSafetyModal, setShowSafetyModal] = useState(false);
+  const [showSectionsMenu, setShowSectionsMenu] = useState(false);
 
   const questions = getHealthQuestions(answers);
   const safeStepIndex = Math.min(currentStepIndex, Math.max(0, questions.length - 1));
@@ -46,16 +64,56 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
   const selectedOptionId = answers[currentQuestion.id];
   const isLastQuestion = safeStepIndex === questions.length - 1;
 
+  // Dynamically calculate the number of questions answered
+  const answeredCount = questions.filter(
+    (q) => !!answers[q.id] && answers[q.id] !== 'skipped'
+  ).length;
+
+  // Compute all unique sections in order of questions
+  const sections: SectionSummary[] = [];
+  questions.forEach((q, idx) => {
+    let sec = sections.find((s) => s.categoryLabel === q.categoryLabel);
+    if (!sec) {
+      sec = {
+        category: q.category,
+        categoryLabel: q.categoryLabel,
+        firstQuestionIndex: idx,
+        totalQuestions: 0,
+        answeredQuestions: 0,
+        isComplete: false,
+        isCurrent: false,
+      };
+      sections.push(sec);
+    }
+    sec.totalQuestions += 1;
+    if (answers[q.id] && answers[q.id] !== 'skipped') {
+      sec.answeredQuestions += 1;
+    }
+  });
+
+  sections.forEach((s) => {
+    s.isComplete = s.answeredQuestions === s.totalQuestions;
+    s.isCurrent = s.categoryLabel === currentQuestion.categoryLabel;
+  });
+
   const handleSelectOption = (optionId: string) => {
     onAnswerChange(currentQuestion.id, optionId);
 
     // Immediate compassionate safety pathway trigger
-    if (currentQuestion.id === 'q_self_harm_thoughts' && optionId === 'yes') {
+    if (
+      (currentQuestion.id === 'phq9_self_harm' ||
+        currentQuestion.id === 'q_self_harm_thoughts' ||
+        currentQuestion.isSafetyQuestion) &&
+      optionId !== 'not_at_all' &&
+      optionId !== 'no' &&
+      optionId !== 'skipped' &&
+      optionId !== 'prefer_not'
+    ) {
       setShowSafetyModal(true);
       return;
     }
 
-    // Auto-advance smoothly after short selection cue if user prefers fast flow
+    // Auto-advance to the next question after brief visual feedback
     setTimeout(() => {
       if (isLastQuestion) {
         if (!hasCompletedCheck) {
@@ -65,7 +123,7 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
       } else {
         setCurrentStepIndex((prev) => Math.min(prev + 1, questions.length - 1));
       }
-    }, 280);
+    }, 240);
   };
 
   const handleSkip = () => {
@@ -90,10 +148,18 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
 
   const handleNext = () => {
     if (isLastQuestion) {
+      if (!hasCompletedCheck) {
+        triggerCompletionConfetti();
+      }
       onFinishCheck();
     } else {
       setCurrentStepIndex((prev) => Math.min(prev + 1, questions.length - 1));
     }
+  };
+
+  const handleJumpToSection = (firstQuestionIndex: number) => {
+    setCurrentStepIndex(firstQuestionIndex);
+    setShowSectionsMenu(false);
   };
 
   const triggerCompletionConfetti = () => {
@@ -109,198 +175,172 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
     }
   };
 
+  const getCategoryIcon = (category: string, className = 'w-6 h-6 text-slate-700') => {
+    const norm = (category || '').toUpperCase();
+    if (norm.includes('OCCUPATION')) {
+      return <Briefcase className={className} />;
+    }
+    if (norm.includes('AGE')) {
+      return <Calendar className={className} />;
+    }
+    if (norm.includes('ROUTINE')) {
+      return <Stethoscope className={className} />;
+    }
+    if (norm.includes('PRESSURE')) {
+      return <Heart className={className} />;
+    }
+    if (norm.includes('SUGAR')) {
+      return <Activity className={className} />;
+    }
+    if (norm.includes('FAMILY')) {
+      return <Users className={className} />;
+    }
+    if (norm.includes('WOMEN')) {
+      return <Sparkles className={className} />;
+    }
+    if (norm.includes('NUTRITION')) {
+      return <Apple className={className} />;
+    }
+    if (norm.includes('EXERCISE') || norm.includes('FITNESS')) {
+      return <Dumbbell className={className} />;
+    }
+    if (norm.includes('SLEEP')) {
+      return <Moon className={className} />;
+    }
+    if (norm.includes('SOCIAL') || norm.includes('RELATIONSHIP')) {
+      return <HeartHandshake className={className} />;
+    }
+    if (norm.includes('MENTAL') || norm.includes('MINDFUL')) {
+      return <Brain className={className} />;
+    }
+    if (norm.includes('TOXIC') || norm.includes('SUBSTANCE')) {
+      return <Shield className={className} />;
+    }
+    return <Users className={className} />;
+  };
+
+  const progressPercent = Math.max(
+    8,
+    Math.round(((safeStepIndex + 1) / questions.length) * 100)
+  );
+
   return (
-    <div className="space-y-5 pb-24 pt-2 text-left max-w-md mx-auto">
-      {/* Review Banner if user returned to review selections */}
-      {hasCompletedCheck && (
-        <div className="bg-emerald-50/90 border border-emerald-200/80 rounded-2xl p-2.5 px-3 flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-            <span className="font-bold text-emerald-900">Reviewing form selections</span>
-          </div>
+    <div className="min-h-screen bg-white text-slate-900 px-5 pt-4 pb-12 max-w-md mx-auto flex flex-col justify-between text-left">
+      <div>
+        {/* Top Header Bar */}
+        <div className="flex items-center justify-between pt-1 pb-3">
           <button
+            type="button"
+            onClick={handlePrevious}
+            aria-label="Previous question or back"
+            className="w-10 h-10 rounded-full bg-slate-100/90 hover:bg-slate-200 active:scale-95 flex items-center justify-center text-slate-800 transition cursor-pointer"
+          >
+            <ArrowLeft className="w-5 h-5 stroke-[2.2]" />
+          </button>
+
+          <h1 className="text-lg sm:text-[19px] font-bold text-slate-900 tracking-tight">
+            Health check
+          </h1>
+
+          <button
+            type="button"
             onClick={onFinishCheck}
-            className="font-bold text-emerald-700 hover:text-emerald-950 bg-white border border-emerald-300 px-3 py-1 rounded-full shadow-2xs flex items-center gap-1 transition cursor-pointer"
+            className="px-4 py-1.5 rounded-full border border-slate-200/90 hover:bg-slate-50 active:scale-95 text-xs font-semibold text-slate-700 transition cursor-pointer"
           >
-            <span>Done · Return to Summary</span>
-            <ArrowRight className="w-3 h-3" />
+            Finish
           </button>
         </div>
-      )}
 
-      {/* Top Multi-segment Progress Bar with click-to-jump */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between gap-1.5 px-0.5">
-          {questions.map((q, idx) => {
-            const isCompleted = !!answers[q.id];
-            const isCurrent = idx === safeStepIndex;
+        {/* Section Category & Progress Indicator */}
+        <div className="mt-2 space-y-1.5">
+          <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
+            {/* Clickable section name that reveals all sections */}
+            <button
+              type="button"
+              onClick={() => setShowSectionsMenu(true)}
+              className="inline-flex items-center gap-1 text-slate-800 hover:text-slate-950 font-semibold cursor-pointer transition py-0.5 px-1 -ml-1 rounded-md hover:bg-slate-100 group"
+              title="Click to jump to another section"
+            >
+              <span className="group-hover:underline underline-offset-2">
+                {currentQuestion.categoryLabel}
+              </span>
+              <span className="text-slate-400 font-normal">
+                · {safeStepIndex + 1} of {questions.length}
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-800 transition" />
+            </button>
 
-            return (
-              <button
-                key={q.id}
-                type="button"
-                onClick={() => setCurrentStepIndex(idx)}
-                title={`Question ${idx + 1}: ${q.categoryLabel}`}
-                className={`h-2 flex-1 rounded-full transition-all cursor-pointer ${
-                  isCurrent
-                    ? 'bg-slate-900 ring-2 ring-slate-900/30 ring-offset-1'
-                    : isCompleted
-                    ? 'bg-emerald-600 hover:bg-emerald-700'
-                    : 'bg-slate-200 hover:bg-slate-300'
-                }`}
-              />
-            );
-          })}
-        </div>
-
-        {/* Category Tracker & Quick Jump Toggle */}
-        <div className="flex items-center justify-between text-xs font-bold text-sky-800 tracking-wider uppercase pt-1">
-          <button
-            onClick={() => setShowOverview(!showOverview)}
-            className="flex items-center gap-1 text-slate-700 hover:text-emerald-800 transition cursor-pointer"
-            title="Click to view all question steps"
-          >
-            <ClipboardList className="w-3.5 h-3.5 text-emerald-700" />
-            <span>
-              {currentQuestion.categoryLabel} · {currentQuestion.stepNumber} OF {currentQuestion.totalSteps}
+            <span className="font-bold text-slate-800">
+              {safeStepIndex + 1} / {questions.length}
             </span>
-          </button>
+          </div>
 
-          <div className="flex items-center gap-2">
-            {safeStepIndex > 0 && (
-              <motion.button
-                whileHover={{ x: -2 }}
-                whileTap={{ scale: 0.96 }}
-                onClick={handlePrevious}
-                className="flex items-center gap-0.5 text-slate-500 hover:text-slate-900 transition text-[11px] font-semibold cursor-pointer"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-                <span>Back</span>
-              </motion.button>
-            )}
+          {/* Thin Progress Bar with cyan-blue gradient fill */}
+          <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-[#003853] via-[#005c87] to-[#0092d0] transition-all duration-300 ease-out"
+              style={{ width: `${progressPercent}%` }}
+            />
           </div>
         </div>
-      </div>
 
-      {/* Overview Accordion Dropdown to jump directly to any question */}
-      <AnimatePresence>
-        {showOverview && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden bg-white border border-slate-200 rounded-2xl p-3 shadow-xs space-y-1.5"
-          >
-            <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                All {questions.length} Screening Questions
-              </span>
-              <button
-                onClick={() => setShowOverview(false)}
-                className="text-[11px] font-bold text-slate-400 hover:text-slate-700 cursor-pointer"
-              >
-                Close
-              </button>
-            </div>
-            <div className="grid grid-cols-2 gap-1.5 max-h-56 overflow-y-auto pt-1">
-              {questions.map((q, idx) => {
-                const answerId = answers[q.id];
-                const isDate = answerId && (answerId.startsWith('date:') || /^\d{4}-\d{2}-\d{2}$/.test(answerId));
-                const matchedOption = q.options.find((opt) => opt.id === answerId);
-                const isCurrent = idx === safeStepIndex;
-
-                let answerText = 'Not answered';
-                if (isDate) {
-                  const rawDate = answerId.replace('date:', '');
-                  answerText = `Date: ${rawDate}`;
-                } else if (matchedOption) {
-                  answerText = matchedOption.label;
-                }
-
-                return (
-                  <button
-                    key={q.id}
-                    onClick={() => {
-                      setCurrentStepIndex(idx);
-                      setShowOverview(false);
-                    }}
-                    className={`text-left p-2 rounded-xl border text-[11px] transition cursor-pointer flex flex-col justify-between ${
-                      isCurrent
-                        ? 'border-slate-900 bg-slate-900 text-white font-bold'
-                        : answerId
-                        ? 'border-emerald-200 bg-emerald-50/60 text-slate-800'
-                        : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
-                    }`}
-                  >
-                    <span className="font-semibold truncate">
-                      {idx + 1}. {q.categoryLabel}
-                    </span>
-                    <span className={`text-[10px] truncate mt-0.5 ${isCurrent ? 'text-emerald-300' : 'text-slate-500'}`}>
-                      {answerText}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </motion.div>
+        {/* Review Banner if user returned to review selections */}
+        {hasCompletedCheck && (
+          <div className="mt-3 bg-emerald-50 border border-emerald-200/80 rounded-2xl p-2.5 px-3 flex items-center justify-between text-xs">
+            <span className="font-bold text-emerald-900">Reviewing answers</span>
+            <button
+              onClick={onFinishCheck}
+              className="font-bold text-emerald-700 hover:text-emerald-950 bg-white border border-emerald-300 px-3 py-1 rounded-full shadow-2xs text-[11px] cursor-pointer"
+            >
+              Done · Return to Summary
+            </button>
+          </div>
         )}
-      </AnimatePresence>
 
-      {/* Main Question & Options Container with AnimatePresence */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentQuestion.id}
-          initial={{ opacity: 0, x: 18 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -18 }}
-          transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
-          className="space-y-4"
-        >
-          {/* Main Question Title */}
-          <div className="space-y-2 pt-1">
-            <h2 className="text-2xl sm:text-[26px] font-black text-slate-900 tracking-tight leading-snug">
+        {/* Category Icon Badge & Answered Count Pill */}
+        <div className="mt-5 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setShowSectionsMenu(true)}
+            title="Click to view all sections"
+            className="w-12 h-12 rounded-2xl bg-[#eaf2fa] hover:bg-[#dce9f8] active:scale-95 flex items-center justify-center text-slate-800 shadow-2xs transition cursor-pointer"
+          >
+            {getCategoryIcon(currentQuestion.category)}
+          </button>
+
+          <div className="bg-[#dcf3e4] text-[#1c783c] px-3.5 py-1 rounded-full text-xs font-semibold tracking-tight shadow-2xs">
+            {answeredCount} answered
+          </div>
+        </div>
+
+        {/* Question Title & Subtitle */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentQuestion.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="mt-4"
+          >
+            <h2 className="text-2xl sm:text-[26px] font-bold text-slate-900 tracking-tight leading-snug">
               {currentQuestion.title}
             </h2>
 
-            {/* "Why we ask this" interactive link with question mark */}
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => setShowWhyModal(true)}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-700 hover:text-sky-900 transition cursor-pointer"
-            >
-              <span className="w-4 h-4 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-[10px] font-black">
-                ?
-              </span>
-              <span>Why we ask this</span>
-            </motion.button>
-          </div>
+            {currentQuestion.whyWeAsk && (
+              <p className="text-sm text-slate-500 leading-relaxed font-normal mt-2.5">
+                {currentQuestion.whyWeAsk}
+              </p>
+            )}
 
-          {/* Date Picker Input for LMP Question */}
-          {currentQuestion.hasDatePicker && (
-            <div className="bg-white rounded-2xl p-4 border border-emerald-200/90 shadow-2xs space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
-                    <Calendar className="w-4 h-4 text-emerald-700" />
-                  </div>
-                  <div>
-                    <label htmlFor="lmp-date-input" className="text-xs font-bold text-slate-900 block leading-tight">
-                      {currentQuestion.datePickerLabel || 'Select date of last menstrual period'}
-                    </label>
-                    <span className="text-[11px] text-slate-500">Pick exact date from calendar</span>
-                  </div>
+            {/* Date Picker Input for LMP Question */}
+            {currentQuestion.hasDatePicker && (
+              <div className="mt-4 bg-white rounded-[22px] p-4 border border-slate-200/90 shadow-[0_1px_3px_rgba(0,0,0,0.02)] space-y-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
+                  <Calendar className="w-4 h-4 text-emerald-600" />
+                  <span>{currentQuestion.datePickerLabel || 'Select exact date'}</span>
                 </div>
-                {selectedOptionId && (selectedOptionId.startsWith('date:') || /^\d{4}-\d{2}-\d{2}$/.test(selectedOptionId)) && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
-                    Date Picked
-                  </span>
-                )}
-              </div>
-
-              <div className="space-y-2.5">
                 <input
-                  id="lmp-date-input"
                   type="date"
                   max={new Date().toISOString().split('T')[0]}
                   value={
@@ -315,14 +355,15 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
                       handleSelectOption(`date:${e.target.value}`);
                     }
                   }}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-300 text-sm font-bold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50 cursor-pointer shadow-2xs"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-slate-50 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 cursor-pointer"
                 />
 
                 {selectedOptionId && (selectedOptionId.startsWith('date:') || /^\d{4}-\d{2}-\d{2}$/.test(selectedOptionId)) && (
                   <div className="flex items-center justify-between pt-1">
-                    <span className="text-xs font-bold text-emerald-800 flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700">
                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                       <span>
+                        Selected:{' '}
                         {new Date(
                           selectedOptionId.replace('date:', '') + 'T00:00:00'
                         ).toLocaleDateString('en-GB', {
@@ -331,11 +372,11 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
                           year: 'numeric',
                         })}
                       </span>
-                    </span>
+                    </div>
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="text-xs font-bold px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center gap-1 shadow-2xs cursor-pointer"
+                      className="px-3.5 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1 transition cursor-pointer"
                     >
                       <span>Continue</span>
                       <ArrowRight className="w-3 h-3" />
@@ -343,166 +384,212 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
                   </div>
                 )}
               </div>
-            </div>
-          )}
-
-          {currentQuestion.hasDatePicker && currentQuestion.options.length > 0 && (
-            <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 text-center pt-1">
-              — Or choose an approximate timeframe —
-            </div>
-          )}
-
-          {/* Question Options List */}
-          <div className="space-y-3 pt-1">
-            {currentQuestion.options.map((option, idx) => {
-              const isSelected = selectedOptionId === option.id;
-
-              return (
-                <motion.button
-                  key={option.id}
-                  id={`option-${currentQuestion.id}-${option.id}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.05, duration: 0.25 }}
-                  whileHover={{ scale: 1.015, x: 2 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleSelectOption(option.id)}
-                  className={`w-full p-4 rounded-2xl border text-left transition-colors flex items-center gap-3.5 cursor-pointer shadow-2xs ${
-                    isSelected
-                      ? 'border-emerald-600 bg-emerald-50/70 ring-1 ring-emerald-600/50'
-                      : 'border-slate-200/90 bg-white hover:border-slate-300 hover:bg-slate-50/70'
-                  }`}
-                >
-                  {/* Custom Radio Button Indicator */}
-                  <div
-                    className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-colors ${
-                      isSelected
-                        ? 'border-2 border-emerald-600 bg-white'
-                        : 'border-2 border-slate-300 bg-white'
-                    }`}
-                  >
-                    {isSelected && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-                        className="w-2.5 h-2.5 rounded-full bg-emerald-600"
-                      />
-                    )}
-                  </div>
-
-                  <div className="flex-1">
-                    <span className="text-sm font-bold text-slate-900 block leading-tight">
-                      {option.label}
-                    </span>
-                    {option.detail && (
-                      <span className="text-[11px] text-slate-500 block mt-0.5 leading-snug">
-                        {option.detail}
-                      </span>
-                    )}
-                  </div>
-                </motion.button>
-              );
-            })}
-          </div>
-
-          {/* Navigation Controls row between questions */}
-          <div className="pt-2 flex items-center justify-between gap-2">
-            <button
-              type="button"
-              onClick={handlePrevious}
-              className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 flex items-center gap-1 cursor-pointer transition shadow-2xs"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" />
-              <span>{safeStepIndex === 0 ? (hasCompletedCheck ? 'Back to Summary' : 'Back') : 'Previous'}</span>
-            </button>
-
-            {/* Skip Question Link */}
-            <button
-              onClick={handleSkip}
-              className="text-xs font-semibold text-slate-500 hover:text-slate-800 transition cursor-pointer px-2"
-            >
-              {currentQuestion.skipText || 'Skip'}
-            </button>
-
-            {safeStepIndex < questions.length - 1 ? (
-              <button
-                type="button"
-                onClick={handleNext}
-                className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-800 hover:text-slate-950 bg-white border border-slate-200 flex items-center gap-1 cursor-pointer transition shadow-2xs"
-              >
-                <span>Next</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={onFinishCheck}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 flex items-center gap-1 cursor-pointer transition shadow-xs"
-              >
-                <span>{hasCompletedCheck ? 'View Summary' : 'Complete'}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
             )}
-          </div>
-        </motion.div>
-      </AnimatePresence>
 
-      {/* Bottom Disclaimer Callout Box */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="bg-rose-50/70 border border-rose-200/70 rounded-2xl p-3.5 text-left space-y-1 mt-4"
-      >
-        <h4 className="text-xs font-black text-rose-900">
-          Awareness, not diagnosis.
-        </h4>
-        <p className="text-[11px] text-rose-900/90 leading-relaxed font-medium">
-          A clinician gives the real assessment. Skip anything you’d rather not answer.
+            {/* Options List */}
+            <div className="mt-5 space-y-2.5">
+              {currentQuestion.options.map((option) => {
+                const isSelected = selectedOptionId === option.id;
+                const isPreferNot =
+                  option.label.toLowerCase().includes('prefer not') ||
+                  option.id === 'prefer_not' ||
+                  option.id === 'prefer_not_to_say';
+
+                if (isSelected) {
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => handleSelectOption(option.id)}
+                      className="w-full bg-[#34a853] hover:bg-[#2ea04b] text-white rounded-[22px] px-5 py-4 font-semibold text-sm sm:text-[15px] flex items-center justify-between shadow-xs transition-transform active:scale-[0.99] cursor-pointer text-left"
+                    >
+                      <div className="pr-3 leading-snug">
+                        <span>{option.label}</span>
+                      </div>
+                      <div className="w-6 h-6 rounded-full bg-white/20 border border-white flex items-center justify-center shrink-0">
+                        <Check className="w-3.5 h-3.5 text-white stroke-[3]" />
+                      </div>
+                    </button>
+                  );
+                }
+
+                if (isPreferNot) {
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => handleSelectOption(option.id)}
+                      className="w-full border border-dashed border-slate-200 hover:border-slate-300 bg-transparent rounded-[22px] px-5 py-4 text-slate-400 font-normal text-sm sm:text-[15px] flex items-center justify-between transition-colors active:scale-[0.99] cursor-pointer text-left"
+                    >
+                      <div className="pr-3 leading-snug">
+                        <span>{option.label}</span>
+                      </div>
+                      <div className="w-6 h-6 rounded-full border-2 border-slate-200 shrink-0" />
+                    </button>
+                  );
+                }
+
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => handleSelectOption(option.id)}
+                    className="w-full bg-white hover:bg-slate-50/80 border border-slate-200/90 rounded-[22px] px-5 py-4 text-slate-800 font-medium text-sm sm:text-[15px] flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.02)] transition-colors active:scale-[0.99] cursor-pointer text-left"
+                  >
+                    <div className="pr-3 leading-snug">
+                      <span>{option.label}</span>
+                      {option.detail && (
+                        <span className="block text-[11px] text-slate-400 font-normal mt-0.5">
+                          {option.detail}
+                        </span>
+                      )}
+                    </div>
+                    <div className="w-6 h-6 rounded-full border-2 border-slate-200 shrink-0" />
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Bottom Action Controls & Disclaimer */}
+      <div className="mt-8 pt-4 space-y-3">
+        {/* Back and Skip this one row */}
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={handlePrevious}
+            className="w-full rounded-full border border-slate-200/90 bg-white hover:bg-slate-50 active:scale-[0.98] py-3.5 text-sm font-semibold text-slate-700 transition cursor-pointer text-center"
+          >
+            Back
+          </button>
+          <button
+            type="button"
+            onClick={handleSkip}
+            className="w-full rounded-full border border-slate-200/90 bg-white hover:bg-slate-50 active:scale-[0.98] py-3.5 text-sm font-semibold text-slate-700 transition cursor-pointer text-center"
+          >
+            Skip this one
+          </button>
+        </div>
+
+        {/* Disclaimer footer */}
+        <p className="text-xs text-slate-400 text-center pt-2 font-normal">
+          Every question can be skipped or answered &ldquo;prefer not to say&rdquo;.
         </p>
-      </motion.div>
+      </div>
 
-      {/* "Why we ask this" Context Modal */}
+      {/* Section Navigation Drawer / Modal */}
       <AnimatePresence>
-        {showWhyModal && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+        {showSectionsMenu && (
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/60 backdrop-blur-xs p-0 sm:p-4">
             <motion.div
-              initial={{ opacity: 0, scale: 0.94, y: 16 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.94, y: 16 }}
-              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-sm rounded-3xl bg-slate-50 p-5 shadow-2xl border border-slate-200 text-slate-900"
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 100 }}
+              transition={{ type: 'spring', damping: 26, stiffness: 300 }}
+              className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-md p-5 pb-8 sm:pb-6 shadow-2xl border border-slate-200 text-left space-y-4 max-h-[82vh] flex flex-col"
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-sky-100 text-sky-800 flex items-center justify-center">
-                    <HelpCircle className="w-4 h-4" />
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between pb-2 border-b border-slate-100 shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-[#eaf2fa] flex items-center justify-center text-slate-700">
+                    <Layers className="w-5 h-5 text-slate-700" />
                   </div>
-                  <h3 className="text-sm font-bold">Clinical Context</h3>
+                  <div>
+                    <h3 className="text-base font-bold text-slate-900 leading-tight">
+                      Screening Sections
+                    </h3>
+                    <p className="text-[11px] text-slate-500 font-normal">
+                      Jump directly to any section below
+                    </p>
+                  </div>
                 </div>
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setShowWhyModal(false)}
-                  className="w-7 h-7 rounded-full bg-slate-200/70 flex items-center justify-center text-slate-600 hover:text-slate-900 cursor-pointer"
+
+                <button
+                  type="button"
+                  onClick={() => setShowSectionsMenu(false)}
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition cursor-pointer"
+                  aria-label="Close sections list"
                 >
                   <X className="w-4 h-4" />
-                </motion.button>
+                </button>
               </div>
 
-              <p className="text-xs text-slate-700 leading-relaxed bg-white p-3.5 rounded-xl border border-slate-200">
-                {currentQuestion.whyWeAsk}
-              </p>
+              {/* Sections Scrollable List */}
+              <div className="overflow-y-auto space-y-2 pr-1 -mr-1 flex-1">
+                {sections.map((sec, idx) => {
+                  return (
+                    <button
+                      key={sec.categoryLabel}
+                      type="button"
+                      onClick={() => handleJumpToSection(sec.firstQuestionIndex)}
+                      className={`w-full p-3 rounded-2xl border transition-all text-left flex items-center justify-between cursor-pointer active:scale-[0.99] ${
+                        sec.isCurrent
+                          ? 'border-[#003853] bg-slate-900 text-white shadow-xs'
+                          : 'border-slate-200/90 bg-white hover:bg-slate-50 text-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 min-w-0 pr-2">
+                        <div
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                            sec.isCurrent
+                              ? 'bg-white/20 text-white'
+                              : 'bg-[#eaf2fa] text-slate-700'
+                          }`}
+                        >
+                          {getCategoryIcon(
+                            sec.category,
+                            `w-4 h-4 ${sec.isCurrent ? 'text-white' : 'text-slate-700'}`
+                          )}
+                        </div>
+                        <div className="truncate">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[11px] font-bold opacity-60">
+                              {idx + 1}.
+                            </span>
+                            <span
+                              className={`text-sm font-bold truncate ${
+                                sec.isCurrent ? 'text-white' : 'text-slate-900'
+                              }`}
+                            >
+                              {sec.categoryLabel}
+                            </span>
+                          </div>
+                          <span
+                            className={`text-[11px] block mt-0.5 ${
+                              sec.isCurrent ? 'text-slate-300' : 'text-slate-500'
+                            }`}
+                          >
+                            {sec.answeredQuestions} of {sec.totalQuestions} answered
+                          </span>
+                        </div>
+                      </div>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setShowWhyModal(false)}
-                className="mt-4 w-full py-2.5 rounded-full bg-slate-900 text-white font-bold text-xs hover:bg-slate-800 transition cursor-pointer"
-              >
-                Continue Check
-              </motion.button>
+                      <div className="shrink-0 flex items-center gap-1.5">
+                        {sec.isCurrent ? (
+                          <span className="px-2.5 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold">
+                            Current
+                          </span>
+                        ) : sec.isComplete ? (
+                          <span className="flex items-center gap-1 text-emerald-600 text-xs font-semibold">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                          </span>
+                        ) : (
+                          <ChevronRight className="w-4 h-4 text-slate-400" />
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Drawer Footer Tip */}
+              <div className="pt-2 text-center shrink-0">
+                <span className="text-[11px] text-slate-400">
+                  You can jump back and forth anytime without losing your answers.
+                </span>
+              </div>
             </motion.div>
           </div>
         )}
@@ -575,26 +662,6 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
                   </div>
                   <span className="text-xs font-bold text-slate-700 bg-white px-2.5 py-1 rounded-full border border-slate-200 shadow-2xs group-hover:bg-slate-900 group-hover:text-white transition">
                     Call 112
-                  </span>
-                </a>
-
-                <a
-                  href="tel:+234700496726"
-                  className="w-full p-3 rounded-2xl bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 transition flex items-center justify-between group cursor-pointer"
-                >
-                  <div className="flex items-center gap-3">
-                    <Stethoscope className="w-5 h-5 text-emerald-700 shrink-0" />
-                    <div>
-                      <span className="text-xs font-bold text-slate-900 block">
-                        Iwosan Lagoon Hospitals Urgent Care
-                      </span>
-                      <span className="text-[11px] text-slate-600 block">
-                        0700-IWOSAN (0700 496726) · 24/7 Clinical Care
-                      </span>
-                    </div>
-                  </div>
-                  <span className="text-xs font-bold text-emerald-800 bg-white px-2.5 py-1 rounded-full border border-emerald-200 shadow-2xs group-hover:bg-emerald-700 group-hover:text-white transition">
-                    Call Clinic
                   </span>
                 </a>
               </div>

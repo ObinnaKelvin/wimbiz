@@ -786,4 +786,201 @@ export const CLINICAL_ARTICLES: Article[] = [
     relatedTopic: 'Iwosan Annual Women’s Wellness Check',
     screenIdTarget: 'contact',
   },
+  // ================= MENTAL HEALTH & MINDFULNESS =================
+  {
+    id: 'mental-health-mindfulness',
+    hub: 'lifestyle',
+    category: 'Mental health & mindfulness',
+    categoryTag: 'Mental health & mindfulness',
+    title: 'Burnout, mood & emotional health',
+    headline: 'Honouring your emotional health: Beyond silent burnout',
+    summary:
+      'Understanding the biological signals of anxiety, low mood, and chronic burnout in women, and practical clinical tools to rebuild emotional vitality.',
+    intro:
+      'Mental health is not a luxury or a sign of personal weakness — it is a biological vital sign. Chronic anxiety, persistent fatigue, and low mood directly influence cardiovascular function, immune response, and hormonal balance. Recognizing emotional exhaustion is the first courageous step toward replenishment.',
+    readTime: '4 min read',
+    image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=800&q=80',
+    reviewerName: 'Dr. Folashade Adeleke',
+    reviewerRole: 'Consultant Neuropsychiatrist & Mental Health Lead',
+    reviewerHospital: 'Iwosan Lagoon Hospitals, Victoria Island',
+    reviewDate: 'Reviewed 12 August 2026',
+    sections: [
+      {
+        number: 1,
+        title: 'The biology of high-functioning burnout',
+        content:
+          'Many women master the art of looking composed while feeling completely depleted on the inside. When work deadlines, family caretaking, and community expectations persist without rest, brain cortisol levels remain continuously elevated. This exhausts dopamine and serotonin production, leading to emotional numbness, brain fog, and disrupted sleep.',
+      },
+      {
+        number: 2,
+        title: 'Dismantling silent guilt & perfectionism',
+        content:
+          'Culturally, women are frequently praised for self-sacrifice and enduring suffering in silence. However, relentless caregiving at the expense of your own needs depletes mental reserves. Boundaries are not selfish; they are a preventive medical intervention that preserves your capacity to thrive.',
+      },
+      {
+        number: 3,
+        title: 'Proactive clinical care & confidential support',
+        content:
+          'Persistent low mood, loss of joy (anhedonia), or intrusive worry respond remarkably well to early evidence-based support. Confidential therapy, structured counseling, and clinician-led lifestyle medicine provide clear, practical tools to restore peace and vitality.',
+      },
+    ],
+    content: [
+      'Recognize that persistent emotional exhaustion is a physical health marker, not a personal failure.',
+      'Set clear daily boundaries around work and caregiving to allow nervous system recovery.',
+      'Seek confidential professional therapy or medical counsel whenever stress feels overwhelming.',
+    ],
+    keyTakeaways: [
+      'Emotional fatigue is a biological reality. Reaching out for professional mental health support is proactive self-care.',
+    ],
+    takeawayMessage:
+      'You do not need to carry everything on your own shoulders. Reaching out to a counselor or clinician brings clarity, relief, and renewed energy.',
+    disclaimer:
+      'Educational information, not a diagnosis. If you are experiencing distress, compassionate confidential support is always available.',
+    relatedArticles: [
+      {
+        id: 'mindfulness-daily-peace',
+        title: 'Mindfulness & nervous system reset',
+        readTime: '3 min read',
+      },
+      {
+        id: 'sleep-stress',
+        title: 'Rest, reset, recover',
+        readTime: '3 min read',
+      },
+    ],
+    tags: ['Mental health', 'Burnout recovery', 'Emotional wellness', 'Depression support'],
+    relatedTopic: 'Iwosan Mental Wellness & Counseling',
+    screenIdTarget: 'contact',
+  },
+  {
+    id: 'mindfulness-daily-peace',
+    hub: 'lifestyle',
+    category: 'Mental health & mindfulness',
+    categoryTag: 'Mental health & mindfulness',
+    title: 'Mindfulness & nervous system reset',
+    headline: 'Calming the overstimulated mind: Everyday somatic practices',
+    summary:
+      'How micro-mindfulness, physiological breathing, and somatic vagal toning downshift chronic stress and restore mental clarity.',
+    intro:
+      'When your mind is inundated with endless task lists, phone notifications, and family responsibilities, your autonomic nervous system remains trapped in sympathetic "fight-or-flight". Mindfulness is not about emptying your thoughts — it is the physical practice of signaling safety back to your body.',
+    readTime: '3 min read',
+    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80',
+    reviewerName: 'Dr. Kemi Balogun',
+    reviewerRole: 'Consultant Lifestyle Medicine Physician & Mindfulness Specialist',
+    reviewerHospital: 'Iwosan Lagoon Hospitals, Ikoyi',
+    reviewDate: 'Reviewed 19 September 2026',
+    sections: [
+      {
+        number: 1,
+        title: 'Why willpower cannot outthink an agitated nervous system',
+        content:
+          'When stress hormones flood the bloodstream, heart rate and arterial tension rise. Telling yourself to simply "relax" rarely works because the alarm signals originate in the lower brain. Somatic regulation uses your breath, sensory awareness, and posture to send immediate physical calming messages through the vagus nerve.',
+      },
+      {
+        number: 2,
+        title: 'The 60-second physiological sigh',
+        content:
+          'Developed by neurobiologists, the physiological sigh is the fastest natural way to downshift anxiety: take two quick inhales through your nose (one deep, followed immediately by a short top-off inhale), followed by a long, slow, audible exhale through your mouth. Repeating this 3 to 5 times instantly lowers heart rate.',
+      },
+      {
+        number: 3,
+        title: 'Micro-mindfulness in everyday Nigerian life',
+        content:
+          'You don’t need an hour in a silent room to practice mindfulness. Ground yourself during a commute by noticing 5 things you can see, 4 you can touch, and 3 you can hear. Savor the warmth of your morning tea without looking at a screen. These micro-pauses prevent chronic sensory overload.',
+      },
+    ],
+    content: [
+      'Use the double-inhale physiological sigh to downshift acute anxiety within 60 seconds.',
+      'Practice sensory grounding (5-4-3-2-1) when waiting in traffic or between meetings.',
+      'Create a 5-minute screen-free pause during your daily transition from work to home.',
+    ],
+    keyTakeaways: [
+      'Mindfulness is somatic safety. Brief, intentional breath resets lower blood pressure and clear brain fog.',
+    ],
+    takeawayMessage:
+      'You don’t need hours of meditation. Three physiological sighs and two minutes of screen-free breathing reset your entire day.',
+    disclaimer:
+      'Educational information, not a diagnosis. If a symptom worries you, please speak to a clinician.',
+    relatedArticles: [
+      {
+        id: 'mental-health-mindfulness',
+        title: 'Burnout, mood & emotional health',
+        readTime: '4 min read',
+      },
+      {
+        id: 'sleep-stress',
+        title: 'Rest, reset, recover',
+        readTime: '3 min read',
+      },
+    ],
+    tags: ['Mindfulness', 'Somatic breathing', 'Vagus nerve', 'Anxiety reset'],
+    relatedTopic: 'Stress Reduction & Somatic Regulation',
+    screenIdTarget: 'lifestyle',
+  },
+  // ================= AVOIDANCE OF TOXIC SUBSTANCES =================
+  {
+    id: 'avoidance-toxic-substances',
+    hub: 'lifestyle',
+    category: 'Avoidance of toxic substances',
+    categoryTag: 'Avoidance of toxic substances',
+    title: 'Everyday toxins, alcohol & tobacco',
+    headline: 'Protecting cellular longevity: Conscious choices against everyday toxins',
+    summary:
+      'Evidence-based guidance on how tobacco, vaping, alcohol, and hidden household chemicals impact female hormones, breast tissue, and vascular walls.',
+    intro:
+      'Our bodies are equipped with remarkable liver and cellular detox systems, but modern life surrounds us with concentrated chemical stressors. From tobacco smoke and vaping to social drinking and plastic packaging, conscious reductions in toxic load yield immediate protective benefits for your heart, liver, and breasts.',
+    readTime: '4 min read',
+    image: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80',
+    reviewerName: 'Dr. Olayinka Soyemi',
+    reviewerRole: 'Consultant Cardiologist & Preventive Medicine Specialist',
+    reviewerHospital: 'Iwosan Lagoon Hospitals, Lekki',
+    reviewDate: 'Reviewed 25 September 2026',
+    sections: [
+      {
+        number: 1,
+        title: 'Alcohol, estrogen metabolism & breast tissue',
+        content:
+          'When the liver processes alcohol, it produces acetaldehyde, a potent cellular toxin. In women, even moderate alcohol intake (3–6 drinks per week) can elevate circulating estrogen levels by competing for liver enzyme pathways. Introducing alcohol-free reset weeks reduces estrogen burden, improves deep sleep quality, and lowers resting blood pressure.',
+      },
+      {
+        number: 2,
+        title: 'Tobacco, vaping & accelerated arterial damage',
+        content:
+          'Cigarette smoking and electronic vaping deliver concentrated nicotine and heavy metals directly to vascular endothelial walls. Women who smoke experience greater arterial stiffening and earlier menopausal onset compared to non-smokers. Quitting at any age yields immediate cardiovascular improvements within days.',
+      },
+      {
+        number: 3,
+        title: 'Household micro-swaps against endocrine disruptors',
+        content:
+          'Everyday plastics containing bisphenols (BPA/BPS) and cosmetics with synthetic phthalates can mimic estrogen in female breast and uterine tissues. Simple switches—using glass or stainless-steel food containers, avoiding microwaving in plastic, and selecting fragrance-free personal care—dramatically reduce internal chemical burden.',
+      },
+    ],
+    content: [
+      'Incorporate weekly alcohol-free reset days to support liver metabolism and hormonal clearance.',
+      'Seek clinical cessation support if you currently smoke or vape to protect arterial walls.',
+      'Replace plastic food containers with glass or ceramic to minimize endocrine-disrupting chemicals.',
+    ],
+    keyTakeaways: [
+      'Every toxin avoided preserves arterial elasticity, supports liver detoxification, and protects breast health.',
+    ],
+    takeawayMessage:
+      'Small, conscious lifestyle swaps—choosing water over alcohol, glass over heated plastics, and clean air—powerfully safeguard your cellular vitality.',
+    disclaimer:
+      'Educational information, not a diagnosis. If you need support with tobacco cessation or alcohol moderation, our clinicians are here to help.',
+    relatedArticles: [
+      {
+        id: 'heart-health-women',
+        title: 'Blood pressure & everyday habits',
+        readTime: '4 min read',
+      },
+      {
+        id: 'breast-health',
+        title: "Knowing what's normal for you",
+        readTime: '4 min read',
+      },
+    ],
+    tags: ['Toxic substances', 'Alcohol moderation', 'Smoking cessation', 'Endocrine health'],
+    relatedTopic: 'Cardiovascular & Preventive Detoxification',
+    screenIdTarget: 'contact',
+  },
 ];
