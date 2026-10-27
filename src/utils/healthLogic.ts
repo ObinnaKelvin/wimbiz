@@ -667,26 +667,6 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
         actionScreen: 'womens-health',
       });
     }
-
-    // HRT Discussion
-    const hrt = answers['q40_hrt_discussion'];
-    if (hrt === 'yes_active' || hrt === 'discussed_waiting') {
-      keepDoing.push({
-        id: 'hrt_empowered',
-        title: 'Active Menopause & Hormonal Health Awareness',
-        description: 'Having informed discussions about menopause therapies with your doctor protects long-term cardiovascular and bone health.',
-        articleId: 'menopause-midlife',
-      });
-    } else if (hrt === 'want_to_learn' || hrt === 'never_discussed') {
-      worthChecking.push({
-        id: 'hrt_explore',
-        title: 'Explore Modern Menopause Therapies (HRT)',
-        description: 'Women in their 40s benefit most from early discussions on Hormone Replacement Therapy (HRT) to understand personal benefits and symptom management.',
-        articleId: 'menopause-midlife',
-        actionText: 'Ask Iwosan About HRT',
-        actionScreen: 'contact',
-      });
-    }
   }
 
   // 11. Menstrual Health (18–49)

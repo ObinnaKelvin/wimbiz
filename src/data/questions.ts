@@ -99,8 +99,8 @@ export const CORE_HEALTH_QUESTIONS: Question[] = [
     whyWeAsk: 'Fasting glucose or HbA1c testing identifies insulin resistance and pre-diabetes early, when simple dietary and movement shifts can completely reverse the trajectory.',
     options: [
       { id: 'within_year', label: 'Within the last 6–12 months', detail: 'Regular metabolic monitoring', type: 'doing_well' },
-      { id: 'never', label: 'Never', detail: 'Helpful to establish your baseline number', type: 'discuss' },
-      { id: 'not_sure', label: 'Not sure', detail: 'Can be added during your next routine test', type: 'worth_checking' },
+      { id: 'longer_than_12_months', label: 'Longer than 12 months', detail: 'Metabolic checkup due for updated numbers', type: 'worth_checking' },
+      { id: 'not_sure_or_never', label: 'Not Sure/Never', detail: 'Can be added during your next routine test', type: 'worth_checking' },
     ],
     skipText: 'Skip this question',
   },
@@ -114,7 +114,6 @@ export const CORE_HEALTH_QUESTIONS: Question[] = [
     whyWeAsk: 'Knowing if immediate relatives (parents, siblings) manage cardiovascular or metabolic conditions helps clinicians suggest earlier or more tailored screening schedules.',
     options: [
       { id: 'yes_immediate', label: 'Yes (parents or siblings)', detail: 'Highlights valuable preventive conversations to have with your doctor', type: 'discuss' },
-      { id: 'yes_extended', label: 'Yes (grandparents, aunts, uncles)', detail: 'Helpful contextual background for lifestyle prevention', type: 'worth_checking' },
       { id: 'no_history', label: 'No known history', detail: 'Continues standard age-based screening guidelines', type: 'doing_well' },
       { id: 'not_sure', label: 'Not sure / Prefer not to say', detail: 'We respect your privacy at all times', type: 'neutral' },
     ],
@@ -281,22 +280,6 @@ export const PERIMENOPAUSE_40_49_QUESTIONS: Question[] = [
       { id: 'occasional_urgency', label: 'Occasional urgency or slight leaks', detail: 'Mild pelvic floor tone changes', type: 'worth_checking' },
       { id: 'no_symptoms', label: 'No urinary symptoms', detail: 'Strong bladder control and pelvic tone', type: 'doing_well' },
       { id: 'not_sure', label: 'Not sure', detail: 'Unsure of cause', type: 'neutral' },
-    ],
-    skipText: 'Skip this question',
-  },
-  {
-    id: 'q40_hrt_discussion',
-    category: 'GENERAL WOMENS HEALTH',
-    categoryLabel: "General Women's Health",
-    stepNumber: 16,
-    totalSteps: 20,
-    title: 'Have you discussed menopause treatment or Hormone Replacement Therapy with a healthcare professional?',
-    whyWeAsk: 'Modern Hormone Replacement Therapy (HRT) and non-hormonal clinical treatments have strong evidence for symptom relief, bone density protection, and cardiovascular resilience when started in your 40s.',
-    options: [
-      { id: 'yes_active', label: 'Yes, currently taking or exploring treatment', detail: 'Active clinical care and management in place', type: 'doing_well' },
-      { id: 'discussed_waiting', label: 'Discussed with doctor, decided to monitor', detail: 'Informed regarding treatment options', type: 'doing_well' },
-      { id: 'want_to_learn', label: 'Not yet, but would like to learn more', detail: 'An Iwosan gynaecologist can discuss tailored options', type: 'worth_checking' },
-      { id: 'never_discussed', label: 'No, have never discussed this', detail: 'A valuable topic for your next wellness consultation', type: 'discuss' },
     ],
     skipText: 'Skip this question',
   },
@@ -608,7 +591,6 @@ const QUESTION_ORDER_WITHIN_CATEGORY: Record<string, number> = {
   q_breast_self_check: 3,
   q40_urinary_leakage: 4,
   q40_hot_flushes: 5,
-  q40_hrt_discussion: 6,
 
   // Nutrition
   q7_nutrition: 1,
