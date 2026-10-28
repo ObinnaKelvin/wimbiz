@@ -18,6 +18,8 @@ import {
   ChevronRight,
 } from 'lucide-react';
 
+import logo from '../../public/icon.svg';
+
 interface WelcomeScreenProps {
   onNavigate: (screen: ScreenId) => void;
   hasCompletedCheck: boolean;
@@ -70,8 +72,11 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
         <div className="flex items-center justify-between">
           {/* Brand Logo */}
           <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg">
+              <img src={logo} alt="Wellness Passport Logo" className="w-full h-full rounded-lg object-contain" />
+            </div>
             {/* Cyan Square Pulse Icon */}
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-teal-400 p-1 flex items-center justify-center shadow-[0_0_12px_rgba(6,182,212,0.35)]">
+            {/* <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-teal-400 p-1 flex items-center justify-center shadow-[0_0_12px_rgba(6,182,212,0.35)]">
               <svg className="w-5 h-5 text-white" viewBox="0 0 40 40" fill="none">
                 <path
                   d="M4 20 H12 L16 10 L22 30 L26 15 L29 23 L32 20 H36"
@@ -81,7 +86,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                   strokeLinejoin="round"
                 />
               </svg>
-            </div>
+            </div> */}
             <div>
               <div className="text-sm font-extrabold tracking-wide text-white leading-tight">
                 <span className="text-cyan-400">Wellness</span> Passport
