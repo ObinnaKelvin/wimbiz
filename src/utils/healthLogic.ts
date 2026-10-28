@@ -624,20 +624,38 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
 
   // 9. Avoidance of Toxic Substances
   const toxic = answers['q_toxic_substances'];
-  if (toxic === 'none') {
+  if (toxic === 'no_smoke' || toxic === 'none') {
     keepDoing.push({
       id: 'toxic_none',
-      title: 'Toxin-Free Cellular Health',
-      description: 'Avoiding tobacco and smoking while keeping alcohol to a minimum or zero directly protects your arterial walls, liver, and cellular longevity.',
+      title: 'Smoke-Free Cellular Health',
+      description: 'Living smoke-free directly protects your arterial walls, lung function, vocal cords, and long-term cellular longevity.',
       articleId: 'avoidance-toxic-substances',
       actionText: 'Read Toxin Guide',
       actionScreen: 'lifestyle',
     });
+  } else if (toxic === 'vape_shisha') {
+    worthChecking.push({
+      id: 'toxic_vape_shisha',
+      title: 'Vaping & Shisha Harm-Reduction Support',
+      description: 'Vaping and shisha expose delicate lung tissue and vascular endothelium to heated aerosols and toxic flavorants. Gradual reduction protects cardiovascular elasticity.',
+      articleId: 'avoidance-toxic-substances',
+      actionText: 'Read Toxin Guide',
+      actionScreen: 'lifestyle',
+    });
+  } else if (toxic === 'cigarettes_daily' || toxic === 'smoke_or_vape') {
+    discussWithDoctor.push({
+      id: 'toxic_smoking_cessation',
+      title: 'Cardiovascular & Lung Protection Support',
+      description: 'Regular cigarette smoking significantly accelerates arterial stiffness and cardiovascular risk for women. Our clinicians offer warm, evidence-based, compassionate cessation support.',
+      articleId: 'avoidance-toxic-substances',
+      actionText: 'Speak with an Iwosan Clinician',
+      actionScreen: 'contact',
+    });
   } else if (toxic === 'occasional_alcohol') {
     keepDoing.push({
       id: 'toxic_moderate',
-      title: 'Conscious & Moderate Alcohol Intake',
-      description: 'Keeping alcohol to rare or occasional social occasions supports liver metabolism, hormonal balance, and deep sleep architecture.',
+      title: 'Conscious & Moderate Lifestyle Habits',
+      description: 'Maintaining moderation supports liver metabolism, hormonal balance, and deep sleep architecture.',
       articleId: 'avoidance-toxic-substances',
       actionText: 'Read Toxin Guide',
       actionScreen: 'lifestyle',
@@ -650,15 +668,6 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       articleId: 'avoidance-toxic-substances',
       actionText: 'Read Toxin Guide',
       actionScreen: 'lifestyle',
-    });
-  } else if (toxic === 'smoke_or_vape') {
-    discussWithDoctor.push({
-      id: 'toxic_smoking_cessation',
-      title: 'Cardiovascular & Lung Protection Support',
-      description: 'Smoking or vaping significantly raises arterial stiffness and cardiovascular risk for women. Our clinicians offer warm, evidence-based, compassionate cessation support.',
-      articleId: 'avoidance-toxic-substances',
-      actionText: 'Speak with an Iwosan Clinician',
-      actionScreen: 'contact',
     });
   }
 
