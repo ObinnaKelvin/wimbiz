@@ -662,6 +662,50 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
     });
   }
 
+  // Specific alcohol evaluation
+  const alcohol = answers['q_alcohol'];
+  if (alcohol === 'more_than_two_a_day') {
+    discussWithDoctor.push({
+      id: 'alcohol_high_intake_support',
+      title: 'Proactive Alcohol Moderation Support',
+      description: 'Consuming more than 2 drinks daily places noticeable metabolic load on liver function, blood pressure regulation, and deep sleep. Speaking with our wellness team provides compassionate, evidence-based reduction steps.',
+      articleId: 'avoidance-toxic-substances',
+      actionText: 'Speak with an Iwosan Clinician',
+      actionScreen: 'contact',
+    });
+  } else if (alcohol === 'one_a_day') {
+    worthChecking.push({
+      id: 'alcohol_daily_moderation',
+      title: 'Incorporate Alcohol-Free Days',
+      description: 'Daily alcohol intake can subtly elevate resting blood pressure and interrupt deep REM sleep cycles. Introducing 3–4 alcohol-free days per week promotes cellular rejuvenation and metabolic ease.',
+      articleId: 'avoidance-toxic-substances',
+      actionText: 'Read Toxin Guide',
+      actionScreen: 'lifestyle',
+    });
+  } else if (alcohol === 'social_drinker') {
+    if (toxic !== 'none' && toxic !== 'occasional_alcohol') {
+      keepDoing.push({
+        id: 'alcohol_social',
+        title: 'Mindful Social Alcohol Consumption',
+        description: 'Keeping alcohol consumption to occasional social settings aligns with liver-protective and cardiovascular health guidelines.',
+        articleId: 'avoidance-toxic-substances',
+        actionText: 'Read Toxin Guide',
+        actionScreen: 'lifestyle',
+      });
+    }
+  } else if (alcohol === 'no') {
+    if (toxic !== 'none') {
+      keepDoing.push({
+        id: 'alcohol_zero',
+        title: 'Alcohol-Free Cellular Vitality',
+        description: 'Abstaining from alcohol supports liver detoxification pathways, restful sleep cycles, and optimal cardiovascular wellness.',
+        articleId: 'avoidance-toxic-substances',
+        actionText: 'Read Toxin Guide',
+        actionScreen: 'lifestyle',
+      });
+    }
+  }
+
   // 10. Midlife & Perimenopause (specifically tailored for 40–49 age band)
   const is40to49 = answers['q1_age'] === '40_49';
   if (is40to49) {

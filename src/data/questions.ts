@@ -261,6 +261,22 @@ export const CORE_HEALTH_QUESTIONS: Question[] = [
     ],
     skipText: 'Skip this question',
   },
+  {
+    id: 'q_alcohol',
+    category: 'AVOIDANCE OF TOXIC SUBSTANCES',
+    categoryLabel: 'Avoidance of Toxic Substances',
+    stepNumber: 0,
+    totalSteps: 0,
+    title: 'Do you drink alcohol?',
+    whyWeAsk: 'Understanding your alcohol habits helps provide clear insights on liver recovery, restful sleep, and cardiovascular wellbeing.',
+    options: [
+      { id: 'social_drinker', label: 'Yes – social drinker', type: 'doing_well' },
+      { id: 'one_a_day', label: 'Yes – 1 drink a day', type: 'worth_checking' },
+      { id: 'more_than_two_a_day', label: 'Yes – more than 2 drinks a day', type: 'discuss' },
+      { id: 'no', label: 'No', type: 'doing_well' },
+    ],
+    skipText: 'Skip this question',
+  },
 ];
 
 export const PERIMENOPAUSE_40_49_QUESTIONS: Question[] = [
@@ -719,7 +735,8 @@ const QUESTION_ORDER_WITHIN_CATEGORY: Record<string, number> = {
 
   // Avoidance of Toxic Substances
   q_toxic_substances: 1,
-  q_last_mammogram: 2,
+  q_alcohol: 2,
+  q_last_mammogram: 3,
 };
 
 export function getHealthQuestions(answers?: Record<string, string>): Question[] {
