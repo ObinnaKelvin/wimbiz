@@ -32,6 +32,16 @@ export const IWOSAN_LOCATIONS: IwosanLocation[] = [
     mapLink: 'https://maps.google.com/?q=Iwosan+Lagoon+Hospital+Ikeja+Lagos',
   },
   {
+    id: 'lagoon-adeniyi-jones',
+    name: 'Iwosan Lagoon Hospital Clinic, Adeniyi Jones',
+    address: 'Adeniyi Jones Avenue, Ikeja, Lagos',
+    area: 'Adeniyi Jones, Ikeja',
+    phone: '+234 700 524666 / +234 1 888 8888',
+    hours: '24/7 Outpatient, Specialist Consultations & Diagnostics',
+    specialties: ['Well-Woman Health Screenings', 'General Outpatient & Specialist Care', 'Diagnostic Laboratory & Ultrasound', 'Pharmacy Services'],
+    mapLink: 'https://maps.google.com/?q=Iwosan+Lagoon+Clinic+Adeniyi+Jones+Ikeja+Lagos',
+  },
+  {
     id: 'lagoon-lekki',
     name: 'Iwosan Lagoon Clinic & Diagnostic Centre, Lekki',
     address: 'Block 24, Plot 1, Admiralty Way, Lekki Phase 1, Lagos',
