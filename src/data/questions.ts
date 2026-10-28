@@ -403,8 +403,8 @@ export const BREAST_GYNAE_QUESTIONS: Question[] = [
   },
   {
     id: 'q_last_mammogram',
-    category: 'AVOIDANCE OF TOXIC SUBSTANCES',
-    categoryLabel: 'Avoidance of Toxic Substances',
+    category: 'GENERAL WOMENS HEALTH',
+    categoryLabel: "General Women's Health",
     stepNumber: 0,
     totalSteps: 0,
     title: 'When was your last mammogram/breast imaging?',
@@ -693,6 +693,7 @@ const QUESTION_ORDER_WITHIN_CATEGORY: Record<string, number> = {
   q40_urinary_leakage: 4,
   q40_hot_flushes: 5,
   q40_sexual_desire: 6,
+  q_last_mammogram: 7,
 
   // Nutrition
   q_nutrition_plate_colors: 1,
@@ -734,7 +735,6 @@ const QUESTION_ORDER_WITHIN_CATEGORY: Record<string, number> = {
   // Avoidance of Toxic Substances
   q_toxic_substances: 1,
   q_alcohol: 2,
-  q_last_mammogram: 3,
 };
 
 export function getHealthQuestions(answers?: Record<string, string>): Question[] {
@@ -761,12 +761,11 @@ export function getHealthQuestions(answers?: Record<string, string>): Question[]
     rawQuestions.push(...PERIMENOPAUSE_40_49_QUESTIONS);
   }
 
-  // 4. Breast & Gynaecological Health (18–50+)
+  // 4. Breast & Gynaecological Health (40–49 and 50+ for mammogram; self-check for all)
   if (is18to50Plus) {
-    const is18to29 = age === '18_29' || age === '20_29';
-    const breastQuestions = is18to29
-      ? BREAST_GYNAE_QUESTIONS.filter((q) => q.id !== 'q_last_mammogram')
-      : BREAST_GYNAE_QUESTIONS;
+    const breastQuestions = is40Plus
+      ? BREAST_GYNAE_QUESTIONS
+      : BREAST_GYNAE_QUESTIONS.filter((q) => q.id !== 'q_last_mammogram');
     rawQuestions.push(...breastQuestions);
   }
 
