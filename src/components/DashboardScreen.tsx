@@ -24,8 +24,6 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
-import logo from '../../public/icon.svg';
-
 interface DashboardScreenProps {
   answers: Record<string, string>;
   numbers: HealthNumbers;
@@ -123,7 +121,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
               </svg>
             </div> */}
             <div className="w-8 h-8 rounded-lg">
-                <img src={logo} alt="Wellness Passport Logo" className="w-full h-full rounded-lg object-contain" />
+                <img src="/icon.svg" alt="Wellness Passport Logo" className="w-full h-full rounded-lg object-contain" />
             </div>
             <div>
               <div className="text-sm font-extrabold tracking-wide text-white leading-tight">

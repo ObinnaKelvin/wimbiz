@@ -508,22 +508,87 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
     });
   }
 
-  // 7. Nutrition
-  const nutrition = answers['q7_nutrition'];
-  if (nutrition === 'daily_most') {
+  // 7. Nutrition & Hydration
+  const plateColor = answers['q_nutrition_plate_colors'];
+  const animalProtein = answers['q_nutrition_animal_protein'];
+  const dietType = answers['q_nutrition_diet_type'];
+  const fibre = answers['q_nutrition_fibre'];
+  const water = answers['q_nutrition_water'];
+  const cookingOil = answers['q_nutrition_cooking_oil'];
+  const legacyNutrition = answers['q7_nutrition'];
+
+  // Plate diversity & colorful meals
+  if (plateColor === 'always' || legacyNutrition === 'daily_most') {
     keepDoing.push({
       id: 'nutrition_rich',
-      title: 'Fiber & Micronutrient-Rich Eating',
-      description: 'Including fresh vegetables, greens, and fruit in daily meals delivers potassium and antioxidants that directly nurture vascular health.',
+      title: 'Diverse, Colorful Meal Plates',
+      description: 'Regularly including a vibrant rainbow of vegetables, legumes, whole grains, and healthy fats delivers antioxidants and phytonutrients that protect vascular and cellular health.',
       articleId: 'nutrition-habits',
     });
-  } else if (nutrition === 'few_times' || nutrition === 'rarely') {
+  } else if (plateColor === 'sometimes' || plateColor === 'rarely' || legacyNutrition === 'few_times' || legacyNutrition === 'rarely') {
     worthChecking.push({
       id: 'nutrition_add',
-      title: 'Add One Extra Portion of Greens or Fresh Fruit Daily',
-      description: 'Targeting a colorful plate model with local dark leafy vegetables (ugwu, spinach, waterleaf) supports digestion and hormone regulation.',
+      title: 'Build a More Colorful Plate Model',
+      description: 'Adding an extra serving of deep leafy greens (such as ugwu, spinach, or waterleaf), legumes, or colorful vegetables enhances your antioxidant shield and gut microbiome vitality.',
       articleId: 'nutrition-habits',
       actionText: 'Read Nutrition Guide',
+      actionScreen: 'lifestyle',
+    });
+  }
+
+  // Dietary Fibre intake
+  if (fibre === 'a_lot_25_30g') {
+    keepDoing.push({
+      id: 'fibre_optimal',
+      title: 'Optimal Daily Fibre Intake (25–30g)',
+      description: 'Reaching 25–30g of daily dietary fibre actively regulates postprandial glucose, lowers LDL cholesterol, and maintains digestive balance.',
+      articleId: 'nutrition-habits',
+    });
+  } else if (fibre === 'not_so_much_less_25g' || fibre === 'no_fibre') {
+    worthChecking.push({
+      id: 'fibre_boost',
+      title: 'Gradually Increase Daily Dietary Fibre',
+      description: 'Most women benefit from reaching 25–30g of daily fibre. Simple additions like oats, beans, chia seeds, and whole vegetables steadily improve metabolic balance.',
+      articleId: 'nutrition-habits',
+      actionText: 'Explore Fibre Tips',
+      actionScreen: 'lifestyle',
+    });
+  }
+
+  // Daily Hydration
+  if (water === '4_5_bottles_75cl' || water === '2_3_bottles_75cl') {
+    keepDoing.push({
+      id: 'water_healthy',
+      title: 'Sufficient Daily Hydration',
+      description: 'Drinking 2–4+ bottles of water daily supports kidney clearance, steady energy, blood pressure regulation, and cognitive focus.',
+      articleId: 'nutrition-habits',
+    });
+  } else if (water === 'less_than_2_bottles_75cl') {
+    worthChecking.push({
+      id: 'water_increase',
+      title: 'Increase Daily Water Hydration',
+      description: 'Consuming less than 1.5 litres of water can lead to subtle dehydration, afternoon fatigue, and urinary tract vulnerability. Aim to carry a refillable water bottle.',
+      articleId: 'nutrition-habits',
+      actionText: 'Read Hydration Tips',
+      actionScreen: 'lifestyle',
+    });
+  }
+
+  // Healthy Cooking Fats
+  if (cookingOil === 'unsaturated_fats') {
+    keepDoing.push({
+      id: 'oil_heart_healthy',
+      title: 'Heart-Healthy Unsaturated Cooking Oils',
+      description: 'Cooking primarily with unsaturated fats (such as olive, canola, sunflower, or avocado oil) protects your blood vessel lining and HDL cholesterol levels.',
+      articleId: 'heart-health-women',
+    });
+  } else if (cookingOil === 'saturated_fats') {
+    worthChecking.push({
+      id: 'oil_swap_guide',
+      title: 'Heart-Friendly Cooking Oil Swaps',
+      description: 'High intake of saturated cooking fats can elevate arterial LDL cholesterol. Consider swapping some saturated fats with cold-pressed olive or vegetable oils.',
+      articleId: 'heart-health-women',
+      actionText: 'Read Heart Health Guide',
       actionScreen: 'lifestyle',
     });
   }
@@ -671,6 +736,33 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
         actionScreen: 'womens-health',
       });
     }
+
+    // Sexual desire & Intimacy (General Women's Health)
+    const sexualDesire = answers['q40_sexual_desire'];
+    if (sexualDesire === 'yes_reduced') {
+      discussWithDoctor.push({
+        id: 'libido_support',
+        title: 'Intimacy, Hormonal Balance & Libido Support',
+        description: 'Shifts in sexual desire during midlife are very common and biologically linked to shifting estrogen, testosterone, and sleep quality. Supportive hormonal and holistic care can help.',
+        articleId: 'menopause-midlife',
+        actionText: 'Discuss with Clinician',
+        actionScreen: 'contact',
+      });
+    } else if (sexualDesire === 'fluctuating') {
+      worthChecking.push({
+        id: 'libido_fluctuating',
+        title: 'Hormonal Rhythms & Intimacy Wellness',
+        description: 'Fluctuating desire often aligns with natural monthly hormonal peaks and fatigue levels. Open communication and gentle pacing support healthy intimacy.',
+        articleId: 'menopause-midlife',
+      });
+    } else if (sexualDesire === 'no_unchanged') {
+      keepDoing.push({
+        id: 'libido_healthy',
+        title: 'Steady Intimacy & Libido',
+        description: 'Maintaining consistent libido and intimacy is a positive sign of hormonal and emotional equilibrium.',
+        articleId: 'menopause-midlife',
+      });
+    }
   }
 
   // 11. Menstrual Health (18–49)
@@ -800,15 +892,24 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
   if (strength === 'regular_2_plus') {
     keepDoing.push({
       id: 'strength_routine_strong',
-      title: 'Strength & Resistance Exercise Habit',
-      description: 'Engaging in regular resistance training 2+ times weekly actively preserves bone density, metabolic rate, and muscle mass.',
+      title: 'Regular Strength or Cardio Exercise Habit',
+      description: 'Engaging in regular exercise 2+ times weekly actively preserves bone density, cardiovascular fitness, metabolic rate, and muscle mass.',
       articleId: 'movement-exercise',
     });
-  } else if (strength === 'cardio_only' || strength === 'none') {
+  } else if (strength === 'cardio_only') {
+    worthChecking.push({
+      id: 'strength_cardio_balance',
+      title: 'Combine Cardio with Resistance Movements',
+      description: 'Cardio is wonderful for cardiovascular health. Adding gentle bodyweight squats, resistance bands, or light weights twice a week strengthens bones and metabolism.',
+      articleId: 'movement-exercise',
+      actionText: 'Explore Movement Tips',
+      actionScreen: 'lifestyle',
+    });
+  } else if (strength === 'none') {
     worthChecking.push({
       id: 'strength_start_guide',
-      title: 'Incorporate 2 Days of Resistance Exercise',
-      description: 'Adding bodyweight squats, resistance bands, or light dumbbells twice a week provides vital bone mineral stimulation.',
+      title: 'Incorporate Regular Strength or Cardio Exercise',
+      description: 'Adding enjoyable brisk walks, light cardio, or bodyweight exercises twice a week provides vital cardiovascular and bone mineral stimulation.',
       articleId: 'movement-exercise',
       actionText: 'Explore Movement Tips',
       actionScreen: 'lifestyle',
