@@ -917,25 +917,80 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
   }
 
   // 15. Social Connectedness & Relationship
-  const lonely = answers['q_feel_lonely'];
-  const confidant = answers['q_have_confidant'];
+  const loved = answers['q_social_loved'];
+  const familySupport = answers['q_social_family_support'];
+  const friends = answers['q_social_friends'];
+  const workEnv = answers['q_social_work_environment'];
+  const teamWork = answers['q_social_team_work'];
+  const socializing = answers['q_social_socializing'];
+  const positiveEnergy = answers['q_social_positive_energy'];
 
-  if (lonely === 'rarely_never' && confidant === 'yes_confidant') {
-    keepDoing.push({
-      id: 'social_strong',
-      title: 'Strong Social Support & Meaningful Connection',
-      description: 'Having a trusted confidant and feeling closely connected to your circle provides vital psychological and cardiovascular resilience.',
-      articleId: 'healthy-micro-habits',
-    });
-  } else if (lonely === 'often' || confidant === 'no_one') {
-    worthChecking.push({
-      id: 'social_connection_care',
-      title: 'Prioritize Meaningful Community & Support Networks',
-      description: 'Navigating busy life seasons without a safe confidant can feel isolating. Connecting with supportive groups or wellness counsellors brings valuable emotional grounding.',
-      articleId: 'mental-health-mindfulness',
-      actionText: 'Read Support Guide',
-      actionScreen: 'lifestyle',
-    });
+  const socialAnswers = [
+    loved,
+    familySupport,
+    friends,
+    workEnv,
+    teamWork,
+    socializing,
+    positiveEnergy,
+  ].filter(Boolean);
+
+  if (socialAnswers.length > 0) {
+    const alwaysCount = socialAnswers.filter((v) => v === 'always').length;
+    const neverCount = socialAnswers.filter((v) => v === 'never').length;
+    const sometimesCount = socialAnswers.filter((v) => v === 'sometimes').length;
+
+    if (alwaysCount >= 4 && neverCount === 0) {
+      keepDoing.push({
+        id: 'social_strong',
+        title: 'Strong Social Support & Vibrant Connections',
+        description:
+          'Feeling loved, having good family and friend support, and thriving in positive team environments provides vital biological resilience and emotional grounding.',
+        articleId: 'healthy-micro-habits',
+      });
+    } else if (neverCount >= 2 || (loved === 'never' && familySupport === 'never')) {
+      worthChecking.push({
+        id: 'social_connection_care',
+        title: 'Nurture Community, Support Networks & Workplace Harmony',
+        description:
+          'Navigating relationships, family dynamics, or workplace tension without reassuring anchors can elevate chronic stress. Connecting with trusted circles, mentors, or wellness counselors brings restorative balance.',
+        articleId: 'mental-health-mindfulness',
+        actionText: 'Read Support Guide',
+        actionScreen: 'lifestyle',
+      });
+    } else if (sometimesCount >= 3 || neverCount === 1) {
+      worthChecking.push({
+        id: 'social_balance_care',
+        title: 'Deepen Social Connections & Relational Energy',
+        description:
+          'Investing intentional moments into supportive friendships, hospitable work boundaries, and positive personal spaces helps sustain everyday vitality and emotional buffer.',
+        articleId: 'mental-health-mindfulness',
+        actionText: 'Explore Mindful Habits',
+        actionScreen: 'lifestyle',
+      });
+    }
+  } else {
+    // Legacy fallback check
+    const lonely = answers['q_feel_lonely'];
+    const confidant = answers['q_have_confidant'];
+
+    if (lonely === 'rarely_never' && confidant === 'yes_confidant') {
+      keepDoing.push({
+        id: 'social_strong',
+        title: 'Strong Social Support & Meaningful Connection',
+        description: 'Having a trusted confidant and feeling closely connected to your circle provides vital psychological and cardiovascular resilience.',
+        articleId: 'healthy-micro-habits',
+      });
+    } else if (lonely === 'often' || confidant === 'no_one') {
+      worthChecking.push({
+        id: 'social_connection_care',
+        title: 'Prioritize Meaningful Community & Support Networks',
+        description: 'Navigating busy life seasons without a safe confidant can feel isolating. Connecting with supportive groups or wellness counsellors brings valuable emotional grounding.',
+        articleId: 'mental-health-mindfulness',
+        actionText: 'Read Support Guide',
+        actionScreen: 'lifestyle',
+      });
+    }
   }
 
   // 16. Mental Health & Mindfulness (PHQ-9 screening protocol)
