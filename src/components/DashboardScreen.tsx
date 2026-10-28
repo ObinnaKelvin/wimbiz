@@ -24,6 +24,8 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
+import logo from '../../public/icon.svg';
+
 interface DashboardScreenProps {
   answers: Record<string, string>;
   numbers: HealthNumbers;
@@ -109,7 +111,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
         <div className="flex items-center justify-between relative z-10">
           <div className="flex items-center gap-2.5">
             {/* Cyan circular pulse icon */}
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-teal-400 p-1 flex items-center justify-center shadow-[0_0_12px_rgba(6,182,212,0.4)]">
+            {/* <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-500 to-teal-400 p-1 flex items-center justify-center shadow-[0_0_12px_rgba(6,182,212,0.4)]">
               <svg className="w-4 h-4 text-white" viewBox="0 0 40 40" fill="none">
                 <path
                   d="M4 20 H12 L16 10 L22 30 L26 15 L29 23 L32 20 H36"
@@ -119,6 +121,9 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
                   strokeLinejoin="round"
                 />
               </svg>
+            </div> */}
+            <div className="w-8 h-8 rounded-lg">
+                <img src={logo} alt="Wellness Passport Logo" className="w-full h-full rounded-lg object-contain" />
             </div>
             <div>
               <div className="text-sm font-extrabold tracking-wide text-white leading-tight">
