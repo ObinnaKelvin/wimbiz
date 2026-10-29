@@ -1,9 +1,12 @@
 import { HealthNumbers, SummaryResults, SummaryInsight, CrisisSupportInfo } from '../types';
 
 // Local storage keys for privacy-first client-only persistence
-const STORAGE_KEY_ANSWERS = 'iwosan_herhealth_answers_v1';
-const STORAGE_KEY_NUMBERS = 'iwosan_herhealth_numbers_v1';
-const STORAGE_KEY_COMPLETED = 'iwosan_herhealth_completed_v1';
+const STORAGE_KEY_ANSWERS = 'iwosan_wellness_answers_v1';
+const STORAGE_KEY_ANSWERS_LEGACY = 'iwosan_herhealth_answers_v1';
+const STORAGE_KEY_NUMBERS = 'iwosan_wellness_numbers_v1';
+const STORAGE_KEY_NUMBERS_LEGACY = 'iwosan_herhealth_numbers_v1';
+const STORAGE_KEY_COMPLETED = 'iwosan_wellness_completed_v1';
+const STORAGE_KEY_COMPLETED_LEGACY = 'iwosan_herhealth_completed_v1';
 
 export function saveAnswersToLocal(answers: Record<string, string>) {
   try {
@@ -15,7 +18,7 @@ export function saveAnswersToLocal(answers: Record<string, string>) {
 
 export function loadAnswersFromLocal(): Record<string, string> {
   try {
-    const data = localStorage.getItem(STORAGE_KEY_ANSWERS);
+    const data = localStorage.getItem(STORAGE_KEY_ANSWERS) || localStorage.getItem(STORAGE_KEY_ANSWERS_LEGACY);
     return data ? JSON.parse(data) : {};
   } catch {
     return {};
@@ -43,7 +46,7 @@ export function saveNumbersToLocal(numbers: HealthNumbers) {
 
 export function loadNumbersFromLocal(): HealthNumbers {
   try {
-    const data = localStorage.getItem(STORAGE_KEY_NUMBERS);
+    const data = localStorage.getItem(STORAGE_KEY_NUMBERS) || localStorage.getItem(STORAGE_KEY_NUMBERS_LEGACY);
     return data ? JSON.parse(data) : { ...DEFAULT_EMPTY_NUMBERS };
   } catch {
     return { ...DEFAULT_EMPTY_NUMBERS };
@@ -53,8 +56,11 @@ export function loadNumbersFromLocal(): HealthNumbers {
 export function clearAllHealthData() {
   try {
     localStorage.removeItem(STORAGE_KEY_ANSWERS);
+    localStorage.removeItem(STORAGE_KEY_ANSWERS_LEGACY);
     localStorage.removeItem(STORAGE_KEY_NUMBERS);
+    localStorage.removeItem(STORAGE_KEY_NUMBERS_LEGACY);
     localStorage.removeItem(STORAGE_KEY_COMPLETED);
+    localStorage.removeItem(STORAGE_KEY_COMPLETED_LEGACY);
   } catch {
     // ignore
   }

@@ -22,6 +22,7 @@ import {
   Sparkles,
   X,
   ExternalLink,
+  QrCode,
 } from 'lucide-react';
 
 interface DashboardScreenProps {
@@ -133,15 +134,28 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
             </div>
           </div>
 
-          {/* Privacy & Lock Button */}
-          <button
-            onClick={() => setShowPrivacyModal(true)}
-            title="Privacy & Data Control"
-            aria-label="Privacy & Security"
-            className="w-8 h-8 rounded-xl border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer shadow-xs"
-          >
-            <Lock className="w-3.5 h-3.5 text-slate-300" />
-          </button>
+          {/* Action buttons: QR Share & Privacy/Lock */}
+          <div className="flex items-center gap-2">
+            {onOpenQR && (
+              <button
+                type="button"
+                onClick={onOpenQR}
+                title="Share QR Code"
+                aria-label="Share Conference QR Code"
+                className="w-8 h-8 rounded-xl border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer shadow-xs"
+              >
+                <QrCode className="w-4 h-4 text-cyan-400" />
+              </button>
+            )}
+            <button
+              onClick={() => setShowPrivacyModal(true)}
+              title="Privacy & Data Control"
+              aria-label="Privacy & Security"
+              className="w-8 h-8 rounded-xl border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer shadow-xs"
+            >
+              <Lock className="w-3.5 h-3.5 text-slate-300" />
+            </button>
+          </div>
         </div>
 
         {/* Greeting & Headline */}

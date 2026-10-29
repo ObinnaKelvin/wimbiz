@@ -1,7 +1,7 @@
 import { HealthNumbers } from '../types';
 
-const ADMIN_TOKEN_KEY = 'iwosan_herhealth_admin_token';
-const ADMIN_USER_KEY = 'iwosan_herhealth_admin_user';
+const ADMIN_TOKEN_KEY = 'iwosan_wellness_admin_token';
+const ADMIN_USER_KEY = 'iwosan_wellness_admin_user';
 
 export interface AdminUser {
   email: string;
@@ -250,25 +250,27 @@ export async function downloadExcelResponses(records?: ClientAnonymousRecord[]) 
 // -------------------------------------------------------------
 // Auto-Submit Anonymous Record from User Health Check
 // -------------------------------------------------------------
-const STORAGE_LOCAL_RECORDS = 'iwosan_herhealth_local_records_v1';
-const STORAGE_USER_ANON_ID = 'iwosan_herhealth_anon_user_id';
+const STORAGE_LOCAL_RECORDS = 'iwosan_wellness_local_records_v1';
+const STORAGE_LOCAL_RECORDS_LEGACY = 'iwosan_herhealth_local_records_v1';
+const STORAGE_USER_ANON_ID = 'iwosan_wellness_anon_user_id';
+const STORAGE_USER_ANON_ID_LEGACY = 'iwosan_herhealth_anon_user_id';
 
 export function getOrCreateAnonymousId(): string {
   try {
-    let id = localStorage.getItem(STORAGE_USER_ANON_ID);
+    let id = localStorage.getItem(STORAGE_USER_ANON_ID) || localStorage.getItem(STORAGE_USER_ANON_ID_LEGACY);
     if (!id) {
-      id = `HH-${Math.floor(1000 + Math.random() * 9000)}`;
+      id = `WP-${Math.floor(1000 + Math.random() * 9000)}`;
       localStorage.setItem(STORAGE_USER_ANON_ID, id);
     }
     return id;
   } catch {
-    return `HH-${Math.floor(1000 + Math.random() * 9000)}`;
+    return `WP-${Math.floor(1000 + Math.random() * 9000)}`;
   }
 }
 
 export function loadLocalAnonymousRecords(): ClientAnonymousRecord[] {
   try {
-    const raw = localStorage.getItem(STORAGE_LOCAL_RECORDS);
+    const raw = localStorage.getItem(STORAGE_LOCAL_RECORDS) || localStorage.getItem(STORAGE_LOCAL_RECORDS_LEGACY);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];

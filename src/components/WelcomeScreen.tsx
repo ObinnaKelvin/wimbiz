@@ -95,14 +95,24 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
             </div>
           </div>
 
-          {/* Info Circle Button */}
-          <button
-            onClick={() => setShowInfoModal(true)}
-            aria-label="Information and About"
-            className="w-8 h-8 rounded-full border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer shadow-xs"
-          >
-            <Info className="w-4 h-4" />
-          </button>
+          {/* Right Header Controls: QR Code Share + Info Circle */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onOpenQR}
+              title="Share Conference QR Code"
+              aria-label="Share QR Code"
+              className="w-8 h-8 rounded-full border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer shadow-xs"
+            >
+              <QrCode className="w-4 h-4 text-cyan-400" />
+            </button>
+            <button
+              onClick={() => setShowInfoModal(true)}
+              aria-label="Information and About"
+              className="w-8 h-8 rounded-full border border-slate-700/80 bg-slate-900/60 hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition active:scale-95 cursor-pointer shadow-xs"
+            >
+              <Info className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 

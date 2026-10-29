@@ -18,13 +18,15 @@ import {
   CheckCircle2,
   Send,
   Sparkles,
+  QrCode,
 } from 'lucide-react';
 
 interface ContactBookingScreenProps {
   onNavigate: (screen: ScreenId) => void;
+  onOpenQR?: () => void;
 }
 
-export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNavigate }) => {
+export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNavigate, onOpenQR }) => {
   const [name, setName] = useState('');
   const [contactInfo, setContactInfo] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('lagoon-vi');
@@ -57,9 +59,22 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
           </h1>
         </div>
 
-        <span className="text-[11px] font-semibold text-slate-500">
-          Lagoon Hospitals
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] font-semibold text-slate-500 hidden sm:inline">
+            Lagoon Hospitals
+          </span>
+          {onOpenQR && (
+            <button
+              type="button"
+              onClick={onOpenQR}
+              aria-label="Share Conference QR Code"
+              title="Share QR Code"
+              className="w-10 h-10 rounded-full bg-white border border-slate-200/90 hover:bg-slate-100 active:scale-95 flex items-center justify-center text-slate-700 shadow-xs transition cursor-pointer"
+            >
+              <QrCode className="w-4 h-4 stroke-[2.2]" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* 2. Signature Hero Green Card */}
@@ -79,7 +94,7 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
               Iwosan
             </span>
             <span className="text-sm font-bold text-slate-950 leading-tight block">
-              HerHealth
+              Wellness Passport
             </span>
           </div>
         </div>
@@ -135,6 +150,7 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
             href={IWOSAN_CONTACT_INFO.whatsappDirectUrl}
             target="_blank"
             rel="noopener noreferrer"
+            title="Chat on WhatsApp (+2349139352778)"
             className="w-full bg-[#0c1626] hover:bg-slate-900 active:scale-95 text-white py-3 px-4 rounded-full font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition cursor-pointer text-center"
           >
             <MessageSquare className="w-3.5 h-3.5 stroke-[2.2] text-[#25D366]" />
@@ -143,6 +159,7 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
 
           <a
             href={`tel:${IWOSAN_CONTACT_INFO.emergencyHotline}`}
+            title="Call Iwosan Lagoon (+2349139352778)"
             className="w-full bg-white hover:bg-slate-50 active:scale-95 border border-[#b8ddf4] text-[#006097] py-3 px-4 rounded-full font-bold text-xs flex items-center justify-center gap-2 shadow-2xs transition cursor-pointer text-center"
           >
             <Phone className="w-3.5 h-3.5" />

@@ -147,7 +147,7 @@ export default function App() {
       {/* Centered Mobile App Canvas Frame */}
       <div className={`w-full ${currentScreen === 'admin' ? 'max-w-4xl' : 'max-w-md'} min-h-screen ${currentScreen === 'welcome' || currentScreen === 'dashboard' || currentScreen === 'summary' ? 'bg-[#050b18] sm:border-slate-800/60' : currentScreen === 'article' ? 'bg-white sm:border-slate-200/80' : 'bg-[#fafbfe] sm:border-slate-200/80'} flex flex-col relative sm:shadow-2xl sm:border-x transition-all duration-300 print:bg-white print:border-none print:shadow-none print:max-w-[430px] print:mx-auto print:min-h-0`}>
         {/* Persistent Brand Header on screens without custom hero top bars */}
-        {currentScreen !== 'welcome' && currentScreen !== 'dashboard' && currentScreen !== 'numbers' && currentScreen !== 'summary' && currentScreen !== 'womens-health' && currentScreen !== 'lifestyle' && currentScreen !== 'screening-guide' && currentScreen !== 'article' && currentScreen !== 'check' && currentScreen !== 'about' && (
+        {currentScreen !== 'welcome' && currentScreen !== 'dashboard' && currentScreen !== 'numbers' && currentScreen !== 'summary' && currentScreen !== 'womens-health' && currentScreen !== 'lifestyle' && currentScreen !== 'screening-guide' && currentScreen !== 'article' && currentScreen !== 'check' && currentScreen !== 'about' && currentScreen !== 'contact' && (
           <Header
             currentScreen={currentScreen}
             onNavigate={handleNavigate}
@@ -158,7 +158,7 @@ export default function App() {
         )}
 
         {/* Dynamic Screen View with Smooth Page Transition */}
-        <main className={`flex-1 ${currentScreen === 'welcome' || currentScreen === 'dashboard' || currentScreen === 'numbers' || currentScreen === 'summary' || currentScreen === 'womens-health' || currentScreen === 'lifestyle' || currentScreen === 'screening-guide' || currentScreen === 'article' || currentScreen === 'check' || currentScreen === 'about' ? 'p-0' : 'px-4 sm:px-5 py-4'} overflow-hidden print:overflow-visible print:p-0`}>
+        <main className={`flex-1 ${currentScreen === 'welcome' || currentScreen === 'dashboard' || currentScreen === 'numbers' || currentScreen === 'summary' || currentScreen === 'womens-health' || currentScreen === 'lifestyle' || currentScreen === 'screening-guide' || currentScreen === 'article' || currentScreen === 'check' || currentScreen === 'about' || currentScreen === 'contact' ? 'p-0' : 'px-4 sm:px-5 py-4'} overflow-hidden print:overflow-visible print:p-0`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={currentScreen}
@@ -203,6 +203,7 @@ export default function App() {
                   onFinishCheck={handleFinishCheck}
                   onNavigate={handleNavigate}
                   hasCompletedCheck={hasCompletedCheck}
+                  onOpenQR={() => setIsQRModalOpen(true)}
                 />
               )}
 
@@ -214,6 +215,7 @@ export default function App() {
                   onNavigate={handleNavigate}
                   hasFilledAssessment={hasFilledAssessment}
                   hasCompletedCheck={hasCompletedCheck}
+                  onOpenQR={() => setIsQRModalOpen(true)}
                 />
               )}
 
@@ -225,6 +227,7 @@ export default function App() {
                   onOpenArticle={handleOpenArticle}
                   onRetakeCheck={handleRetakeCheck}
                   onReviewSelections={() => handleNavigate('check')}
+                  onOpenQR={() => setIsQRModalOpen(true)}
                 />
               )}
 
@@ -233,6 +236,7 @@ export default function App() {
                   initialTab="all"
                   onOpenArticle={handleOpenArticle}
                   onNavigate={handleNavigate}
+                  onOpenQR={() => setIsQRModalOpen(true)}
                 />
               )}
 
@@ -241,6 +245,7 @@ export default function App() {
                   initialTab="lifestyle"
                   onOpenArticle={handleOpenArticle}
                   onNavigate={handleNavigate}
+                  onOpenQR={() => setIsQRModalOpen(true)}
                 />
               )}
 
@@ -248,12 +253,14 @@ export default function App() {
                 <ScreeningGuideScreen
                   onNavigate={handleNavigate}
                   userAgeBand={ageBandLabel}
+                  onOpenQR={() => setIsQRModalOpen(true)}
                 />
               )}
 
               {currentScreen === 'contact' && (
                 <ContactBookingScreen
                   onNavigate={handleNavigate}
+                  onOpenQR={() => setIsQRModalOpen(true)}
                 />
               )}
 
@@ -261,6 +268,7 @@ export default function App() {
                 <AboutSafetyScreen
                   onNavigate={handleNavigate}
                   onDataReset={handleDataReset}
+                  onOpenQR={() => setIsQRModalOpen(true)}
                 />
               )}
 
@@ -276,6 +284,7 @@ export default function App() {
                   onNavigate={handleNavigate}
                   onOpenArticle={handleOpenArticle}
                   onBack={handleBackFromArticle}
+                  onOpenQR={() => setIsQRModalOpen(true)}
                 />
               )}
             </motion.div>

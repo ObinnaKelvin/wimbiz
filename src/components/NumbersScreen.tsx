@@ -11,6 +11,7 @@ import {
   Scale,
   Calculator,
   Plus,
+  QrCode,
 } from 'lucide-react';
 
 interface NumbersScreenProps {
@@ -19,6 +20,7 @@ interface NumbersScreenProps {
   onNavigate: (screen: ScreenId) => void;
   hasFilledAssessment?: boolean;
   hasCompletedCheck?: boolean;
+  onOpenQR?: () => void;
 }
 
 export const NumbersScreen: React.FC<NumbersScreenProps> = ({
@@ -27,6 +29,7 @@ export const NumbersScreen: React.FC<NumbersScreenProps> = ({
   onNavigate,
   hasFilledAssessment = false,
   hasCompletedCheck = false,
+  onOpenQR,
 }) => {
   const [systolic, setSystolic] = useState<string>(numbers.systolic ? String(numbers.systolic) : '');
   const [diastolic, setDiastolic] = useState<string>(numbers.diastolic ? String(numbers.diastolic) : '');
@@ -112,17 +115,31 @@ export const NumbersScreen: React.FC<NumbersScreenProps> = ({
   return (
     <div className="w-full min-h-screen bg-[#fafbfe] text-slate-900 px-5 pt-4 pb-16 flex flex-col justify-start select-none max-w-md mx-auto">
       {/* 1. TOP NAVIGATION BAR */}
-      <div className="flex items-center gap-3.5 mb-6">
-        <button
-          onClick={handleBack}
-          aria-label="Go back"
-          className="w-10 h-10 rounded-full bg-[#f1f4f9] hover:bg-slate-200 active:bg-slate-300 flex items-center justify-center text-slate-800 transition active:scale-95 cursor-pointer shadow-2xs"
-        >
-          <ArrowLeft className="w-5 h-5 stroke-[2.2]" />
-        </button>
-        <h2 className="text-xl font-bold text-slate-900 tracking-tight">
-          Add your numbers
-        </h2>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3.5">
+          <button
+            onClick={handleBack}
+            aria-label="Go back"
+            className="w-10 h-10 rounded-full bg-[#f1f4f9] hover:bg-slate-200 active:bg-slate-300 flex items-center justify-center text-slate-800 transition active:scale-95 cursor-pointer shadow-2xs"
+          >
+            <ArrowLeft className="w-5 h-5 stroke-[2.2]" />
+          </button>
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+            Add your numbers
+          </h2>
+        </div>
+
+        {onOpenQR && (
+          <button
+            type="button"
+            onClick={onOpenQR}
+            aria-label="Share Conference QR Code"
+            title="Share QR Code"
+            className="w-10 h-10 rounded-full bg-white border border-slate-200/90 hover:bg-slate-100 active:scale-95 flex items-center justify-center text-slate-700 shadow-xs transition cursor-pointer"
+          >
+            <QrCode className="w-4 h-4 stroke-[2.2]" />
+          </button>
+        )}
       </div>
 
       {/* 2. OPTIONAL KICKER BADGE */}

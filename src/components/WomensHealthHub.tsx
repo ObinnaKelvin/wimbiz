@@ -20,6 +20,7 @@ import {
   Brain,
   Wind,
   Shield,
+  QrCode,
 } from 'lucide-react';
 
 export type TabType = 'all' | 'womens' | 'lifestyle';
@@ -28,6 +29,7 @@ interface WomensHealthHubProps {
   initialTab?: TabType;
   onOpenArticle: (articleId: string) => void;
   onNavigate: (screen: ScreenId) => void;
+  onOpenQR?: () => void;
 }
 
 interface TopicCard {
@@ -185,6 +187,7 @@ export const WomensHealthHub: React.FC<WomensHealthHubProps> = ({
   initialTab = 'all',
   onOpenArticle,
   onNavigate,
+  onOpenQR,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
 
@@ -233,13 +236,27 @@ export const WomensHealthHub: React.FC<WomensHealthHubProps> = ({
   return (
     <div className="w-full min-h-screen bg-[#fafbfe] text-slate-900 px-4 sm:px-5 pt-3 pb-32 flex flex-col justify-start select-none max-w-md mx-auto">
       {/* 1. TOP HEADER */}
-      <div className="flex items-center gap-3.5 mb-4">
-        <div className="w-10 h-10 rounded-full bg-[#edf2f8] flex items-center justify-center text-slate-900 shadow-2xs">
-          <Heart className="w-5 h-5 fill-slate-900 stroke-0" />
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-full bg-[#edf2f8] flex items-center justify-center text-slate-900 shadow-2xs">
+            <Heart className="w-5 h-5 fill-slate-900 stroke-0" />
+          </div>
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            Learn
+          </h1>
         </div>
-        <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-          Learn
-        </h1>
+
+        {onOpenQR && (
+          <button
+            type="button"
+            onClick={onOpenQR}
+            aria-label="Share Conference QR Code"
+            title="Share QR Code"
+            className="w-10 h-10 rounded-full bg-white border border-slate-200/90 hover:bg-slate-100 active:scale-95 flex items-center justify-center text-slate-700 shadow-xs transition cursor-pointer"
+          >
+            <QrCode className="w-4 h-4 stroke-[2.2]" />
+          </button>
+        )}
       </div>
 
       {/* 2. CYAN / OCEAN HERO CARD */}

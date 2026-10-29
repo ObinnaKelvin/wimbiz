@@ -25,6 +25,7 @@ import {
   ChevronRight,
   PhoneCall,
   HeartHandshake,
+  QrCode,
 } from 'lucide-react';
 
 interface SummaryScreenProps {
@@ -34,6 +35,7 @@ interface SummaryScreenProps {
   onOpenArticle: (articleId: string) => void;
   onRetakeCheck: () => void;
   onReviewSelections?: () => void;
+  onOpenQR?: () => void;
 }
 
 export const SummaryScreen: React.FC<SummaryScreenProps> = ({
@@ -43,6 +45,7 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
   onOpenArticle,
   onRetakeCheck,
   onReviewSelections,
+  onOpenQR,
 }) => {
   const [copiedLink, setCopiedLink] = useState(false);
   const summary: SummaryResults = generateSummary(answers, numbers);
@@ -191,8 +194,21 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
             Your summary
           </h1>
         </div>
-        <div className="text-sm font-medium text-slate-400 tracking-normal">
-          Iwosan
+        <div className="flex items-center gap-2">
+          {onOpenQR && (
+            <button
+              type="button"
+              onClick={onOpenQR}
+              aria-label="Share Conference QR Code"
+              title="Share QR Code"
+              className="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 active:scale-95 flex items-center justify-center text-slate-700 shadow-2xs transition cursor-pointer print:hidden"
+            >
+              <QrCode className="w-4 h-4 stroke-[2.2]" />
+            </button>
+          )}
+          <div className="text-sm font-medium text-slate-400 tracking-normal hidden sm:inline">
+            Iwosan
+          </div>
         </div>
       </div>
 
@@ -206,7 +222,7 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
         <div className="flex items-center justify-between mb-4 relative z-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs font-semibold text-slate-200 shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-slate-300" />
-            <span>Your HerHealth snapshot</span>
+            <span>Your Wellness Passport snapshot</span>
           </div>
 
           <button

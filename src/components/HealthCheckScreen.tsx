@@ -26,6 +26,7 @@ import {
   ChevronRight,
   X,
   Layers,
+  QrCode,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -35,6 +36,7 @@ interface HealthCheckScreenProps {
   onFinishCheck: () => void;
   onNavigate: (screen: ScreenId) => void;
   hasCompletedCheck?: boolean;
+  onOpenQR?: () => void;
 }
 
 interface SectionSummary {
@@ -53,6 +55,7 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
   onFinishCheck,
   onNavigate,
   hasCompletedCheck = false,
+  onOpenQR,
 }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [showSafetyModal, setShowSafetyModal] = useState(false);
@@ -242,13 +245,26 @@ export const HealthCheckScreen: React.FC<HealthCheckScreenProps> = ({
             Health check
           </h1>
 
-          <button
-            type="button"
-            onClick={onFinishCheck}
-            className="px-4 py-1.5 rounded-full border border-slate-200/90 hover:bg-slate-50 active:scale-95 text-xs font-semibold text-slate-700 transition cursor-pointer"
-          >
-            Finish
-          </button>
+          <div className="flex items-center gap-2">
+            {onOpenQR && (
+              <button
+                type="button"
+                onClick={onOpenQR}
+                aria-label="Share Conference QR Code"
+                title="Share QR Code"
+                className="w-9 h-9 rounded-full bg-white border border-slate-200/90 hover:bg-slate-100 active:scale-95 flex items-center justify-center text-slate-700 shadow-2xs transition cursor-pointer"
+              >
+                <QrCode className="w-4 h-4 stroke-[2.2]" />
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onFinishCheck}
+              className="px-4 py-1.5 rounded-full border border-slate-200/90 hover:bg-slate-50 active:scale-95 text-xs font-semibold text-slate-700 transition cursor-pointer"
+            >
+              Finish
+            </button>
+          </div>
         </div>
 
         {/* Section Category & Progress Indicator */}

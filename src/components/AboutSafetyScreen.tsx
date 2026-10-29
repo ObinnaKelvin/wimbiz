@@ -21,16 +21,20 @@ import {
   Stethoscope,
   Building2,
   Sparkles,
+  Lock,
+  QrCode,
 } from 'lucide-react';
 
 interface AboutSafetyScreenProps {
   onNavigate: (screen: ScreenId) => void;
   onDataReset: () => void;
+  onOpenQR?: () => void;
 }
 
 export const AboutSafetyScreen: React.FC<AboutSafetyScreenProps> = ({
   onNavigate,
   onDataReset,
+  onOpenQR,
 }) => {
   const [resetDone, setResetDone] = useState(false);
   const [showHowItWorksModal, setShowHowItWorksModal] = useState(false);
@@ -72,19 +76,33 @@ export const AboutSafetyScreen: React.FC<AboutSafetyScreenProps> = ({
   return (
     <div className="min-h-screen bg-[#fafbfe] text-slate-900 px-4 sm:px-5 pt-3 pb-24 max-w-md mx-auto text-left space-y-4">
       {/* Top Header Row */}
-      <div className="flex items-center gap-3 pt-1 pb-1">
-        <button
-          type="button"
-          onClick={() => onNavigate('dashboard')}
-          aria-label="Return to Dashboard"
-          className="w-10 h-10 rounded-full bg-[#f1f3f6] hover:bg-slate-200 active:scale-95 flex items-center justify-center text-slate-900 transition cursor-pointer"
-        >
-          <Heart className="w-5 h-5 fill-slate-900 text-slate-900" />
-        </button>
+      <div className="flex items-center justify-between pt-1 pb-1">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => onNavigate('dashboard')}
+            aria-label="Return to Dashboard"
+            className="w-10 h-10 rounded-full bg-[#f1f3f6] hover:bg-slate-200 active:scale-95 flex items-center justify-center text-slate-900 transition cursor-pointer"
+          >
+            <Heart className="w-5 h-5 fill-slate-900 text-slate-900" />
+          </button>
 
-        <h1 className="text-xl font-bold text-slate-900 tracking-tight">
-          About & safety
-        </h1>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+            About & safety
+          </h1>
+        </div>
+
+        {onOpenQR && (
+          <button
+            type="button"
+            onClick={onOpenQR}
+            aria-label="Share Conference QR Code"
+            title="Share QR Code"
+            className="w-10 h-10 rounded-full bg-white border border-slate-200/90 hover:bg-slate-100 active:scale-95 flex items-center justify-center text-slate-700 shadow-xs transition cursor-pointer"
+          >
+            <QrCode className="w-4 h-4 stroke-[2.2]" />
+          </button>
+        )}
       </div>
 
       {/* Hero Green Card */}
@@ -104,7 +122,7 @@ export const AboutSafetyScreen: React.FC<AboutSafetyScreenProps> = ({
               Iwosan
             </span>
             <span className="text-sm font-bold text-slate-950 leading-tight block">
-              HerHealth
+              Wellness Passport
             </span>
           </div>
         </div>
@@ -151,7 +169,7 @@ export const AboutSafetyScreen: React.FC<AboutSafetyScreenProps> = ({
               Anonymous by default
             </h3>
             <p className="text-[11px] text-slate-500 leading-relaxed mt-1">
-              No name, email or phone needed to use any part of HerHealth.
+              No name, email or phone needed to use any part of this app.
             </p>
           </div>
         </motion.div>
@@ -366,7 +384,7 @@ export const AboutSafetyScreen: React.FC<AboutSafetyScreenProps> = ({
           About this app
         </h3>
         <p className="text-xs text-slate-600 leading-relaxed">
-          Iwosan HerHealth is a conference companion app that stays useful afterwards. It runs as a web app — no app store, works on iPhone and Android, and can be added to your home screen from your browser menu.
+          Wellness Passport is a conference companion app that stays useful afterwards. It runs as a web app — no app store, works on iPhone and Android, and can be added to your home screen from your browser menu.
         </p>
 
         <div className="space-y-2 pt-1 border-t border-slate-100 text-[11px]">
@@ -398,10 +416,21 @@ export const AboutSafetyScreen: React.FC<AboutSafetyScreenProps> = ({
         <span>Talk to Iwosan (optional)</span>
       </motion.button>
 
-      {/* Educational Footer Note */}
-      <p className="text-[10px] text-slate-400 text-center font-normal pt-1 pb-4">
-        Educational information, not a diagnosis. Iwosan Healthcare Systems.
-      </p>
+      {/* Educational Footer Note with Discrete Admin Link */}
+      <div className="flex items-center justify-center gap-1.5 pt-1 pb-4">
+        <p className="text-[10px] text-slate-400 text-center font-normal">
+          Educational information, not a diagnosis. Iwosan Healthcare Systems.
+        </p>
+        <button
+          type="button"
+          onClick={() => onNavigate('admin')}
+          title="Clinical & Admin Portal"
+          aria-label="Admin Portal"
+          className="text-slate-300 hover:text-slate-600 transition-colors opacity-40 hover:opacity-100 p-1 rounded-sm cursor-pointer inline-flex items-center shrink-0"
+        >
+          <Lock className="w-2.5 h-2.5" />
+        </button>
+      </div>
 
       {/* "How it works" Detailed Modal */}
       <AnimatePresence>
@@ -420,7 +449,7 @@ export const AboutSafetyScreen: React.FC<AboutSafetyScreenProps> = ({
                     <Sparkles className="w-4 h-4 text-[#3b72c4]" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900">How HerHealth Works</h3>
+                    <h3 className="text-sm font-bold text-slate-900">How Wellness Passport Works</h3>
                     <p className="text-[11px] text-slate-500">Six simple steps to proactive wellness</p>
                   </div>
                 </div>

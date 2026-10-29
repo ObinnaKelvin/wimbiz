@@ -15,6 +15,7 @@ import {
   Minus,
   User,
   Share2,
+  QrCode,
 } from 'lucide-react';
 
 interface ArticlePostScreenProps {
@@ -22,6 +23,7 @@ interface ArticlePostScreenProps {
   onNavigate: (screen: ScreenId) => void;
   onOpenArticle: (articleId: string) => void;
   onBack: () => void;
+  onOpenQR?: () => void;
 }
 
 export const ArticlePostScreen: React.FC<ArticlePostScreenProps> = ({
@@ -29,6 +31,7 @@ export const ArticlePostScreen: React.FC<ArticlePostScreenProps> = ({
   onNavigate,
   onOpenArticle,
   onBack,
+  onOpenQR,
 }) => {
   // Manage accordion open state: default to opening section index 0
   const [openSections, setOpenSections] = useState<Record<number, boolean>>({ 0: true });
@@ -154,19 +157,32 @@ export const ArticlePostScreen: React.FC<ArticlePostScreenProps> = ({
           {categoryLabel}
         </h1>
 
-        <button
-          onClick={toggleBookmark}
-          aria-label="Bookmark"
-          className={`w-10 h-10 rounded-2xl border flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-2xs ${
-            isBookmarked
-              ? 'bg-emerald-50 border-emerald-300 text-emerald-700'
-              : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
-          }`}
-        >
-          <Bookmark
-            className={`w-4 h-4 stroke-[2.2] ${isBookmarked ? 'fill-emerald-600' : ''}`}
-          />
-        </button>
+        <div className="flex items-center gap-2">
+          {onOpenQR && (
+            <button
+              onClick={onOpenQR}
+              aria-label="Share Conference QR Code"
+              title="Share QR Code"
+              className="w-10 h-10 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-2xs"
+            >
+              <QrCode className="w-4 h-4 stroke-[2.2]" />
+            </button>
+          )}
+
+          <button
+            onClick={toggleBookmark}
+            aria-label="Bookmark"
+            className={`w-10 h-10 rounded-2xl border flex items-center justify-center transition-all cursor-pointer active:scale-95 shadow-2xs ${
+              isBookmarked
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-700'
+                : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+            }`}
+          >
+            <Bookmark
+              className={`w-4 h-4 stroke-[2.2] ${isBookmarked ? 'fill-emerald-600' : ''}`}
+            />
+          </button>
+        </div>
       </div>
 
       {/* 2. HERO IMAGE BANNER with smooth fade to white */}
