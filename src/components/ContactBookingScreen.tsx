@@ -31,6 +31,7 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
   const [contactInfo, setContactInfo] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('lagoon-vi');
   const [packageInterest, setPackageInterest] = useState('Well-Woman Comprehensive Screening');
+  const [message, setMessage] = useState('');
   const [hasConsent, setHasConsent] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -278,7 +279,13 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
               </p>
               <button
                 type="button"
-                onClick={() => setIsSubmitted(false)}
+                onClick={() => {
+                  setName('');
+                  setContactInfo('');
+                  setMessage('');
+                  setHasConsent(false);
+                  setIsSubmitted(false);
+                }}
                 className="text-xs font-bold text-emerald-700 underline pt-2 cursor-pointer"
               >
                 Submit another inquiry
@@ -363,6 +370,19 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div>
+                <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                  Message or Note (Optional)
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Type any questions, clinical concerns, or preferred days/times for appointment..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50/70 resize-none leading-relaxed placeholder:text-slate-400"
+                />
               </div>
 
               {/* Explicit Consent Checkbox */}
