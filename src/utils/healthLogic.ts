@@ -854,7 +854,7 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
     worthChecking.push({
       id: 'gynae_condition_care',
       title: 'Active Gynaecological Condition Management',
-      description: 'Managing diagnosed fibroids, endometriosis, or PCOS with regular pelvic ultrasounds and hormonal reviews preserves vitality and reproductive options.',
+      description: 'Managing diagnosed fibroids, endometriosis, or PMOS with regular pelvic ultrasounds and hormonal reviews preserves vitality and reproductive options.',
       articleId: 'menstrual-health',
       actionText: 'Read Condition Guide',
       actionScreen: 'womens-health',
@@ -863,8 +863,132 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
     keepDoing.push({
       id: 'gynae_clear',
       title: 'Clear Gynaecological Profile',
-      description: 'No history of fibroids, endometriosis, or PCOS noted. Continuing annual checkups supports ongoing reproductive wellness.',
+      description: 'No history of fibroids, endometriosis, or PMOS noted. Continuing annual checkups supports ongoing reproductive wellness.',
       articleId: 'reproductive-health',
+    });
+  }
+
+  // General Women's Health - Detailed Symptom Evaluation (All Ages)
+  const cycleDays = answers['q_cycle_days'];
+  const severePeriodPain = answers['q_severe_period_pain'];
+  const bleedingBetween = answers['q_bleeding_between_periods'];
+  const painIntercourse = answers['q_pain_sexual_intercourse'];
+  const periodInterference = answers['q_periods_interfere_activities'];
+  const difficultyPregnant = answers['q_difficulty_getting_pregnant'];
+  const weightPerception = answers['q_weight_perception'];
+  const chinHair = answers['q_chin_hair'];
+
+  // Cycle Length
+  if (cycleDays === '21_to_35_days') {
+    keepDoing.push({
+      id: 'cycle_regular_normal',
+      title: 'Healthy Cycle Duration (21–35 Days)',
+      description: 'Your menstrual cycle length falls comfortably within the standard biological range, reflecting balanced ovulatory and hormonal pacing.',
+      articleId: 'menstrual-health',
+    });
+  } else if (cycleDays === 'less_than_21_days' || cycleDays === 'more_than_35_days') {
+    worthChecking.push({
+      id: 'cycle_duration_review',
+      title: 'Cycle Regularity & Hormone Pacing Review',
+      description: 'Cycles shorter than 21 days or longer than 35 days often indicate anovulatory cycles, thyroid fluctuations, or PMOS / ovarian patterns. Discussing cycle tracking with a gynaecologist can restore balance.',
+      articleId: 'menstrual-health',
+      actionText: 'Read Menstrual Guide',
+      actionScreen: 'womens-health',
+    });
+  }
+
+  // Dysmenorrhea & Activity Interference
+  if (severePeriodPain === 'severe_disabling' || periodInterference === 'often_miss_work') {
+    discussWithDoctor.push({
+      id: 'severe_dysmenorrhea_review',
+      title: 'Severe Period Pain & Disruption Support',
+      description: 'Severe cramping that interrupts work, sleep, or daily responsibilities is not something you must simply endure. It warrants dedicated screening for endometriosis, adenomyosis, or fibroids.',
+      articleId: 'menstrual-health',
+      actionText: 'Book Gynaecological Review',
+      actionScreen: 'contact',
+    });
+  } else if (severePeriodPain === 'no_mild' && (periodInterference === 'never' || periodInterference === 'rarely')) {
+    keepDoing.push({
+      id: 'period_comfort_good',
+      title: 'Manageable Menstrual Comfort',
+      description: 'Experiencing minimal pain and maintaining daily productivity during menstruation indicates favorable pelvic health and hormonal comfort.',
+      articleId: 'menstrual-health',
+    });
+  }
+
+  // Intermenstrual Bleeding
+  if (bleedingBetween === 'frequently' || bleedingBetween === 'after_sex_postmenopausal') {
+    discussWithDoctor.push({
+      id: 'intermenstrual_bleeding_check',
+      title: 'Intermenstrual or Post-Coital Spotting Evaluation',
+      description: 'Bleeding between periods or after intercourse warrants a gentle speculum exam and pelvic ultrasound to check the cervix and endometrial lining.',
+      articleId: 'cervical-cancer-hpv',
+      actionText: 'Speak with an Iwosan Clinician',
+      actionScreen: 'contact',
+    });
+  }
+
+  // Dyspareunia (Pain during intercourse)
+  if (painIntercourse === 'frequent_deep_pain') {
+    discussWithDoctor.push({
+      id: 'dyspareunia_support',
+      title: 'Pelvic Comfort & Gynaecological Review',
+      description: 'Persistent discomfort or deep pain during intercourse can stem from pelvic floor tightness, localized tissue dryness, fibroids, or endometriosis. Compassionate medical care can provide meaningful relief.',
+      articleId: 'reproductive-health',
+      actionText: 'Consult Women’s Health Specialist',
+      actionScreen: 'contact',
+    });
+  } else if (painIntercourse === 'occasional_dryness') {
+    worthChecking.push({
+      id: 'intimacy_dryness_care',
+      title: 'Vaginal Moisture & Hormonal Balance',
+      description: 'Intermittent dryness is very common with stress, contraceptive use, or shifting estrogen. Clinician-recommended moisturizers and gentle therapies quickly restore comfort.',
+      articleId: 'reproductive-health',
+      actionText: 'Explore Women’s Health Guide',
+      actionScreen: 'womens-health',
+    });
+  }
+
+  // Fertility Difficulty
+  if (difficultyPregnant === 'significant_difficulty') {
+    discussWithDoctor.push({
+      id: 'fertility_evaluation_support',
+      title: 'Comprehensive Reproductive & Fertility Assessment',
+      description: 'Facing difficulty getting pregnant can be emotionally demanding. Early investigations of ovulation reserve, tubal patency, and pelvic anatomy provide clear, proactive paths forward.',
+      articleId: 'reproductive-health',
+      actionText: 'Connect with Fertility Team',
+      actionScreen: 'contact',
+    });
+  }
+
+  // Chin Hair (Hirsutism / PMOS Sign)
+  if (chinHair === 'noticeable_coarse' || chinHair === 'frequent_spreading') {
+    worthChecking.push({
+      id: 'hirsutism_hormonal_balance',
+      title: 'Androgen & Hormonal Profile Review',
+      description: 'Coarse hair growth under the chin is often linked to elevated androgens or insulin resistance (frequently seen in PMOS). Blood hormone tests and metabolic support offer targeted management.',
+      articleId: 'menstrual-health',
+      actionText: 'Learn about PMOS Care',
+      actionScreen: 'womens-health',
+    });
+  }
+
+  // Weight Perception
+  if (weightPerception === 'obese') {
+    worthChecking.push({
+      id: 'metabolic_weight_management',
+      title: 'Metabolic & Cardiometabolic Wellness Review',
+      description: 'Carrying significant excess weight places additional stress on joints, vascular endothelium, and insulin receptors. A physician-led metabolic plan can help protect long-term vitality.',
+      articleId: 'nutrition-hydration',
+      actionText: 'Read Nutrition Guide',
+      actionScreen: 'lifestyle',
+    });
+  } else if (weightPerception === 'normal_weight') {
+    keepDoing.push({
+      id: 'weight_balance_healthy',
+      title: 'Healthy Weight Perception & Metabolic Ease',
+      description: 'Maintaining a stable, healthy weight perception supports cardiovascular longevity, reproductive health, and steady daily vitality.',
+      articleId: 'nutrition-hydration',
     });
   }
 
