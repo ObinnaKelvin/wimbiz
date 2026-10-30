@@ -11,7 +11,8 @@ export type ScreenId =
   | 'contact'
   | 'about'
   | 'admin'
-  | 'article';
+  | 'article'
+  | 'flipbook';
 
 export type QuestionCategory =
   | 'OCCUPATION'

@@ -26,6 +26,7 @@ import {
   PhoneCall,
   HeartHandshake,
   QrCode,
+  BookOpen,
 } from 'lucide-react';
 
 interface SummaryScreenProps {
@@ -614,6 +615,30 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
           </p>
 
           <div className="space-y-2">
+            {/* Wellness Passport Flipbook Preview */}
+            <button
+              onClick={() => onNavigate('flipbook')}
+              className="w-full bg-[#081934] hover:bg-[#0c2246] border-2 border-[#00B1DA]/50 hover:border-[#00B1DA] text-white rounded-2xl p-3.5 flex items-center justify-between text-left transition shadow-md group cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-[#00B1DA] text-[#081934] flex items-center justify-center flex-shrink-0 shadow-xs">
+                  <BookOpen className="w-4 h-4 stroke-[2.3]" />
+                </div>
+                <div>
+                  <div className="text-xs sm:text-sm font-bold text-white group-hover:text-[#00B1DA] transition flex items-center gap-1.5">
+                    <span>Wellness Passport Flipbook Preview</span>
+                    <span className="text-[10px] bg-[#47B549]/20 text-[#47B549] font-bold px-2 py-0.5 rounded-full border border-[#47B549]/40">
+                      6 Pages
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-300 mt-0.5">
+                    Flip through your 6-page interactive commemorative health passport booklet.
+                  </div>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-[#00B1DA] group-hover:translate-x-0.5 flex-shrink-0 transition" />
+            </button>
+
             {/* 1. Review Selection */}
             <button
               onClick={onReviewSelections || (() => onNavigate('check'))}
