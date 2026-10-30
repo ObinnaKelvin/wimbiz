@@ -43,8 +43,6 @@ import {
   MapPin,
   Smartphone,
   Info,
-  Trash2,
-  RotateCcw,
   FileText,
 } from 'lucide-react';
 
@@ -150,122 +148,29 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentPage]);
 
-  const handlePrint = () => {
+  const handleDownloadFullPdf = () => {
     const origTitle = document.title;
-    document.title = `E_Health_Passport_Page_${currentPage}_${new Date().toISOString().split('T')[0]}`;
+    document.title = `Iwosan_WIMBIZ_25_Wellness_Passport_9_Pages_${new Date().toISOString().split('T')[0]}`;
     window.print();
     setTimeout(() => {
       document.title = origTitle;
-    }, 1000);
+    }, 1500);
   };
+
+  const handlePrint = handleDownloadFullPdf;
 
   // Current formatted page string (e.g., "01/06")
   const pageNumberString = `0${currentPage}/0${TOTAL_PAGES}`;
   const currentTitle = PAGE_META[currentPage - 1].title;
 
-  return (
-    <div className="min-h-screen bg-[#f4f7fb] text-slate-900 flex flex-col justify-between px-3 sm:px-4 py-3 sm:py-5 max-w-lg mx-auto print:bg-white print:p-0 print:max-w-none">
-      {/* 1. Top Header Bar (Matching Attached Design image_cefdcbc8.png) */}
-      <header className="pb-2 print:hidden">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() => onNavigate('summary')}
-              className="w-10 h-10 rounded-full bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs flex items-center justify-center text-slate-800 transition active:scale-95 cursor-pointer"
-              title="Return to Summary"
-              aria-label="Return to Summary"
-            >
-              <ArrowLeft className="w-4 h-4 stroke-[2.3]" />
-            </button>
-            <div>
-              <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight">
-                E-Health passport
-              </h1>
-              <p className="text-xs text-slate-500 font-medium leading-none mt-0.5">
-                Iwosan
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handlePrint}
-              title="Print or Save Document"
-              aria-label="Print Document"
-              className="w-10 h-10 rounded-full bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs flex items-center justify-center text-slate-700 transition active:scale-95 cursor-pointer"
-            >
-              <Printer className="w-4 h-4" />
-            </button>
-
-            {onOpenQR && (
-              <button
-                type="button"
-                onClick={onOpenQR}
-                title="Share QR Code"
-                aria-label="Share QR Code"
-                className="w-10 h-10 rounded-full bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs flex items-center justify-center text-slate-700 transition active:scale-95 cursor-pointer"
-              >
-                <QrCode className="w-4 h-4 text-[#00B1DA]" />
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Header Kicker Title: "Your e-health passport" */}
-        <div className="mt-3.5 px-0.5">
-          <div className="text-[11px] font-medium text-slate-400 tracking-wider">
-            Iwosan × WIMBIZ 25
-          </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mt-0.5">
-            Your e-health <span className="font-serif italic font-normal text-slate-800">passport</span>
-          </h2>
-        </div>
-      </header>
-
-      {/* 2. Passport Flipbook Container (Matching Attached Design image_cefdcbc8.png) */}
-      <main className="relative my-2 sm:my-3 flex-1 flex flex-col justify-center items-center">
-        <div className="w-full relative max-w-md mx-auto">
-          {/* Subtle Page Peek Layers Beneath (Booklet Edge Effect) */}
-          <div className="absolute inset-x-4 -bottom-2 h-6 bg-slate-200/70 rounded-[28px] pointer-events-none" />
-          <div className="absolute inset-x-2 -bottom-1 h-6 bg-slate-100 rounded-[30px] pointer-events-none shadow-xs" />
-
-          {/* Main Card Frame */}
-          <div className="relative rounded-[28px] sm:rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(8,25,52,0.35)] border border-slate-800/80 bg-[#081934]">
-            {/* Animated Dynamic Page Content */}
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={currentPage}
-                custom={direction}
-                initial={{
-                  opacity: 0,
-                  rotateY: direction > 0 ? 25 : -25,
-                  x: direction > 0 ? 30 : -30,
-                  scale: 0.98,
-                }}
-                animate={{
-                  opacity: 1,
-                  rotateY: 0,
-                  x: 0,
-                  scale: 1,
-                }}
-                exit={{
-                  opacity: 0,
-                  rotateY: direction > 0 ? -25 : 25,
-                  x: direction > 0 ? -30 : 30,
-                  scale: 0.98,
-                }}
-                transition={{
-                  duration: 0.28,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                className="w-full min-h-[510px] sm:min-h-[530px] flex flex-col justify-between"
-              >
+  // Render content for a specific flipbook page (used for both screen viewer and 9-page PDF printout)
+  const renderPageContent = (pageIndex: number, isPrint = false) => {
+    return (
+      <>
                 {/* ---------------------------------------------------- */}
                 {/* PAGE 1: EXACT MATCH TO image_cefdcbc8.png            */}
                 {/* ---------------------------------------------------- */}
-                {currentPage === 1 && (
+                {pageIndex === 1 && (
                   <div className="flex-1 bg-gradient-to-b from-[#081934] via-[#0b2144] to-[#051124] text-white p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden select-none">
                     {/* Security Subtle Grid Tint */}
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#00B1DA_1px,transparent_1px)] [background-size:16px_16px]" />
@@ -383,7 +288,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* ---------------------------------------------------- */}
                 {/* PAGE 2: FIT@25 BASELINE PROFILE (Matches image_6019a855.png) */}
                 {/* ---------------------------------------------------- */}
-                {currentPage === 2 && (
+                {pageIndex === 2 && (
                   <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
                     <div>
                       {/* Top Meta Line: "Baseline profile" + "Page 01" */}
@@ -616,7 +521,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* ---------------------------------------------------- */}
                 {/* PAGE 3: THE MAP, PART ONE (Matches image_80ebe606.png)*/}
                 {/* ---------------------------------------------------- */}
-                {currentPage === 3 && (
+                {pageIndex === 3 && (
                   <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
                     <div>
                       {/* Top Meta Line: "Health conversation map" + "Page 02" */}
@@ -802,7 +707,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* ---------------------------------------------------- */}
                 {/* PAGE 4: THE MAP, PART TWO (Matches image_268c2c40.png)*/}
                 {/* ---------------------------------------------------- */}
-                {currentPage === 4 && (
+                {pageIndex === 4 && (
                   <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
                     <div>
                       {/* Top Meta Line: "Health conversation map" + "Page 03" */}
@@ -959,7 +864,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* ---------------------------------------------------- */}
                 {/* PAGE 5: THINGS TO DISCUSS (Matches image_911c706d.png)*/}
                 {/* ---------------------------------------------------- */}
-                {currentPage === 5 && (
+                {pageIndex === 5 && (
                   <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
                     <div>
                       {/* Top Meta Line: "Clinical preparation" + "Page 04" */}
@@ -1138,7 +1043,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* ---------------------------------------------------- */}
                 {/* PAGE 6: PREVENTIVE SCREENING (Matches image_59518671.png) */}
                 {/* ---------------------------------------------------- */}
-                {currentPage === 6 && (
+                {pageIndex === 6 && (
                   <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
                     <div>
                       {/* Top Meta Line: "Preventive screening" + "Page 05" */}
@@ -1293,7 +1198,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* ---------------------------------------------------- */}
                 {/* PAGE 7: LIFE & LEADERSHIP PLAN (Matches image_ebeb5c0d.png) */}
                 {/* ---------------------------------------------------- */}
-                {currentPage === 7 && (
+                {pageIndex === 7 && (
                   <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
                     <div>
                       {/* Top Meta Line: "Life & leadership plan" + "Page 06" */}
@@ -1555,7 +1460,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* ---------------------------------------------------- */}
                 {/* PAGE 8: MILESTONES & SIGNATURE (Matches image_6f8d39f8.png) */}
                 {/* ---------------------------------------------------- */}
-                {currentPage === 8 && (
+                {pageIndex === 8 && (
                   <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
                     <div>
                       {/* Top Meta Line: "Milestones & signature" + "Page 07" */}
@@ -1742,7 +1647,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* ---------------------------------------------------- */}
                 {/* PAGE 9: IWOSAN CLINICAL BOOTH (Matches image_5f1a0e51.png) */}
                 {/* ---------------------------------------------------- */}
-                {currentPage === 9 && (
+                {pageIndex === 9 && (
                   <div className="flex-1 p-5 sm:p-6 bg-[#081934] text-white flex flex-col justify-between relative select-none">
                     <div>
                       {/* Top Meta Line & 25th Badge */}
@@ -1851,35 +1756,19 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                         </p>
                       </div>
 
-                      {/* Save this passport as PDF */}
-                      <button
-                        type="button"
-                        onClick={() => window.print()}
-                        className="w-full py-3 px-4 bg-white hover:bg-slate-100 text-slate-950 font-extrabold text-xs sm:text-sm rounded-full flex items-center justify-center gap-2 shadow-md transition cursor-pointer mt-3.5"
-                      >
-                        <FileText className="w-4 h-4 stroke-[2.2]" />
-                        <span>Save this passport as PDF</span>
-                      </button>
-
-                      {/* Secondary Action Buttons: Redo the check / Erase data */}
-                      <div className="grid grid-cols-2 gap-2 mt-2.5">
-                        <button
-                          type="button"
-                          onClick={() => onNavigate('questions')}
-                          className="py-2.5 px-3 rounded-full border border-white/20 bg-transparent hover:bg-white/10 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
-                        >
-                          <RotateCcw className="w-3.5 h-3.5" />
-                          <span>Redo the check</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onNavigate('welcome')}
-                          className="py-2.5 px-3 rounded-full border border-white/20 bg-transparent hover:bg-white/10 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition cursor-pointer"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          <span>Erase data</span>
-                        </button>
-                      </div>
+                      {/* Interactive PDF & navigation actions (hidden in exported print document) */}
+                      {!isPrint && (
+                        <div className="print:hidden">
+                          <button
+                            type="button"
+                            onClick={handleDownloadFullPdf}
+                            className="w-full py-3 px-4 bg-white hover:bg-slate-100 text-slate-950 font-extrabold text-xs sm:text-sm rounded-full flex items-center justify-center gap-2 shadow-md transition cursor-pointer mt-3.5"
+                          >
+                            <FileText className="w-4 h-4 stroke-[2.2]" />
+                            <span>Save this passport as PDF</span>
+                          </button>
+                        </div>
+                      )}
                     </div>
 
                     {/* Passport Machine Code Line */}
@@ -1888,11 +1777,154 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                     </div>
                   </div>
                 )}
+
+      </>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-[#f4f7fb] text-slate-900 flex flex-col justify-between px-3 sm:px-4 py-3 sm:py-5 max-w-lg mx-auto print:bg-white print:p-0 print:max-w-none">
+      {/* 1. Top Header Bar (Matching Attached Design image_cefdcbc8.png) */}
+      <header className="pb-2 print:hidden">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => onNavigate('summary')}
+              className="w-10 h-10 rounded-full bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs flex items-center justify-center text-slate-800 transition active:scale-95 cursor-pointer"
+              title="Return to Summary"
+              aria-label="Return to Summary"
+            >
+              <ArrowLeft className="w-4 h-4 stroke-[2.3]" />
+            </button>
+            <div>
+              <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight">
+                E-Health passport
+              </h1>
+              <p className="text-xs text-slate-500 font-medium leading-none mt-0.5">
+                Iwosan
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handlePrint}
+              title="Print or Save Document"
+              aria-label="Print Document"
+              className="w-10 h-10 rounded-full bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs flex items-center justify-center text-slate-700 transition active:scale-95 cursor-pointer"
+            >
+              <Printer className="w-4 h-4" />
+            </button>
+
+            {onOpenQR && (
+              <button
+                type="button"
+                onClick={onOpenQR}
+                title="Share QR Code"
+                aria-label="Share QR Code"
+                className="w-10 h-10 rounded-full bg-white hover:bg-slate-50 border border-slate-200/80 shadow-2xs flex items-center justify-center text-slate-700 transition active:scale-95 cursor-pointer"
+              >
+                <QrCode className="w-4 h-4 text-[#00B1DA]" />
+              </button>
+            )}
+          </div>
+        </div>
+        {/* Header Kicker Title: "Your e-health passport" + Download 9-Page PDF Button */}
+        <div className="mt-3.5 px-0.5 flex items-center justify-between">
+          <div>
+            <div className="text-[11px] font-medium text-slate-400 tracking-wider">
+              Iwosan × WIMBIZ 25
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mt-0.5">
+              Your e-health <span className="font-serif italic font-normal text-slate-800">passport</span>
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={handleDownloadFullPdf}
+            title="Download Complete 9-Page PDF Flipbook"
+            aria-label="Download Complete 9-Page PDF Flipbook"
+            className="w-10 h-10 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center text-slate-700 hover:bg-slate-50 hover:text-[#00B1DA] transition active:scale-95 cursor-pointer"
+          >
+            <FileText className="w-4 h-4" />
+          </button>
+        </div>
+      </header>
+
+      {/* 2. Passport Flipbook Container (Matching Attached Design image_cefdcbc8.png) */}
+      <main className="relative my-2 sm:my-3 flex-1 flex flex-col justify-center items-center print:hidden">
+        <div className="w-full relative max-w-md mx-auto">
+          {/* Subtle Page Peek Layers Beneath (Booklet Edge Effect) */}
+          <div className="absolute inset-x-4 -bottom-2 h-6 bg-slate-200/70 rounded-[28px] pointer-events-none" />
+          <div className="absolute inset-x-2 -bottom-1 h-6 bg-slate-100 rounded-[30px] pointer-events-none shadow-xs" />
+
+          {/* Main Card Frame */}
+          <div className="relative rounded-[28px] sm:rounded-[32px] overflow-hidden shadow-[0_20px_50px_rgba(8,25,52,0.35)] border border-slate-800/80 bg-[#081934]">
+            {/* Animated Dynamic Page Content */}
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={currentPage}
+                custom={direction}
+                initial={{
+                  opacity: 0,
+                  rotateY: direction > 0 ? 25 : -25,
+                  x: direction > 0 ? 30 : -30,
+                  scale: 0.98,
+                }}
+                animate={{
+                  opacity: 1,
+                  rotateY: 0,
+                  x: 0,
+                  scale: 1,
+                }}
+                exit={{
+                  opacity: 0,
+                  rotateY: direction > 0 ? -25 : 25,
+                  x: direction > 0 ? -30 : 30,
+                  scale: 0.98,
+                }}
+                transition={{
+                  duration: 0.28,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="w-full min-h-[510px] sm:min-h-[530px] flex flex-col justify-between"
+              >
+                {renderPageContent(currentPage, false)}
               </motion.div>
             </AnimatePresence>
           </div>
         </div>
       </main>
+
+      {/* 3. High-Fidelity 9-Page Complete PDF Flipbook Booklet (Exported / Printed Sequentially) */}
+      <div className="hidden print:block w-full print-flipbook-document">
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((pageNum) => (
+          <div
+            key={`print-booklet-page-${pageNum}`}
+            className={`print-page w-full max-w-[460px] mx-auto min-h-[270mm] rounded-[28px] overflow-hidden border shadow-none flex flex-col justify-between my-0 ${
+              pageNum === 1 || pageNum === 9
+                ? 'border-slate-800 bg-[#081934]'
+                : 'border-slate-200 bg-white'
+            }`}
+          >
+            <div className="w-full flex-1 flex flex-col justify-between">
+              {renderPageContent(pageNum, true)}
+            </div>
+            <div
+              className={`py-2 px-5 border-t flex items-center justify-between text-[9px] font-mono tracking-wider ${
+                pageNum === 1 || pageNum === 9
+                  ? 'bg-[#051124] text-slate-400 border-white/10'
+                  : 'bg-slate-50 text-slate-400 border-slate-200/80'
+              }`}
+            >
+              <span>IWOSAN HEALTHCARE × WIMBIZ 25</span>
+              <span>PASSPORT NO. IW25-0810 · PAGE 0${pageNum} OF 09</span>
+            </div>
+          </div>
+        ))}
+      </div>
 
       {/* 3. Bottom Flipbook Navigation Controls (Matching image_cefdcbc8.png) */}
       <footer className="pt-2 sm:pt-3 print:hidden">

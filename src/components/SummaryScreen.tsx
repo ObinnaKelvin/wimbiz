@@ -628,11 +628,11 @@ export const SummaryScreen: React.FC<SummaryScreenProps> = ({
                   <div className="text-xs sm:text-sm font-bold text-white group-hover:text-[#00B1DA] transition flex items-center gap-1.5">
                     <span>Wellness Passport Flipbook Preview</span>
                     <span className="text-[10px] bg-[#47B549]/20 text-[#47B549] font-bold px-2 py-0.5 rounded-full border border-[#47B549]/40">
-                      6 Pages
+                      9 Pages
                     </span>
                   </div>
                   <div className="text-[11px] text-slate-300 mt-0.5">
-                    Flip through your 6-page interactive commemorative health passport booklet.
+                    Flip through your 9-page interactive commemorative health passport booklet.
                   </div>
                 </div>
               </div>
