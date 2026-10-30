@@ -171,7 +171,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* PAGE 1: EXACT MATCH TO image_cefdcbc8.png            */}
                 {/* ---------------------------------------------------- */}
                 {pageIndex === 1 && (
-                  <div className="flex-1 bg-gradient-to-b from-[#081934] via-[#0b2144] to-[#051124] text-white p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden select-none">
+                  <div className={`flex-1 bg-gradient-to-b from-[#081934] via-[#0b2144] to-[#051124] text-white ${isPrint ? "p-4 sm:p-5" : "p-5 sm:p-6"} flex flex-col justify-between relative overflow-hidden select-none`}>
                     {/* Security Subtle Grid Tint */}
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#00B1DA_1px,transparent_1px)] [background-size:16px_16px]" />
 
@@ -274,13 +274,15 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                       </div>
 
                       {/* Swipe or Tap to Open CTA */}
-                      <button
-                        type="button"
-                        onClick={goToNextPage}
-                        className="w-full text-center py-1 text-xs text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition cursor-pointer"
-                      >
-                        <span>→ Swipe to open</span>
-                      </button>
+                      {!isPrint && (
+                        <button
+                          type="button"
+                          onClick={goToNextPage}
+                          className="w-full text-center py-1 text-xs text-slate-400 hover:text-white flex items-center justify-center gap-1.5 transition cursor-pointer print:hidden"
+                        >
+                          <span>→ Swipe to open</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 )}
@@ -289,7 +291,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* PAGE 2: FIT@25 BASELINE PROFILE (Matches image_6019a855.png) */}
                 {/* ---------------------------------------------------- */}
                 {pageIndex === 2 && (
-                  <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
+                  <div className={`flex-1 ${isPrint ? "p-3.5 sm:p-4" : "p-5 sm:p-6"} bg-white text-slate-900 flex flex-col justify-between relative select-none`}>
                     <div>
                       {/* Top Meta Line: "Baseline profile" + "Page 01" */}
                       <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
@@ -522,7 +524,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* PAGE 3: THE MAP, PART ONE (Matches image_80ebe606.png)*/}
                 {/* ---------------------------------------------------- */}
                 {pageIndex === 3 && (
-                  <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
+                  <div className={`flex-1 ${isPrint ? "p-3.5 sm:p-4" : "p-5 sm:p-6"} bg-white text-slate-900 flex flex-col justify-between relative select-none`}>
                     <div>
                       {/* Top Meta Line: "Health conversation map" + "Page 02" */}
                       <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
@@ -708,7 +710,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* PAGE 4: THE MAP, PART TWO (Matches image_268c2c40.png)*/}
                 {/* ---------------------------------------------------- */}
                 {pageIndex === 4 && (
-                  <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
+                  <div className={`flex-1 ${isPrint ? "p-3.5 sm:p-4" : "p-5 sm:p-6"} bg-white text-slate-900 flex flex-col justify-between relative select-none`}>
                     <div>
                       {/* Top Meta Line: "Health conversation map" + "Page 03" */}
                       <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
@@ -1044,7 +1046,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* PAGE 6: PREVENTIVE SCREENING (Matches image_59518671.png) */}
                 {/* ---------------------------------------------------- */}
                 {pageIndex === 6 && (
-                  <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
+                  <div className={`flex-1 ${isPrint ? "p-3.5 sm:p-4" : "p-5 sm:p-6"} bg-white text-slate-900 flex flex-col justify-between relative select-none`}>
                     <div>
                       {/* Top Meta Line: "Preventive screening" + "Page 05" */}
                       <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
@@ -1199,7 +1201,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* PAGE 7: LIFE & LEADERSHIP PLAN (Matches image_ebeb5c0d.png) */}
                 {/* ---------------------------------------------------- */}
                 {pageIndex === 7 && (
-                  <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
+                  <div className={`flex-1 ${isPrint ? "p-3.5 sm:p-4" : "p-5 sm:p-6"} bg-white text-slate-900 flex flex-col justify-between relative select-none`}>
                     <div>
                       {/* Top Meta Line: "Life & leadership plan" + "Page 06" */}
                       <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
@@ -1461,7 +1463,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* PAGE 8: MILESTONES & SIGNATURE (Matches image_6f8d39f8.png) */}
                 {/* ---------------------------------------------------- */}
                 {pageIndex === 8 && (
-                  <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
+                  <div className={`flex-1 ${isPrint ? "p-3.5 sm:p-4" : "p-5 sm:p-6"} bg-white text-slate-900 flex flex-col justify-between relative select-none`}>
                     <div>
                       {/* Top Meta Line: "Milestones & signature" + "Page 07" */}
                       <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
@@ -1783,7 +1785,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f7fb] text-slate-900 flex flex-col justify-between px-3 sm:px-4 py-3 sm:py-5 max-w-lg mx-auto print:bg-white print:p-0 print:max-w-none print:min-h-0 print:h-auto">
+    <div className="min-h-screen bg-[#f4f7fb] text-slate-900 flex flex-col justify-between px-3 sm:px-4 py-3 sm:py-5 max-w-lg mx-auto print:bg-white print:p-0 print:m-0 print:max-w-none print:min-h-0 print:h-auto print:w-[210mm]">
       {/* 1. Top Header Bar (Matching Attached Design image_cefdcbc8.png) */}
       <header className="pb-2 print:hidden">
         <div className="flex items-center justify-between">
@@ -1899,14 +1901,14 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
       </main>
 
       {/* 3. High-Fidelity 9-Page Complete PDF Flipbook Booklet (Exported / Printed Sequentially) */}
-      <div className="hidden print:block w-full print-flipbook-document">
+      <div className="hidden print:block w-[210mm] print-flipbook-document">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((pageNum) => (
           <div
             key={`print-booklet-page-${pageNum}`}
-            className="print-page w-full h-[100vh] max-h-[100vh] flex flex-col justify-center items-center overflow-hidden box-border"
+            className="print-page w-[210mm] h-[297mm] max-w-[210mm] max-h-[297mm] min-h-[297mm] flex flex-col justify-center items-center overflow-hidden box-border mx-auto"
           >
             <div
-              className={`print-card w-full max-w-[430px] mx-auto h-[95vh] max-h-[256mm] rounded-[24px] overflow-hidden border shadow-none flex flex-col justify-between box-border ${
+              className={`print-card w-full max-w-[175mm] h-full max-h-[268mm] rounded-[24px] overflow-hidden border shadow-none flex flex-col justify-between box-border mx-auto ${
                 pageNum === 1 || pageNum === 9
                   ? 'border-slate-800 bg-[#081934]'
                   : 'border-slate-200 bg-white'
@@ -1916,7 +1918,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {renderPageContent(pageNum, true)}
               </div>
               <div
-                className={`py-1.5 px-4 border-t flex items-center justify-between text-[8.5px] font-mono tracking-wider shrink-0 ${
+                className={`py-2 px-6 border-t flex items-center justify-between text-[9px] font-mono tracking-wider shrink-0 ${
                   pageNum === 1 || pageNum === 9
                     ? 'bg-[#051124] text-slate-400 border-white/10'
                     : 'bg-slate-50 text-slate-400 border-slate-200/80'

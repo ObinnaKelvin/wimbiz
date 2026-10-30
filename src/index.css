@@ -30,7 +30,7 @@
 /* High-Fidelity Print & PDF Export Rules */
 @media print {
   @page {
-    size: portrait;
+    size: A4 portrait;
     margin: 0;
   }
 
@@ -50,13 +50,14 @@
     padding: 0 !important;
     overflow: visible !important;
     height: auto !important;
+    width: 210mm !important;
   }
 
   #root {
     overflow: visible !important;
     height: auto !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
     margin: 0 !important;
     padding: 0 !important;
   }
@@ -76,10 +77,10 @@
     page-break-inside: avoid !important;
   }
 
-  /* 9-Page Dedicated Booklet Print Sheet: Strictly 1 Sheet Per Flipbook Page */
+  /* 9-Page Dedicated Booklet Print Sheet: Strictly 1 A4 Sheet Per Flipbook Page */
   .print-flipbook-document {
     display: block !important;
-    width: 100% !important;
+    width: 210mm !important;
     margin: 0 !important;
     padding: 0 !important;
     overflow: visible !important;
@@ -91,22 +92,38 @@
     break-after: page !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
-    height: 100vh !important;
-    max-height: 100vh !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    min-width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    min-height: 297mm !important;
     box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
     align-items: center !important;
     overflow: hidden !important;
-    padding: 5mm 6mm !important;
-    margin: 0 !important;
+    padding: 12mm 15mm !important;
+    margin: 0 auto !important;
   }
 
   .print-page:last-child {
     page-break-after: avoid !important;
     break-after: avoid !important;
+  }
+
+  .print-card {
+    width: 100% !important;
+    max-width: 175mm !important;
+    height: 100% !important;
+    max-height: 268mm !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+    margin: auto !important;
+    border-radius: 24px !important;
   }
 }
