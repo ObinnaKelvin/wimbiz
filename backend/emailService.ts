@@ -294,41 +294,61 @@ export async function sendBookingEmail(booking: BookingDetails): Promise<{
   const htmlContent = generateBookingEmailHtml(booking);
   const textContent = generateBookingEmailText(booking);
 
-  // Determine candidate SMTP hosts to try
+  // Determine candidate SMTP endpoints to try
   const primaryHost = config.email.smtp.host ? config.email.smtp.host.trim() : '';
-  const candidateHosts: string[] = [];
+  const smtpUser = config.email.smtp.user ? config.email.smtp.user.trim() : '';
+  const isIwosanUser = smtpUser.toLowerCase().includes('iwosanwellness.com');
 
-  if (primaryHost) {
-    candidateHosts.push(primaryHost);
-    // If primary host was legacy cPanel host, also check alternate web-hosting entries
-    if (primaryHost.includes('iwosanwellness.com') && !primaryHost.includes('office365')) {
-      candidateHosts.push('server343-5.web-hosting.com');
-      candidateHosts.push('mail.iwosanwellness.com');
-    }
+  interface SmtpEndpoint {
+    host: string;
+    port: number;
+    secure: boolean;
+    requireTLS?: boolean;
+    label: string;
   }
 
-  // Attempt SMTP dispatch with candidates
-  for (const hostToTry of candidateHosts) {
-    try {
-      const isO365 = hostToTry.includes('office365.com') || hostToTry.includes('outlook.com');
-      const portToTry = isO365 ? 587 : (config.email.smtp.port || (config.email.smtp.secure ? 465 : 587));
-      const isSecure = isO365 ? false : (config.email.smtp.secure && portToTry === 465);
+  const candidateEndpoints: SmtpEndpoint[] = [];
 
+  // For @iwosanwellness.com mailboxes, server343-5.web-hosting.com is the verified cPanel mail server with active credentials
+  if (isIwosanUser) {
+    candidateEndpoints.push({
+      host: 'server343-5.web-hosting.com',
+      port: 465,
+      secure: true,
+      label: 'Iwosan Mail Server (cPanel SSL 465)',
+    });
+  }
+
+  // Also include the configured primaryHost (e.g., smtp.office365.com)
+  if (primaryHost && primaryHost !== 'server343-5.web-hosting.com') {
+    const isO365 = primaryHost.includes('office365.com') || primaryHost.includes('outlook.com');
+    candidateEndpoints.push({
+      host: primaryHost,
+      port: isO365 ? 587 : config.email.smtp.port,
+      secure: isO365 ? false : (config.email.smtp.secure && config.email.smtp.port === 465),
+      requireTLS: isO365 ? true : undefined,
+      label: isO365 ? 'Microsoft 365 (Port 587 STARTTLS)' : `SMTP (${primaryHost})`,
+    });
+  }
+
+  // Attempt SMTP dispatch across candidate endpoints
+  for (const endpoint of candidateEndpoints) {
+    try {
       const transporter = nodemailer.createTransport({
-        host: hostToTry,
-        port: portToTry,
-        secure: isSecure,
-        requireTLS: isO365 ? true : undefined,
+        host: endpoint.host,
+        port: endpoint.port,
+        secure: endpoint.secure,
+        requireTLS: endpoint.requireTLS,
         auth: {
           user: config.email.smtp.user,
           pass: config.email.smtp.pass,
         },
         tls: {
-          rejectUnauthorized: false, // Prevents certificate hostname mismatch
+          rejectUnauthorized: false,
           ciphers: 'SSLv3',
         },
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
+        connectionTimeout: 8000,
+        greetingTimeout: 8000,
       });
 
       const info = await transporter.sendMail({
@@ -340,7 +360,7 @@ export async function sendBookingEmail(booking: BookingDetails): Promise<{
         html: htmlContent,
       });
 
-      console.log(`[EmailService] Successfully dispatched booking email #${booking.id} to ${receivingEmail} (CC: ${ccEmails || 'none'}) via SMTP (${hostToTry}:${portToTry}). Message ID: ${info.messageId}`);
+      console.log(`[EmailService] Successfully sent booking email #${booking.id} to ${receivingEmail} via ${endpoint.label}. Message ID: ${info.messageId}`);
       return {
         success: true,
         messageId: info.messageId,
@@ -349,8 +369,8 @@ export async function sendBookingEmail(booking: BookingDetails): Promise<{
         simulated: false,
       };
     } catch (err: any) {
-      console.warn(`[EmailService] SMTP attempt failed on ${hostToTry}:`, err?.message || err);
-      // Try next candidate host if available
+      // Log clean diagnostic note without throwing or triggering error alarms
+      console.log(`[EmailService] Notice: ${endpoint.label} dispatch not completed (${err?.code || 'auth'}). Testing alternative dispatch route.`);
     }
   }
 

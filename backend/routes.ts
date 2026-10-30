@@ -249,35 +249,50 @@ apiRouter.delete('/admin/records', requireAdminAuth, async (req: Request, res: R
 // 9. Concierge Screening & Callback Booking Requests (Email Dispatch)
 // -------------------------------------------------------------
 const HOSPITAL_LOCATIONS_MAP: Record<string, { name: string; area: string; address: string }> = {
-  'lagoon-vi': {
-    name: 'Iwosan Lagoon Hospital, Victoria Island',
-    area: 'Victoria Island',
-    address: '17B Idejo Street, Off Adeola Odeku, Victoria Island, Lagos',
-  },
   'lagoon-ikoyi': {
-    name: 'Iwosan Lagoon Hospital, Ikoyi',
+    name: 'Iwosan Lagoon Hospitals, Ikoyi',
     area: 'Ikoyi',
-    address: '11B Bourdillon Road, Ikoyi, Lagos',
+    address: '17B Bourdillon Road, Ikoyi, Lagos',
+  },
+  'lagoon-vi': {
+    name: 'Iwosan Wellness Centre, Victoria Island',
+    area: 'Victoria Island',
+    address: '13B Idejo Street, Victoria Island, Lagos',
+  },
+  'iwosan-wellness-vi': {
+    name: 'Iwosan Wellness Centre, Victoria Island',
+    area: 'Victoria Island',
+    address: '13B Idejo Street, Victoria Island, Lagos',
   },
   'lagoon-ikeja': {
-    name: 'Iwosan Lagoon Hospital, Ikeja',
-    area: 'Ikeja Mainland',
-    address: '97 Obafemi Awolowo Way, Ikeja, Lagos',
+    name: 'Iwosan Lagoon Hospitals, Ikeja',
+    area: 'Ikeja',
+    address: '97/101 Obafemi Awolowo Way, Ikeja, Lagos',
   },
   'lagoon-adeniyi-jones': {
-    name: 'Iwosan Lagoon Hospital Clinic, Adeniyi Jones',
+    name: 'Iwosan Lagoon Clinic, Ikeja',
     area: 'Adeniyi Jones, Ikeja',
-    address: 'Adeniyi Jones Avenue, Ikeja, Lagos',
+    address: '91 Adeniyi Jones Avenue, Ikeja, Lagos',
+  },
+  'lagoon-idejo-outpatient': {
+    name: 'Iwosan Lagoon Outpatient Clinic, Idejo',
+    area: 'Victoria Island',
+    address: '13A Idejo Street, Victoria Island, Lagos',
   },
   'lagoon-lekki': {
-    name: 'Iwosan Lagoon Clinic & Diagnostic Centre, Lekki',
-    area: 'Lekki Phase 1',
-    address: 'Block 24, Plot 1, Admiralty Way, Lekki Phase 1, Lagos',
+    name: 'Iwosan Lagoon Outpatient Clinic, Idejo',
+    area: 'Victoria Island',
+    address: '13A Idejo Street, Victoria Island, Lagos',
+  },
+  'lagoon-ligali-vi': {
+    name: 'Iwosan Lagoon Hospitals, Victoria Island',
+    area: 'Victoria Island',
+    address: '3B, Ligali Ayorinde Street, Victoria Island, Lagos',
   },
   'iwosan-heart-vi': {
-    name: 'Iwosan Lagoon Centre for Cardiovascular Care',
+    name: 'Iwosan Lagoon Hospitals, Victoria Island',
     area: 'Victoria Island',
-    address: 'Plot 21B, Ligali Ayorinde Street, Victoria Island, Lagos',
+    address: '3B, Ligali Ayorinde Street, Victoria Island, Lagos',
   },
   'paelon-memorial-vi': {
     name: 'Paelon Memorial Hospital',
@@ -306,9 +321,9 @@ apiRouter.post('/bookings', async (req: Request, res: Response) => {
     }
 
     const locInfo = HOSPITAL_LOCATIONS_MAP[selectedLocation] || {
-      name: 'Iwosan Lagoon Hospital, Victoria Island',
-      area: 'Victoria Island',
-      address: '17B Idejo Street, Off Adeola Odeku, Victoria Island, Lagos',
+      name: 'Iwosan Lagoon Hospitals, Ikoyi',
+      area: 'Ikoyi',
+      address: '17B Bourdillon Road, Ikoyi, Lagos',
     };
 
     const bookingId = `IW-BK-${Math.floor(1000 + Math.random() * 9000)}`;

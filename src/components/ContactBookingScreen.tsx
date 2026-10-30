@@ -15,6 +15,7 @@ import {
   MapPin,
   Clock,
   ExternalLink,
+  Navigation,
   CheckCircle2,
   Send,
   Sparkles,
@@ -578,10 +579,11 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
                   href={loc.mapLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition shrink-0"
-                  title="View on Google Maps"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200/70 font-bold text-[11px] transition shrink-0 shadow-2xs group"
+                  title={`Get directions to ${loc.name}`}
                 >
-                  <ExternalLink className="w-3.5 h-3.5" />
+                  <Navigation className="w-3.5 h-3.5 text-emerald-700 transition group-hover:rotate-12" />
+                  <span>Directions</span>
                 </a>
               </div>
 
