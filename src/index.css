@@ -31,7 +31,7 @@
 @media print {
   @page {
     size: portrait;
-    margin: 8mm;
+    margin: 0;
   }
 
   *,
@@ -57,6 +57,8 @@
     height: auto !important;
     width: 100% !important;
     max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   .print\:hidden {
@@ -74,22 +76,37 @@
     page-break-inside: avoid !important;
   }
 
-  /* 9-Page Dedicated Booklet Print Sheet */
+  /* 9-Page Dedicated Booklet Print Sheet: Strictly 1 Sheet Per Flipbook Page */
+  .print-flipbook-document {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
   .print-page {
+    page-break-before: auto !important;
     page-break-after: always !important;
     break-after: page !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-    min-height: 270mm !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
     box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important;
-    margin: 0 auto !important;
+    justify-content: center !important;
+    align-items: center !important;
+    overflow: hidden !important;
+    padding: 5mm 6mm !important;
+    margin: 0 !important;
   }
 
   .print-page:last-child {
-    page-break-after: auto !important;
-    break-after: auto !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
 }

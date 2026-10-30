@@ -865,7 +865,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                 {/* PAGE 5: THINGS TO DISCUSS (Matches image_911c706d.png)*/}
                 {/* ---------------------------------------------------- */}
                 {pageIndex === 5 && (
-                  <div className="flex-1 p-5 sm:p-6 bg-white text-slate-900 flex flex-col justify-between relative select-none">
+                  <div className={`flex-1 ${isPrint ? 'p-3 sm:p-4' : 'p-5 sm:p-6'} bg-white text-slate-900 flex flex-col justify-between relative select-none`}>
                     <div>
                       {/* Top Meta Line: "Clinical preparation" + "Page 04" */}
                       <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
@@ -874,19 +874,19 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                       </div>
 
                       {/* Main Title: "Things to discuss" */}
-                      <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 mt-2">
+                      <h3 className={`text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 ${isPrint ? 'mt-1' : 'mt-2'}`}>
                         Things to <span className="font-serif italic font-normal text-slate-800">discuss</span>
                       </h3>
 
                       {/* Description Subtitle */}
-                      <p className="text-xs sm:text-[13px] text-slate-500 mt-1.5 leading-relaxed">
+                      <p className={`text-xs sm:text-[13px] text-slate-500 ${isPrint ? 'mt-0.5' : 'mt-1.5'} leading-relaxed`}>
                         Five minutes of preparation turns a rushed appointment into a useful one. Read these aloud if it helps.
                       </p>
 
                       {/* 6 Discussion Item Cards */}
-                      <div className="space-y-2 mt-4">
+                      <div className={isPrint ? 'space-y-1 mt-2' : 'space-y-2 mt-4'}>
                         {/* 1. Nutrition */}
-                        <div className="bg-white border border-slate-200/90 rounded-2xl p-2.5 sm:p-3 shadow-2xs">
+                        <div className={`bg-white border border-slate-200/90 rounded-2xl ${isPrint ? 'p-1.5 px-2.5' : 'p-2.5 sm:p-3'} shadow-2xs`}>
                           <div className="flex items-center gap-2 mb-1">
                             <span className="w-5 h-5 rounded-full bg-[#081934] text-white flex items-center justify-center text-[10.5px] font-bold shrink-0">
                               1
@@ -900,7 +900,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                         </div>
 
                         {/* 2. Screening rhythm */}
-                        <div className="bg-white border border-slate-200/90 rounded-2xl p-2.5 sm:p-3 shadow-2xs">
+                        <div className={`bg-white border border-slate-200/90 rounded-2xl ${isPrint ? 'p-1.5 px-2.5' : 'p-2.5 sm:p-3'} shadow-2xs`}>
                           <div className="flex items-center gap-2 mb-1">
                             <span className="w-5 h-5 rounded-full bg-[#081934] text-white flex items-center justify-center text-[10.5px] font-bold shrink-0">
                               2
@@ -914,7 +914,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                         </div>
 
                         {/* 3. Blood pressure */}
-                        <div className="bg-white border border-slate-200/90 rounded-2xl p-2.5 sm:p-3 shadow-2xs">
+                        <div className={`bg-white border border-slate-200/90 rounded-2xl ${isPrint ? 'p-1.5 px-2.5' : 'p-2.5 sm:p-3'} shadow-2xs`}>
                           <div className="flex items-center gap-2 mb-1">
                             <span className="w-5 h-5 rounded-full bg-[#081934] text-white flex items-center justify-center text-[10.5px] font-bold shrink-0">
                               3
@@ -928,7 +928,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                         </div>
 
                         {/* 4. Blood sugar */}
-                        <div className="bg-white border border-slate-200/90 rounded-2xl p-2.5 sm:p-3 shadow-2xs">
+                        <div className={`bg-white border border-slate-200/90 rounded-2xl ${isPrint ? 'p-1.5 px-2.5' : 'p-2.5 sm:p-3'} shadow-2xs`}>
                           <div className="flex items-center gap-2 mb-1">
                             <span className="w-5 h-5 rounded-full bg-[#081934] text-white flex items-center justify-center text-[10.5px] font-bold shrink-0">
                               4
@@ -942,7 +942,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                         </div>
 
                         {/* 5. Movement */}
-                        <div className="bg-white border border-slate-200/90 rounded-2xl p-2.5 sm:p-3 shadow-2xs">
+                        <div className={`bg-white border border-slate-200/90 rounded-2xl ${isPrint ? 'p-1.5 px-2.5' : 'p-2.5 sm:p-3'} shadow-2xs`}>
                           <div className="flex items-center gap-2 mb-1">
                             <span className="w-5 h-5 rounded-full bg-[#081934] text-white flex items-center justify-center text-[10.5px] font-bold shrink-0">
                               5
@@ -956,7 +956,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                         </div>
 
                         {/* 6. Sleep & stress */}
-                        <div className="bg-white border border-slate-200/90 rounded-2xl p-2.5 sm:p-3 shadow-2xs">
+                        <div className={`bg-white border border-slate-200/90 rounded-2xl ${isPrint ? 'p-1.5 px-2.5' : 'p-2.5 sm:p-3'} shadow-2xs`}>
                           <div className="flex items-center gap-2 mb-1">
                             <span className="w-5 h-5 rounded-full bg-[#081934] text-white flex items-center justify-center text-[10.5px] font-bold shrink-0">
                               6
@@ -971,7 +971,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                       </div>
 
                       {/* Bring with you Box */}
-                      <div className="rounded-2xl border border-[#47B549]/35 bg-[#47B549]/5 p-3 sm:p-3.5 space-y-2 mt-3.5">
+                      <div className={`rounded-2xl border border-[#47B549]/35 bg-[#47B549]/5 ${isPrint ? 'p-2 space-y-1 mt-2' : 'p-3 sm:p-3.5 space-y-2 mt-3.5'}`}>
                         <div className="flex items-center gap-2 text-xs font-bold text-slate-800">
                           <Briefcase className="w-4 h-4 text-[#47B549] stroke-[2.2]" />
                           <span className="tracking-tight text-[#081934] font-bold">Bring with you</span>
@@ -996,7 +996,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                       </div>
 
                       {/* Chaperone & Notes callout */}
-                      <div className="rounded-2xl border border-dashed border-slate-200/90 bg-slate-50/70 p-2.5 sm:p-3 flex items-center gap-2.5 mt-3">
+                      <div className={`rounded-2xl border border-dashed border-slate-200/90 bg-slate-50/70 ${isPrint ? 'p-1.5 mt-1.5' : 'p-2.5 sm:p-3 mt-3'} flex items-center gap-2.5`}>
                         <div className="w-6 h-6 rounded-full bg-white border border-slate-200/80 flex items-center justify-center text-[#00B1DA] shrink-0 shadow-2xs">
                           <Mic className="w-3.5 h-3.5" />
                         </div>
@@ -1006,7 +1006,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                       </div>
 
                       {/* Status Key */}
-                      <div className="pt-3">
+                      <div className={isPrint ? 'pt-1.5' : 'pt-3'}>
                         <div className="text-[10px] font-medium text-slate-400 mb-1.5">
                           Status key
                         </div>
@@ -1032,7 +1032,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                     </div>
 
                     {/* Section Footer Footnote */}
-                    <div className="pt-2.5 border-t border-dashed border-slate-200 mt-3">
+                    <div className={`border-t border-dashed border-slate-200 ${isPrint ? 'pt-1.5 mt-2' : 'pt-2.5 mt-3'}`}>
                       <p className="text-[10px] text-slate-400 leading-relaxed">
                         Sensitive topics around personal safety are automatically left out of the exported PDF.
                       </p>
@@ -1783,7 +1783,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f7fb] text-slate-900 flex flex-col justify-between px-3 sm:px-4 py-3 sm:py-5 max-w-lg mx-auto print:bg-white print:p-0 print:max-w-none">
+    <div className="min-h-screen bg-[#f4f7fb] text-slate-900 flex flex-col justify-between px-3 sm:px-4 py-3 sm:py-5 max-w-lg mx-auto print:bg-white print:p-0 print:max-w-none print:min-h-0 print:h-auto">
       {/* 1. Top Header Bar (Matching Attached Design image_cefdcbc8.png) */}
       <header className="pb-2 print:hidden">
         <div className="flex items-center justify-between">
@@ -1903,24 +1903,28 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((pageNum) => (
           <div
             key={`print-booklet-page-${pageNum}`}
-            className={`print-page w-full max-w-[460px] mx-auto min-h-[270mm] rounded-[28px] overflow-hidden border shadow-none flex flex-col justify-between my-0 ${
-              pageNum === 1 || pageNum === 9
-                ? 'border-slate-800 bg-[#081934]'
-                : 'border-slate-200 bg-white'
-            }`}
+            className="print-page w-full h-[100vh] max-h-[100vh] flex flex-col justify-center items-center overflow-hidden box-border"
           >
-            <div className="w-full flex-1 flex flex-col justify-between">
-              {renderPageContent(pageNum, true)}
-            </div>
             <div
-              className={`py-2 px-5 border-t flex items-center justify-between text-[9px] font-mono tracking-wider ${
+              className={`print-card w-full max-w-[430px] mx-auto h-[95vh] max-h-[256mm] rounded-[24px] overflow-hidden border shadow-none flex flex-col justify-between box-border ${
                 pageNum === 1 || pageNum === 9
-                  ? 'bg-[#051124] text-slate-400 border-white/10'
-                  : 'bg-slate-50 text-slate-400 border-slate-200/80'
+                  ? 'border-slate-800 bg-[#081934]'
+                  : 'border-slate-200 bg-white'
               }`}
             >
-              <span>IWOSAN HEALTHCARE × WIMBIZ 25</span>
-              <span>PASSPORT NO. IW25-0810 · PAGE 0${pageNum} OF 09</span>
+              <div className="w-full flex-1 flex flex-col justify-between overflow-hidden">
+                {renderPageContent(pageNum, true)}
+              </div>
+              <div
+                className={`py-1.5 px-4 border-t flex items-center justify-between text-[8.5px] font-mono tracking-wider shrink-0 ${
+                  pageNum === 1 || pageNum === 9
+                    ? 'bg-[#051124] text-slate-400 border-white/10'
+                    : 'bg-slate-50 text-slate-400 border-slate-200/80'
+                }`}
+              >
+                <span>IWOSAN HEALTHCARE × WIMBIZ 25</span>
+                <span>PASSPORT NO. IW25-0810 · PAGE 0${pageNum} OF 09</span>
+              </div>
             </div>
           </div>
         ))}
