@@ -11,6 +11,7 @@ import {
 } from './db';
 import { generateExcelWorkbook, QUESTION_HEADER_MAP, formatAnswerValue } from './excelExport';
 import { config } from './config';
+import { sendBookingEmail, BookingDetails } from './emailService';
 
 export const apiRouter = Router();
 
@@ -243,3 +244,118 @@ apiRouter.delete('/admin/records', requireAdminAuth, async (req: Request, res: R
     return res.status(500).json({ error: 'Failed to clear records' });
   }
 });
+
+// -------------------------------------------------------------
+// 9. Concierge Screening & Callback Booking Requests (Email Dispatch)
+// -------------------------------------------------------------
+const HOSPITAL_LOCATIONS_MAP: Record<string, { name: string; area: string; address: string }> = {
+  'lagoon-vi': {
+    name: 'Iwosan Lagoon Hospital, Victoria Island',
+    area: 'Victoria Island',
+    address: '17B Idejo Street, Off Adeola Odeku, Victoria Island, Lagos',
+  },
+  'lagoon-ikoyi': {
+    name: 'Iwosan Lagoon Hospital, Ikoyi',
+    area: 'Ikoyi',
+    address: '11B Bourdillon Road, Ikoyi, Lagos',
+  },
+  'lagoon-ikeja': {
+    name: 'Iwosan Lagoon Hospital, Ikeja',
+    area: 'Ikeja Mainland',
+    address: '97 Obafemi Awolowo Way, Ikeja, Lagos',
+  },
+  'lagoon-adeniyi-jones': {
+    name: 'Iwosan Lagoon Hospital Clinic, Adeniyi Jones',
+    area: 'Adeniyi Jones, Ikeja',
+    address: 'Adeniyi Jones Avenue, Ikeja, Lagos',
+  },
+  'lagoon-lekki': {
+    name: 'Iwosan Lagoon Clinic & Diagnostic Centre, Lekki',
+    area: 'Lekki Phase 1',
+    address: 'Block 24, Plot 1, Admiralty Way, Lekki Phase 1, Lagos',
+  },
+  'iwosan-heart-vi': {
+    name: 'Iwosan Lagoon Centre for Cardiovascular Care',
+    area: 'Victoria Island',
+    address: 'Plot 21B, Ligali Ayorinde Street, Victoria Island, Lagos',
+  },
+  'paelon-memorial-vi': {
+    name: 'Paelon Memorial Hospital',
+    area: 'Victoria Island',
+    address: '1221 Ahmadu Bello Way, Victoria Island, Lagos',
+  },
+  'euracare-vi': {
+    name: 'Euracare Multi-Specialist Hospital',
+    area: 'Victoria Island',
+    address: '293B Younis Bashorun Street, Off Sinari Daranijo Street, Victoria Island, Lagos',
+  },
+};
+
+const bookingInquiries: BookingDetails[] = [];
+
+apiRouter.post('/bookings', async (req: Request, res: Response) => {
+  try {
+    const { name, contactInfo, selectedLocation, packageInterest, message, hasConsent } = req.body || {};
+
+    if (!contactInfo || typeof contactInfo !== 'string' || !contactInfo.trim()) {
+      return res.status(400).json({ error: 'Contact phone or WhatsApp number is required.' });
+    }
+
+    if (!hasConsent) {
+      return res.status(400).json({ error: 'Explicit consent is required to request a callback.' });
+    }
+
+    const locInfo = HOSPITAL_LOCATIONS_MAP[selectedLocation] || {
+      name: 'Iwosan Lagoon Hospital, Victoria Island',
+      area: 'Victoria Island',
+      address: '17B Idejo Street, Off Adeola Odeku, Victoria Island, Lagos',
+    };
+
+    const bookingId = `IW-BK-${Math.floor(1000 + Math.random() * 9000)}`;
+    const timestamp = new Date().toISOString();
+
+    const booking: BookingDetails = {
+      id: bookingId,
+      name: name ? String(name).trim() : undefined,
+      contactInfo: String(contactInfo).trim(),
+      selectedLocation: selectedLocation || 'lagoon-vi',
+      locationName: locInfo.name,
+      locationArea: locInfo.area,
+      locationAddress: locInfo.address,
+      packageInterest: packageInterest || 'Well-Woman Comprehensive Screening',
+      message: message ? String(message).trim() : undefined,
+      hasConsent: Boolean(hasConsent),
+      timestamp,
+      source: 'Iwosan HerHealth PWA - WIMBIZ 25th Annual Conference',
+    };
+
+    // Store in inquiry ledger
+    bookingInquiries.unshift(booking);
+
+    // Send tabular email to configured recipient
+    const emailResult = await sendBookingEmail(booking);
+
+    return res.status(201).json({
+      success: true,
+      bookingId: booking.id,
+      recipient: emailResult.recipient,
+      cc: emailResult.cc,
+      timestamp: booking.timestamp,
+      message: 'Your inquiry has been successfully transmitted to the Iwosan Concierge team.',
+    });
+  } catch (err: any) {
+    console.error('Error handling booking request:', err);
+    return res.status(500).json({ error: 'Failed to process booking request. Please try again.' });
+  }
+});
+
+apiRouter.get('/admin/bookings', requireAdminAuth, (req: Request, res: Response) => {
+  return res.json({
+    success: true,
+    count: bookingInquiries.length,
+    bookings: bookingInquiries,
+    configuredRecipient: config.email.receivingEmail,
+    configuredCc: config.email.ccEmails,
+  });
+});
+

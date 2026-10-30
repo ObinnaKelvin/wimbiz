@@ -19,6 +19,9 @@ import {
   Send,
   Sparkles,
   QrCode,
+  Mail,
+  Loader2,
+  AlertCircle,
 } from 'lucide-react';
 
 interface ContactBookingScreenProps {
@@ -33,12 +36,56 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
   const [packageInterest, setPackageInterest] = useState('Well-Woman Comprehensive Screening');
   const [message, setMessage] = useState('');
   const [hasConsent, setHasConsent] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [bookingResult, setBookingResult] = useState<{
+    bookingId: string;
+    recipient: string;
+    timestamp: string;
+  } | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!hasConsent || !contactInfo.trim()) return;
-    setIsSubmitted(true);
+    if (!hasConsent || !contactInfo.trim() || isSubmitting) return;
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          contactInfo: contactInfo.trim(),
+          selectedLocation,
+          packageInterest,
+          message: message.trim(),
+          hasConsent,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to dispatch booking request. Please check connection.');
+      }
+
+      setBookingResult({
+        bookingId: data.bookingId,
+        recipient: data.recipient || 'okereobinna11@gmail.com',
+        timestamp: data.timestamp || new Date().toISOString(),
+      });
+      setIsSubmitted(true);
+    } catch (err: any) {
+      console.error('Failed to submit booking inquiry:', err);
+      setSubmitError(err?.message || 'Failed to send request. Please try again or reach concierge directly via phone.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -266,30 +313,92 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="py-6 text-center space-y-3"
+              className="py-4 space-y-4"
             >
-              <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
-                <CheckCircle2 className="w-6 h-6" />
+              <div className="text-center space-y-2">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-2xs">
+                  <CheckCircle2 className="w-6 h-6 stroke-[2.2]" />
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200/80 text-[11px] font-bold">
+                  <Mail className="w-3 h-3 text-emerald-600" />
+                  Email Dispatched to Concierge
+                </div>
+                <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">
+                  Request Transmitted to Iwosan
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed max-w-xs mx-auto">
+                  A clinical intake inquiry email in tabular format was sent to <strong className="text-slate-900">{bookingResult?.recipient || 'okereobinna11@gmail.com'}</strong>.
+                </p>
               </div>
-              <h3 className="text-lg font-extrabold text-slate-900">
-                Thank You! Request Received.
-              </h3>
-              <p className="text-xs text-slate-600 leading-relaxed max-w-xs mx-auto">
-                The Iwosan Women’s Health Concierge will contact you via WhatsApp or phone within 2 business hours with booking options.
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setName('');
-                  setContactInfo('');
-                  setMessage('');
-                  setHasConsent(false);
-                  setIsSubmitted(false);
-                }}
-                className="text-xs font-bold text-emerald-700 underline pt-2 cursor-pointer"
-              >
-                Submit another inquiry
-              </button>
+
+              {/* Tabular Summary Card for User */}
+              <div className="border border-slate-200 rounded-2xl overflow-hidden bg-slate-50/70 text-xs">
+                <div className="bg-[#081934] text-white px-3.5 py-2 font-bold text-[11px] flex items-center justify-between">
+                  <span>DISPATCHED DETAILS</span>
+                  <span className="font-mono text-emerald-400">#{bookingResult?.bookingId || 'IW-BK'}</span>
+                </div>
+                <div className="divide-y divide-slate-200/80">
+                  <div className="px-3.5 py-2 flex justify-between items-center">
+                    <span className="text-slate-500 font-medium text-[11px]">Client Name</span>
+                    <span className="font-bold text-slate-900">{name.trim() || 'Confidential / Anonymous'}</span>
+                  </div>
+                  <div className="px-3.5 py-2 flex justify-between items-center">
+                    <span className="text-slate-500 font-medium text-[11px]">Phone / WhatsApp</span>
+                    <span className="font-bold text-sky-700">{contactInfo}</span>
+                  </div>
+                  <div className="px-3.5 py-2 flex justify-between items-start gap-2">
+                    <span className="text-slate-500 font-medium text-[11px] shrink-0">Package</span>
+                    <span className="font-bold text-slate-900 text-right">{packageInterest}</span>
+                  </div>
+                  <div className="px-3.5 py-2 flex justify-between items-start gap-2">
+                    <span className="text-slate-500 font-medium text-[11px] shrink-0">Preferred Branch</span>
+                    <span className="font-semibold text-slate-900 text-right">
+                      {IWOSAN_LOCATIONS.find((l) => l.id === selectedLocation)?.name || 'Victoria Island'}
+                    </span>
+                  </div>
+                  {message.trim() && (
+                    <div className="px-3.5 py-2">
+                      <span className="text-slate-500 font-medium text-[11px] block mb-0.5">Notes</span>
+                      <p className="text-slate-700 italic text-[11px] line-clamp-2 leading-relaxed">"{message.trim()}"</p>
+                    </div>
+                  )}
+                  <div className="px-3.5 py-2 flex justify-between items-center bg-emerald-50/50">
+                    <span className="text-slate-500 font-medium text-[11px]">Consent Status</span>
+                    <span className="font-bold text-emerald-700 text-[11px]">✓ Confirmed</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Direct WhatsApp Follow-up & Reset */}
+              <div className="space-y-2 pt-1">
+                <a
+                  href={`https://wa.me/2349139352778?text=${encodeURIComponent(`Hello Iwosan Concierge, I just submitted screening booking inquiry #${bookingResult?.bookingId || ''} for ${packageInterest}.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 px-4 rounded-full bg-[#0c1626] hover:bg-slate-900 active:scale-95 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition cursor-pointer text-center"
+                >
+                  <MessageSquare className="w-3.5 h-3.5 text-[#25D366]" />
+                  <span>Chat on WhatsApp regarding #{bookingResult?.bookingId || 'booking'}</span>
+                </a>
+
+                <div className="text-center pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setName('');
+                      setContactInfo('');
+                      setMessage('');
+                      setHasConsent(false);
+                      setBookingResult(null);
+                      setSubmitError(null);
+                      setIsSubmitted(false);
+                    }}
+                    className="text-xs font-bold text-emerald-700 hover:text-emerald-800 underline cursor-pointer"
+                  >
+                    Submit another inquiry
+                  </button>
+                </div>
+              </div>
             </motion.div>
           ) : (
             <motion.form
@@ -307,8 +416,17 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
                 </h3>
               </div>
               <p className="text-[11px] text-slate-500 leading-relaxed">
-                Leave your preferred contact details and our team will get in touch with available appointments.
+                Leave your preferred contact details and our team will get in touch with available appointments. Form details are sent in a clinical tabular summary directly to the Iwosan Concierge.
               </p>
+
+              {submitError && (
+                <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  <div className="leading-relaxed">
+                    <strong>Submission Notice:</strong> {submitError}
+                  </div>
+                </div>
+              )}
 
               <div>
                 <label className="text-[11px] font-bold text-slate-700 block mb-1">
@@ -319,7 +437,8 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
                   placeholder="e.g. Chioma"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50/70"
+                  disabled={isSubmitting}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50/70 disabled:opacity-60"
                 />
               </div>
 
@@ -333,7 +452,8 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
                   placeholder="e.g. 0803 123 4567"
                   value={contactInfo}
                   onChange={(e) => setContactInfo(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50/70"
+                  disabled={isSubmitting}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50/70 disabled:opacity-60"
                 />
               </div>
 
@@ -344,7 +464,8 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
                 <select
                   value={packageInterest}
                   onChange={(e) => setPackageInterest(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50/70 cursor-pointer"
+                  disabled={isSubmitting}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50/70 cursor-pointer disabled:opacity-60"
                 >
                   <option value="Well-Woman Comprehensive Screening">Well-Woman Comprehensive Screening</option>
                   <option value="Digital Mammography & Breast Ultrasound">Digital Mammography & Breast Ultrasound</option>
@@ -362,7 +483,8 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
                 <select
                   value={selectedLocation}
                   onChange={(e) => setSelectedLocation(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50/70 cursor-pointer"
+                  disabled={isSubmitting}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50/70 cursor-pointer disabled:opacity-60"
                 >
                   {IWOSAN_LOCATIONS.map((loc) => (
                     <option key={loc.id} value={loc.id}>
@@ -381,7 +503,8 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
                   placeholder="Type any questions, clinical concerns, or preferred days/times for appointment..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50/70 resize-none leading-relaxed placeholder:text-slate-400"
+                  disabled={isSubmitting}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50/70 resize-none leading-relaxed placeholder:text-slate-400 disabled:opacity-60"
                 />
               </div>
 
@@ -392,6 +515,7 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
                   required
                   checked={hasConsent}
                   onChange={(e) => setHasConsent(e.target.checked)}
+                  disabled={isSubmitting}
                   className="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                 />
                 <span className="text-[11px] text-slate-600 leading-snug">
@@ -401,11 +525,20 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
 
               <button
                 type="submit"
-                disabled={!hasConsent || !contactInfo.trim()}
+                disabled={!hasConsent || !contactInfo.trim() || isSubmitting}
                 className="w-full py-3.5 px-4 rounded-full bg-[#0c1626] hover:bg-slate-900 active:scale-95 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Send className="w-3.5 h-3.5" />
-                <span>Send Request to Iwosan Concierge</span>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+                    <span>Transmitting to Iwosan Concierge...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Send Request to Iwosan Concierge</span>
+                  </>
+                )}
               </button>
             </motion.form>
           )}
