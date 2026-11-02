@@ -326,12 +326,12 @@ const HOSPITAL_LOCATIONS_MAP: Record<string, { name: string; area: string; addre
     address: '13A Idejo Street, Victoria Island, Lagos',
   },
   'lagoon-ligali-vi': {
-    name: 'Iwosan Lagoon Hospitals, Victoria Island',
+    name: 'Wellness Centre, Idejo, Victoria Island',
     area: 'Victoria Island',
     address: '3B, Ligali Ayorinde Street, Victoria Island, Lagos',
   },
   'iwosan-heart-vi': {
-    name: 'Iwosan Lagoon Hospitals, Victoria Island',
+    name: 'Wellness Centre, Idejo, Victoria Island',
     area: 'Victoria Island',
     address: '3B, Ligali Ayorinde Street, Victoria Island, Lagos',
   },

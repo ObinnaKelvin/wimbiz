@@ -53,7 +53,7 @@ export const IWOSAN_LOCATIONS: IwosanLocation[] = [
   },
   {
     id: 'lagoon-ligali-vi',
-    name: 'Iwosan Lagoon Hospitals, Victoria Island',
+    name: 'Wellness Centre, Idejo, Victoria Island',
     address: '3B, Ligali Ayorinde Street, Victoria Island, Lagos',
     area: 'Victoria Island',
     phone: '+234 700 524666 / +234 1 888 8888',
