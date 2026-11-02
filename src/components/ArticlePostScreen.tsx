@@ -135,10 +135,6 @@ export const ArticlePostScreen: React.FC<ArticlePostScreenProps> = ({
       ? '/assets/aistudio/image_27257c44.png'
       : article.id === 'mental-health-mindfulness'
       ? 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=800&q=80'
-      : article.id === 'mindfulness-daily-peace'
-      ? 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80'
-      : article.id === 'avoidance-toxic-substances'
-      ? 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80'
       : '/assets/aistudio/image_a986066b.png');
 
   return (
@@ -221,10 +217,14 @@ export const ArticlePostScreen: React.FC<ArticlePostScreenProps> = ({
               <User className="w-4 h-4 stroke-[2.5]" />
             </div>
             <div className="min-w-0 text-left">
-              <div className="text-xs sm:text-[13px] font-bold text-slate-900 truncate">
-                {article.reviewerName}, {article.reviewerRole}
+              <div className="text-xs sm:text-[13px] font-bold text-slate-900 leading-snug">
+                {article.reviewerName}
               </div>
-              <div className="text-[11px] text-slate-400 font-medium">
+              <div className="text-[11px] text-slate-600 font-medium leading-snug">
+                {article.reviewerRole}
+                {article.reviewerHospital ? ` · ${article.reviewerHospital}` : ''}
+              </div>
+              <div className="text-[11px] text-slate-400 font-medium mt-0.5">
                 {article.reviewDate.replace('Reviewed: ', 'Reviewed ')}
               </div>
             </div>

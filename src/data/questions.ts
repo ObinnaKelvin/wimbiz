@@ -952,3 +952,127 @@ export function getHealthQuestions(answers?: Record<string, string>): Question[]
 }
 
 export const HEALTH_QUESTIONS = getHealthQuestions();
+
+/**
+ * Returns every unique question across all age bands/demographics from the form,
+ * sorted strictly by CATEGORY_ORDER and QUESTION_ORDER_WITHIN_CATEGORY.
+ * Any subsequent additions, edits, or removals of questions in this file
+ * automatically flow through this function to the Administrator Dashboard and Excel Export.
+ */
+export function getAllFormQuestions(): Question[] {
+  const combined: Question[] = [
+    ...CORE_HEALTH_QUESTIONS,
+    ...GENERAL_WOMENS_HEALTH_ALL_AGES_QUESTIONS,
+    ...MENSTRUAL_20_49_QUESTIONS,
+    ...PREGNANCY_20_50_QUESTIONS,
+    ...PERIMENOPAUSE_40_49_QUESTIONS,
+    ...BREAST_GYNAE_QUESTIONS,
+    ...BONE_MOBILITY_QUESTIONS,
+    ...SOCIAL_CONNECTEDNESS_QUESTIONS,
+    ...MENTAL_HEALTH_QUESTIONS,
+  ];
+
+  // Deduplicate by question ID while preserving first seen definition
+  const seen = new Set<string>();
+  const uniqueQuestions: Question[] = [];
+  for (const q of combined) {
+    if (!seen.has(q.id)) {
+      seen.add(q.id);
+      uniqueQuestions.push(q);
+    }
+  }
+
+  const categoryOrderMap = new Map(CATEGORY_ORDER.map((cat, idx) => [cat, idx]));
+
+  const sorted = [...uniqueQuestions].sort((a, b) => {
+    const orderA = categoryOrderMap.get(a.category) ?? 999;
+    const orderB = categoryOrderMap.get(b.category) ?? 999;
+    if (orderA !== orderB) {
+      return orderA - orderB;
+    }
+    const prioA = QUESTION_ORDER_WITHIN_CATEGORY[a.id] ?? 50;
+    const prioB = QUESTION_ORDER_WITHIN_CATEGORY[b.id] ?? 50;
+    return prioA - prioB;
+  });
+
+  const total = sorted.length;
+  return sorted.map((q, idx) => ({
+    ...q,
+    stepNumber: idx + 1,
+    totalSteps: total,
+  }));
+}
+
+export const ALL_HEALTH_QUESTIONS: Question[] = getAllFormQuestions();
+
+export const QUESTION_MAP: Record<string, Question> = Object.fromEntries(
+  ALL_HEALTH_QUESTIONS.map((q) => [q.id, q])
+);
+
+/**
+ * Dynamic map of Question ID -> Question Title derived directly from ALL_HEALTH_QUESTIONS.
+ */
+export const QUESTION_HEADER_MAP: Record<string, string> = Object.fromEntries(
+  ALL_HEALTH_QUESTIONS.map((q) => [q.id, q.title])
+);
+
+/**
+ * Dynamic list of active form categories in strict display order.
+ */
+export const FORM_CATEGORIES: { id: QuestionCategory; label: string; count: number }[] = CATEGORY_ORDER.map(
+  (catId) => {
+    const matching = ALL_HEALTH_QUESTIONS.filter((q) => q.category === catId);
+    return {
+      id: catId,
+      label: matching[0]?.categoryLabel || catId,
+      count: matching.length,
+    };
+  }
+).filter((c) => c.count > 0);
+
+/**
+ * Resolves a raw option ID to its human-readable option label from the current question form.
+ */
+export function formatQuestionAnswer(qId: string, optionId?: string): string {
+  if (!optionId) return 'N/A';
+  if (optionId === 'skipped') return 'Skipped';
+  if (optionId.startsWith('date:')) {
+    return optionId.replace('date:', '');
+  }
+
+  const question = QUESTION_MAP[qId];
+  if (question) {
+    const matchedOpt = question.options.find((opt) => opt.id === optionId);
+    if (matchedOpt) {
+      return matchedOpt.label;
+    }
+  }
+
+  // Fallback for legacy age band codes if stored in ageBand field
+  const legacyAgeMap: Record<string, string> = {
+    '18_29': '18 – 29',
+    '20_29': '20 – 29',
+    '30_39': '30 – 39',
+    '40_49': '40 – 49',
+    '50_plus': '50 and above',
+    '50_59': '50 – 59',
+    '60_plus': '60+',
+  };
+  if (qId === 'q1_age' && legacyAgeMap[optionId]) {
+    return legacyAgeMap[optionId];
+  }
+
+  return optionId.replace(/_/g, ' ');
+}
+
+/**
+ * Checks whether an answer triggers the immediate safety support protocol.
+ */
+export function isSafetyTriggerAnswer(qId: string, optionId?: string): boolean {
+  if (!optionId || optionId === 'skipped' || optionId === 'not_at_all' || optionId === 'no' || optionId === 'prefer_not') {
+    return false;
+  }
+  const q = QUESTION_MAP[qId];
+  return Boolean(q?.isSafetyQuestion || qId === 'phq9_self_harm');
+}
+

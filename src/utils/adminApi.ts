@@ -1,4 +1,9 @@
 import { HealthNumbers } from '../types';
+import {
+  ALL_HEALTH_QUESTIONS,
+  formatQuestionAnswer,
+  isSafetyTriggerAnswer,
+} from '../data/questions';
 
 const ADMIN_TOKEN_KEY = 'iwosan_wellness_admin_token';
 const ADMIN_USER_KEY = 'iwosan_wellness_admin_user';
@@ -14,10 +19,14 @@ export interface AdminUser {
 export interface QuestionAnalyticsItem {
   questionId: string;
   title: string;
+  category?: string;
+  categoryLabel?: string;
+  stepNumber?: number;
   totalResponders: number;
   options: {
     optionId: string;
     label: string;
+    type?: string;
     count: number;
     percentage: number;
   }[];
@@ -37,6 +46,7 @@ export interface AdminDashboardData {
     isConnected: boolean;
     type: 'mongodb' | 'local_fallback';
     dbName: string;
+    collectionName?: string;
     totalRecords: number;
     uriMasked: string;
     connectionError?: string | null;
@@ -55,6 +65,71 @@ export interface ClientAnonymousRecord {
   bpCategory?: string;
   sugarCategory?: string;
   source?: string;
+}
+
+/**
+ * Dynamically builds questionAnalytics for every active question on the form
+ * from a list of participant records, ensuring 100% alignment with src/data/questions.ts.
+ */
+export function buildQuestionAnalyticsFromRecords(
+  records: ClientAnonymousRecord[]
+): Record<string, QuestionAnalyticsItem> {
+  const analytics: Record<string, QuestionAnalyticsItem> = {};
+
+  for (const q of ALL_HEALTH_QUESTIONS) {
+    const counts: Record<string, number> = {};
+    let total = 0;
+
+    for (const r of records) {
+      const ans =
+        q.id === 'q1_age'
+          ? r.answers?.['q1_age'] || r.ageBand
+          : r.answers?.[q.id];
+      if (ans && ans !== 'skipped') {
+        counts[ans] = (counts[ans] || 0) + 1;
+        total++;
+      }
+    }
+
+    const seenOptionIds = new Set<string>();
+    const options: QuestionAnalyticsItem['options'] = [];
+
+    for (const opt of q.options) {
+      seenOptionIds.add(opt.id);
+      const count = counts[opt.id] || 0;
+      options.push({
+        optionId: opt.id,
+        label: opt.label,
+        type: opt.type,
+        count,
+        percentage: total > 0 ? Math.round((count / total) * 1000) / 10 : 0,
+      });
+    }
+
+    for (const [optId, count] of Object.entries(counts)) {
+      if (!seenOptionIds.has(optId)) {
+        options.push({
+          optionId: optId,
+          label: formatQuestionAnswer(q.id, optId),
+          type: 'neutral',
+          count,
+          percentage: total > 0 ? Math.round((count / total) * 1000) / 10 : 0,
+        });
+      }
+    }
+
+    analytics[q.id] = {
+      questionId: q.id,
+      title: q.title,
+      category: q.category,
+      categoryLabel: q.categoryLabel,
+      stepNumber: q.stepNumber,
+      totalResponders: total,
+      options,
+    };
+  }
+
+  return analytics;
 }
 
 // -------------------------------------------------------------
@@ -148,7 +223,33 @@ export async function fetchAdminDashboardStats(): Promise<AdminDashboardData | n
     return data;
   } catch (err) {
     console.warn('Could not fetch server stats, building client-side aggregated view:', err);
-    return null;
+    const localRecords = loadLocalAnonymousRecords();
+    const totalCount = localRecords.length;
+    const completedCount = localRecords.filter((r) => r.completedCheck).length;
+    let safetyTriggerCount = 0;
+    for (const r of localRecords) {
+      if (r.answers && Object.entries(r.answers).some(([qId, optId]) => isSafetyTriggerAnswer(qId, optId))) {
+        safetyTriggerCount++;
+      }
+    }
+    return {
+      totalParticipants: totalCount,
+      completedChecks: completedCount,
+      completionRate: totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0,
+      avgSystolic: null,
+      avgBmi: null,
+      safetyTriggerCount,
+      ageDistribution: {},
+      questionResponses: {},
+      questionAnalytics: buildQuestionAnalyticsFromRecords(localRecords),
+      databaseStatus: {
+        isConnected: false,
+        type: 'local_fallback',
+        dbName: 'local_storage',
+        totalRecords: totalCount,
+        uriMasked: 'Local Browser Fallback',
+      },
+    };
   }
 }
 
@@ -205,44 +306,84 @@ export async function downloadExcelResponses(records?: ClientAnonymousRecord[]) 
     console.warn('Direct stream export unavailable, generating via client-side XLSX module:', e);
   }
 
-  // Client-side fallback generation with xlsx
+  // Client-side fallback generation with xlsx mapped strictly to ALL_HEALTH_QUESTIONS
   const XLSX = await import('xlsx');
   const sourceRecords = records && records.length > 0 ? records : await fetchAdminRecords();
   const wb = XLSX.utils.book_new();
 
-  const OCCUPATION_MAP: Record<string, string> = {
-    full_time: 'Full-Time Employee',
-    part_time: 'Part-Time Employee',
-    self_employed: 'Self-Employed Woman',
-    freelancer: 'Freelancer',
-    contract_worker: 'Contract Worker',
-    casual_worker: 'Casual Worker',
-    unemployed_professional: 'Unemployed Professional',
-    job_seeker: 'Job Seeker',
-    retired_professional: 'Retired Professional',
-    student: 'Student',
-    stay_at_home: 'Stay-at-Home Woman',
-  };
+  const headerRow: string[] = [
+    'Participant ID',
+    'Date & Time (UTC)',
+    'Check Completed?',
+    'Systolic BP (mmHg)',
+    'Diastolic BP (mmHg)',
+    'Blood Glucose',
+    'Glucose Type',
+    'Height',
+    'Weight',
+    'BMI',
+    'BMI Category',
+    ...ALL_HEALTH_QUESTIONS.map((q) => q.title),
+  ];
 
-  const flatRows = sourceRecords.map((r) => ({
-    'Participant ID': r.id,
-    'Timestamp (UTC)': r.timestamp,
-    'Occupation Category': r.answers?.['q0_occupation'] ? (OCCUPATION_MAP[r.answers['q0_occupation']] || r.answers['q0_occupation']) : 'N/A',
-    'Age Band': r.ageBand || r.answers?.['q1_age'] || 'N/A',
-    'Check Completed': r.completedCheck ? 'Yes' : 'In-Progress',
-    'Systolic BP (mmHg)': r.numbers?.systolic ?? '',
-    'Diastolic BP (mmHg)': r.numbers?.diastolic ?? '',
-    'Blood Glucose': r.numbers?.bloodSugar ?? '',
-    'Glucose Type': r.numbers?.sugarType ?? '',
-    'Height (cm/in)': r.numbers?.height ?? '',
-    'Weight (kg/lbs)': r.numbers?.weight ?? '',
-    'BMI (kg/m²)': r.bmi ?? '',
-    'BMI Category': r.bmiCategory ?? '',
-    ...r.answers,
-  }));
+  const dataRows: (string | number)[][] = sourceRecords.map((r) => {
+    const row: (string | number)[] = [
+      r.id,
+      r.timestamp ? new Date(r.timestamp).toLocaleString('en-GB') : '',
+      r.completedCheck ? 'Yes' : 'In-Progress',
+      r.numbers?.systolic ?? '',
+      r.numbers?.diastolic ?? '',
+      r.numbers?.bloodSugar ?? '',
+      r.numbers?.sugarType ? `${r.numbers.sugarType} (${r.numbers.sugarUnit || 'mg/dL'})` : '',
+      r.numbers?.height ? `${r.numbers.height} ${r.numbers.unitSystem === 'imperial' ? 'in' : 'cm'}` : '',
+      r.numbers?.weight ? `${r.numbers.weight} ${r.numbers.unitSystem === 'imperial' ? 'lbs' : 'kg'}` : '',
+      r.bmi ?? '',
+      r.bmiCategory ?? '',
+    ];
 
-  const ws = XLSX.utils.json_to_sheet(flatRows);
-  XLSX.utils.book_append_sheet(wb, ws, 'User Responses Data');
+    for (const q of ALL_HEALTH_QUESTIONS) {
+      const rawVal =
+        q.id === 'q1_age'
+          ? r.answers?.['q1_age'] || r.ageBand
+          : r.answers?.[q.id];
+      row.push(formatQuestionAnswer(q.id, rawVal));
+    }
+
+    return row;
+  });
+
+  const wsResponses = XLSX.utils.aoa_to_sheet([headerRow, ...dataRows]);
+  XLSX.utils.book_append_sheet(wb, wsResponses, 'User Responses Data');
+
+  // Sheet 2: Question Percentages
+  const analyticsMap = buildQuestionAnalyticsFromRecords(sourceRecords);
+  const statsHeaders = [
+    'Category',
+    'Question ID',
+    'Question Text',
+    'Total Responses',
+    'Option Answer',
+    'Response Count',
+    'Percentage (%)',
+  ];
+  const statsRows: (string | number)[][] = [];
+  for (const q of ALL_HEALTH_QUESTIONS) {
+    const item = analyticsMap[q.id];
+    if (!item) continue;
+    for (const opt of item.options) {
+      statsRows.push([
+        q.categoryLabel,
+        q.id,
+        q.title,
+        item.totalResponders,
+        opt.label,
+        opt.count,
+        `${opt.percentage.toFixed(1)}%`,
+      ]);
+    }
+  }
+  const wsPercentages = XLSX.utils.aoa_to_sheet([statsHeaders, ...statsRows]);
+  XLSX.utils.book_append_sheet(wb, wsPercentages, 'Question Percentages');
 
   XLSX.writeFile(wb, `Wellness_Passport_Responses_${new Date().toISOString().split('T')[0]}.xlsx`);
 }

@@ -5,8 +5,8 @@ export const CLINICAL_ARTICLES: Article[] = [
   {
     id: 'breast-health',
     hub: 'womens',
-    category: 'Breast health',
-    categoryTag: 'Breast health',
+    category: 'Breast Health',
+    categoryTag: 'Breast Health',
     title: "Knowing what's normal for you",
     headline: "Knowing what's normal for you",
     summary:
@@ -15,10 +15,10 @@ export const CLINICAL_ARTICLES: Article[] = [
       "Breast awareness is not about checking for cancer every morning. It's about knowing how your breasts normally look and feel, so that a change stands out...",
     readTime: '4 min read',
     image: '/assets/aistudio/image_a986066b.png',
-    reviewerName: 'Dr. A. Okonjo',
-    reviewerRole: 'Consultant Breast Surgeon',
-    reviewerHospital: 'Iwosan Lagoon Hospitals, Victoria Island',
-    reviewDate: 'Reviewed 14 August 2026',
+    reviewerName: 'Dr. Omotayo Mofoluwake Ayeni',
+    reviewerRole: 'Consultant, Obstetrics and Gynaecology',
+    reviewerHospital: 'Iwosan Lagoon Hospitals',
+    reviewDate: 'Reviewed 2nd November 2026',
     sections: [
       {
         number: 1,
@@ -70,8 +70,8 @@ export const CLINICAL_ARTICLES: Article[] = [
   {
     id: 'menstrual-health',
     hub: 'womens',
-    category: 'Menstrual health',
-    categoryTag: 'Menstrual health',
+    category: 'Menstrual Health',
+    categoryTag: 'Menstrual Health',
     title: 'Cycles, pain & what is normal',
     headline: 'Cycles, pain & what is normal',
     summary:
@@ -80,10 +80,10 @@ export const CLINICAL_ARTICLES: Article[] = [
       'A menstrual cycle provides a continuous monthly report on your hormonal and metabolic wellbeing. Knowing what is typical helps you recognize when symptoms deserve gentle care.',
     readTime: '4 min read',
     image: '/assets/aistudio/image_425a2223.png',
-    reviewerName: 'Dr. Ngozi Adeleke',
-    reviewerRole: 'Consultant Gynaecologist & Minimally Invasive Surgeon',
-    reviewerHospital: 'Iwosan Lagoon Hospitals, Ikoyi',
-    reviewDate: 'Reviewed 20 July 2026',
+    reviewerName: 'Dr. Omotayo Mofoluwake Ayeni',
+    reviewerRole: 'Consultant, Obstetrics and Gynaecology',
+    reviewerHospital: 'Iwosan Lagoon Hospitals',
+    reviewDate: 'Reviewed 2nd November 2026',
     sections: [
       {
         number: 1,
@@ -135,8 +135,8 @@ export const CLINICAL_ARTICLES: Article[] = [
   {
     id: 'menopause-midlife',
     hub: 'womens',
-    category: 'Menopause & midlife',
-    categoryTag: 'Menopause & midlife',
+    category: 'Menopause & Midlife',
+    categoryTag: 'Menopause & Midlife',
     title: 'Changes, comfort & midlife support',
     headline: 'Changes, comfort & midlife support',
     summary:
@@ -145,10 +145,10 @@ export const CLINICAL_ARTICLES: Article[] = [
       'Midlife and perimenopause represent a powerful transitional chapter. Understanding hormonal shifts empowers you to protect your bones, heart, and vitality.',
     readTime: '4 min read',
     image: '/assets/aistudio/image_69e6584c.png',
-    reviewerName: 'Dr. Funmi Oladipo',
-    reviewerRole: 'Consultant Reproductive Endocrinologist',
-    reviewerHospital: 'Iwosan Lagoon Hospitals, Ikeja',
-    reviewDate: 'Reviewed 18 June 2026',
+    reviewerName: 'Dr. Omotayo Mofoluwake Ayeni',
+    reviewerRole: 'Consultant, Obstetrics and Gynaecology',
+    reviewerHospital: 'Iwosan Lagoon Hospitals',
+    reviewDate: 'Reviewed 2nd November 2026',
     sections: [
       {
         number: 1,
@@ -200,8 +200,8 @@ export const CLINICAL_ARTICLES: Article[] = [
   {
     id: 'reproductive-health',
     hub: 'womens',
-    category: 'Reproductive health',
-    categoryTag: 'Reproductive health',
+    category: 'Reproductive Health',
+    categoryTag: 'Reproductive Health',
     title: 'Fertility, infections & holistic care',
     headline: 'Fertility, infections & holistic care',
     summary:
@@ -210,10 +210,10 @@ export const CLINICAL_ARTICLES: Article[] = [
       'Reproductive health encompasses physical, hormonal, and emotional vitality across your childbearing years and beyond. Proactive care gives you peace of mind.',
     readTime: '3 min read',
     image: '/assets/aistudio/image_ad6762cc.png',
-    reviewerName: 'Dr. Amina Bello',
-    reviewerRole: 'Consultant Obstetrician & Fertility Specialist',
-    reviewerHospital: 'Iwosan Lagoon Hospitals, Victoria Island',
-    reviewDate: 'Reviewed 12 May 2026',
+    reviewerName: 'Dr. Omotayo Mofoluwake Ayeni',
+    reviewerRole: 'Consultant, Obstetrics and Gynaecology',
+    reviewerHospital: 'Iwosan Lagoon Hospitals',
+    reviewDate: 'Reviewed 2nd November 2026',
     sections: [
       {
         number: 1,
@@ -265,8 +265,8 @@ export const CLINICAL_ARTICLES: Article[] = [
   {
     id: 'cervical-cancer-hpv',
     hub: 'womens',
-    category: 'Cervical health',
-    categoryTag: 'Cervical health',
+    category: 'Cervical Health',
+    categoryTag: 'Cervical Health',
     title: 'HPV, smears & prevention',
     headline: 'HPV, smears & prevention',
     summary:
@@ -275,10 +275,10 @@ export const CLINICAL_ARTICLES: Article[] = [
       'Cervical cancer is one of the rare cancers that can be almost completely prevented through routine screening and vaccination.',
     readTime: '3 min read',
     image: '/assets/aistudio/image_ff6d3cc7.png',
-    reviewerName: 'Dr. Ayotunde Peters',
-    reviewerRole: 'Consultant Obstetrician & Gynaecologist, FWACS',
-    reviewerHospital: 'Iwosan Lagoon Hospitals, Victoria Island',
-    reviewDate: 'Reviewed 28 April 2026',
+    reviewerName: 'Dr. Omotayo Mofoluwake Ayeni',
+    reviewerRole: 'Consultant, Obstetrics and Gynaecology',
+    reviewerHospital: 'Iwosan Lagoon Hospitals',
+    reviewDate: 'Reviewed 2nd November 2026',
     sections: [
       {
         number: 1,
@@ -330,8 +330,8 @@ export const CLINICAL_ARTICLES: Article[] = [
   {
     id: 'preventive-care-matrix',
     hub: 'womens',
-    category: 'Preventive care',
-    categoryTag: 'Preventive care',
+    category: 'Preventive Care',
+    categoryTag: 'Preventive Care',
     title: 'Routine checks that matter',
     headline: 'Routine checks that matter',
     summary:
@@ -340,10 +340,10 @@ export const CLINICAL_ARTICLES: Article[] = [
       'Preventive health is an act of empowerment. When you monitor key vitals and screening benchmarks proactively, health challenges can be caught before they disrupt your life.',
     readTime: '4 min read',
     image: '/assets/aistudio/image_a4a9cee3.png',
-    reviewerName: 'Dr. Kemi Johnson',
-    reviewerRole: 'Chief Medical Director & Preventive Health Specialist',
-    reviewerHospital: 'Iwosan Lagoon Hospitals Group',
-    reviewDate: 'Reviewed 15 March 2026',
+    reviewerName: 'Dr. Oluwatomi Kogo',
+    reviewerRole: 'Managing Director of Wellness',
+    reviewerHospital: 'Wellness Centre, Idejo, Victoria Island',
+    reviewDate: 'Reviewed 2nd November 2026',
     sections: [
       {
         number: 1,
@@ -397,8 +397,8 @@ export const CLINICAL_ARTICLES: Article[] = [
   {
     id: 'heart-health-women',
     hub: 'lifestyle',
-    category: 'Heart health',
-    categoryTag: 'Heart health',
+    category: 'Heart Health',
+    categoryTag: 'Heart Health',
     title: 'Blood pressure & everyday habits',
     headline: 'Blood pressure & everyday habits',
     summary:
@@ -407,10 +407,10 @@ export const CLINICAL_ARTICLES: Article[] = [
       'Cardiovascular disease remains the leading health risk for women worldwide, yet women frequently experience subtle signals rather than classic chest pain.',
     readTime: '4 min read',
     image: '/assets/aistudio/image_572b6d90.png',
-    reviewerName: 'Dr. Chioma Eze',
-    reviewerRole: 'Consultant Cardiologist & Heart Specialist',
-    reviewerHospital: 'Iwosan Lagoon Heart Center, Victoria Island',
-    reviewDate: 'Reviewed 10 February 2026',
+    reviewerName: 'Dr. Bright Ateraye',
+    reviewerRole: 'Consultant Family Physician',
+    reviewerHospital: 'Iwosan Lagoon Hospitals, Idejo',
+    reviewDate: 'Reviewed 2nd November 2026',
     sections: [
       {
         number: 1,
@@ -462,8 +462,8 @@ export const CLINICAL_ARTICLES: Article[] = [
   {
     id: 'diabetes-prevention',
     hub: 'lifestyle',
-    category: 'Diabetes',
-    categoryTag: 'Diabetes',
+    category: 'Diabetes & Metabolic Health',
+    categoryTag: 'Diabetes & Metabolic Health',
     title: 'Sugar, signs & prevention',
     headline: 'Sugar, signs & prevention',
     summary:
@@ -473,10 +473,10 @@ export const CLINICAL_ARTICLES: Article[] = [
     readTime: '4 min read',
     image:
       'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?auto=format&fit=crop&w=480&q=80',
-    reviewerName: 'Dr. Babatunde Alabi',
-    reviewerRole: 'Consultant Endocrinologist & Diabetologist',
-    reviewerHospital: 'Iwosan Lagoon Hospitals, Ikeja',
-    reviewDate: 'Reviewed 24 January 2026',
+    reviewerName: 'Dr. Ekido Okpiabhele',
+    reviewerRole: 'Consultant Endocrinologist',
+    reviewerHospital: 'Iwosan Lagoon Hospitals',
+    reviewDate: 'Reviewed 2nd November 2026',
     sections: [
       {
         number: 1,
@@ -539,10 +539,10 @@ export const CLINICAL_ARTICLES: Article[] = [
     readTime: '3 min read',
     image:
       'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=480&q=80',
-    reviewerName: 'Dr. Folake Sanni',
-    reviewerRole: 'Clinical Nutritionist & Wellness Specialist',
-    reviewerHospital: 'Iwosan Lagoon Hospitals, Ikoyi',
-    reviewDate: 'Reviewed 15 February 2026',
+    reviewerName: 'Chelsea Onyemuwa',
+    reviewerRole: 'Clinical Nutritionist',
+    reviewerHospital: 'Iwosan Lagoon Hospitals, Idejo',
+    reviewDate: 'Reviewed 2nd November 2026',
     sections: [
       {
         number: 1,
@@ -594,8 +594,8 @@ export const CLINICAL_ARTICLES: Article[] = [
   {
     id: 'movement-exercise',
     hub: 'lifestyle',
-    category: 'Movement',
-    categoryTag: 'Movement',
+    category: 'Movement & Physical Activity',
+    categoryTag: 'Movement & Physical Activity',
     title: 'Start small, stay steady',
     headline: 'Start small, stay steady',
     summary:
@@ -604,10 +604,10 @@ export const CLINICAL_ARTICLES: Article[] = [
       'Movement is medicine. While brisk walking powers your cardiovascular stamina, strength and resistance training preserve bone density and muscle as you age.',
     readTime: '3 min read',
     image: '/assets/aistudio/image_1a1890e0.png',
-    reviewerName: 'Dr. Chidinma Okafor',
-    reviewerRole: 'Specialist in Sports & Preventive Medicine',
-    reviewerHospital: 'Iwosan Lagoon Hospitals, Victoria Island',
-    reviewDate: 'Reviewed 20 January 2026',
+    reviewerName: 'Ayowole Ilelaboye',
+    reviewerRole: 'Exercise Physiologist',
+    reviewerHospital: 'Wellness Centre, Idejo, Victoria Island',
+    reviewDate: 'Reviewed 2nd November 2026',
     sections: [
       {
         number: 1,
@@ -659,8 +659,8 @@ export const CLINICAL_ARTICLES: Article[] = [
   {
     id: 'sleep-stress',
     hub: 'lifestyle',
-    category: 'Sleep & stress',
-    categoryTag: 'Sleep & stress',
+    category: 'Sleep & Stress',
+    categoryTag: 'Sleep & Stress',
     title: 'Rest, reset, recover',
     headline: 'Rest, reset, recover',
     summary:
@@ -669,10 +669,10 @@ export const CLINICAL_ARTICLES: Article[] = [
       'Sleep is your body’s nocturnal repair shop. When chronic stress keeps cortisol elevated, restorative sleep is your fastest path back to balance.',
     readTime: '3 min read',
     image: '/assets/aistudio/image_e9ce1814.png',
-    reviewerName: 'Dr. Tolu Olusanya',
-    reviewerRole: 'Lifestyle Medicine Physician & Stress Specialist',
-    reviewerHospital: 'Iwosan Lagoon Hospitals, Victoria Island',
-    reviewDate: 'Reviewed 18 January 2026',
+    reviewerName: 'Dr. Oluwatomi Kogo',
+    reviewerRole: 'Managing Director of Wellness',
+    reviewerHospital: 'Wellness Centre, Idejo, Victoria Island',
+    reviewDate: 'Reviewed 2nd November 2026',
     sections: [
       {
         number: 1,
@@ -724,8 +724,8 @@ export const CLINICAL_ARTICLES: Article[] = [
   {
     id: 'healthy-micro-habits',
     hub: 'lifestyle',
-    category: 'Healthy habits',
-    categoryTag: 'Healthy habits',
+    category: 'Healthy Habits',
+    categoryTag: 'Healthy Habits',
     title: 'Small steps, kept simple',
     headline: 'Small steps, kept simple',
     summary:
@@ -734,10 +734,10 @@ export const CLINICAL_ARTICLES: Article[] = [
       'Health transformation is rarely built on extreme overhauls. It is the steady accumulation of small, loving choices repeated day after day.',
     readTime: '3 min read',
     image: '/assets/aistudio/image_27257c44.png',
-    reviewerName: 'Dr. Kemi Johnson',
-    reviewerRole: 'Chief Medical Director & Preventive Health Lead',
-    reviewerHospital: 'Iwosan Lagoon Hospitals Group',
-    reviewDate: 'Reviewed 2 February 2026',
+    reviewerName: 'Dr. Oluwatomi Kogo',
+    reviewerRole: 'Managing Director of Wellness',
+    reviewerHospital: 'Wellness Centre, Idejo, Victoria Island',
+    reviewDate: 'Reviewed 2nd November 2026',
     sections: [
       {
         number: 1,
@@ -790,20 +790,20 @@ export const CLINICAL_ARTICLES: Article[] = [
   {
     id: 'mental-health-mindfulness',
     hub: 'lifestyle',
-    category: 'Mental health & mindfulness',
-    categoryTag: 'Mental health & mindfulness',
+    category: 'Mental Health & Mindfulness',
+    categoryTag: 'Mental Health & Mindfulness',
     title: 'Burnout, mood & emotional health',
-    headline: 'Honouring your emotional health: Beyond silent burnout',
+    headline: 'Burnout, mood & emotional health',
     summary:
       'Understanding the biological signals of anxiety, low mood, and chronic burnout in women, and practical clinical tools to rebuild emotional vitality.',
     intro:
       'Mental health is not a luxury or a sign of personal weakness — it is a biological vital sign. Chronic anxiety, persistent fatigue, and low mood directly influence cardiovascular function, immune response, and hormonal balance. Recognizing emotional exhaustion is the first courageous step toward replenishment.',
     readTime: '4 min read',
     image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=800&q=80',
-    reviewerName: 'Dr. Folashade Adeleke',
-    reviewerRole: 'Consultant Neuropsychiatrist & Mental Health Lead',
-    reviewerHospital: 'Iwosan Lagoon Hospitals, Victoria Island',
-    reviewDate: 'Reviewed 12 August 2026',
+    reviewerName: 'Dr Maymunah Yusuf Kadiri',
+    reviewerRole: 'Medical Director and Psychiatrist-in-Chief',
+    reviewerHospital: 'Pinnacle Medical Services',
+    reviewDate: 'Reviewed 2nd November, 2026',
     sections: [
       {
         number: 1,
@@ -838,149 +838,18 @@ export const CLINICAL_ARTICLES: Article[] = [
       'Educational information, not a diagnosis. If you are experiencing distress, compassionate confidential support is always available.',
     relatedArticles: [
       {
-        id: 'mindfulness-daily-peace',
-        title: 'Mindfulness & nervous system reset',
+        id: 'sleep-stress',
+        title: 'Rest, reset, recover',
         readTime: '3 min read',
       },
       {
-        id: 'sleep-stress',
-        title: 'Rest, reset, recover',
+        id: 'healthy-micro-habits',
+        title: 'Small steps, kept simple',
         readTime: '3 min read',
       },
     ],
     tags: ['Mental health', 'Burnout recovery', 'Emotional wellness', 'Depression support'],
     relatedTopic: 'Iwosan Mental Wellness & Counseling',
-    screenIdTarget: 'contact',
-  },
-  {
-    id: 'mindfulness-daily-peace',
-    hub: 'lifestyle',
-    category: 'Mental health & mindfulness',
-    categoryTag: 'Mental health & mindfulness',
-    title: 'Mindfulness & nervous system reset',
-    headline: 'Calming the overstimulated mind: Everyday somatic practices',
-    summary:
-      'How micro-mindfulness, physiological breathing, and somatic vagal toning downshift chronic stress and restore mental clarity.',
-    intro:
-      'When your mind is inundated with endless task lists, phone notifications, and family responsibilities, your autonomic nervous system remains trapped in sympathetic "fight-or-flight". Mindfulness is not about emptying your thoughts — it is the physical practice of signaling safety back to your body.',
-    readTime: '3 min read',
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80',
-    reviewerName: 'Dr. Kemi Balogun',
-    reviewerRole: 'Consultant Lifestyle Medicine Physician & Mindfulness Specialist',
-    reviewerHospital: 'Iwosan Lagoon Hospitals, Ikoyi',
-    reviewDate: 'Reviewed 19 September 2026',
-    sections: [
-      {
-        number: 1,
-        title: 'Why willpower cannot outthink an agitated nervous system',
-        content:
-          'When stress hormones flood the bloodstream, heart rate and arterial tension rise. Telling yourself to simply "relax" rarely works because the alarm signals originate in the lower brain. Somatic regulation uses your breath, sensory awareness, and posture to send immediate physical calming messages through the vagus nerve.',
-      },
-      {
-        number: 2,
-        title: 'The 60-second physiological sigh',
-        content:
-          'Developed by neurobiologists, the physiological sigh is the fastest natural way to downshift anxiety: take two quick inhales through your nose (one deep, followed immediately by a short top-off inhale), followed by a long, slow, audible exhale through your mouth. Repeating this 3 to 5 times instantly lowers heart rate.',
-      },
-      {
-        number: 3,
-        title: 'Micro-mindfulness in everyday Nigerian life',
-        content:
-          'You don’t need an hour in a silent room to practice mindfulness. Ground yourself during a commute by noticing 5 things you can see, 4 you can touch, and 3 you can hear. Savor the warmth of your morning tea without looking at a screen. These micro-pauses prevent chronic sensory overload.',
-      },
-    ],
-    content: [
-      'Use the double-inhale physiological sigh to downshift acute anxiety within 60 seconds.',
-      'Practice sensory grounding (5-4-3-2-1) when waiting in traffic or between meetings.',
-      'Create a 5-minute screen-free pause during your daily transition from work to home.',
-    ],
-    keyTakeaways: [
-      'Mindfulness is somatic safety. Brief, intentional breath resets lower blood pressure and clear brain fog.',
-    ],
-    takeawayMessage:
-      'You don’t need hours of meditation. Three physiological sighs and two minutes of screen-free breathing reset your entire day.',
-    disclaimer:
-      'Educational information, not a diagnosis. If a symptom worries you, please speak to a clinician.',
-    relatedArticles: [
-      {
-        id: 'mental-health-mindfulness',
-        title: 'Burnout, mood & emotional health',
-        readTime: '4 min read',
-      },
-      {
-        id: 'sleep-stress',
-        title: 'Rest, reset, recover',
-        readTime: '3 min read',
-      },
-    ],
-    tags: ['Mindfulness', 'Somatic breathing', 'Vagus nerve', 'Anxiety reset'],
-    relatedTopic: 'Stress Reduction & Somatic Regulation',
-    screenIdTarget: 'lifestyle',
-  },
-  // ================= AVOIDANCE OF TOXIC SUBSTANCES =================
-  {
-    id: 'avoidance-toxic-substances',
-    hub: 'lifestyle',
-    category: 'Avoidance of toxic substances',
-    categoryTag: 'Avoidance of toxic substances',
-    title: 'Everyday toxins, alcohol & tobacco',
-    headline: 'Protecting cellular longevity: Conscious choices against everyday toxins',
-    summary:
-      'Evidence-based guidance on how tobacco, vaping, alcohol, and hidden household chemicals impact female hormones, breast tissue, and vascular walls.',
-    intro:
-      'Our bodies are equipped with remarkable liver and cellular detox systems, but modern life surrounds us with concentrated chemical stressors. From tobacco smoke and vaping to social drinking and plastic packaging, conscious reductions in toxic load yield immediate protective benefits for your heart, liver, and breasts.',
-    readTime: '4 min read',
-    image: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80',
-    reviewerName: 'Dr. Olayinka Soyemi',
-    reviewerRole: 'Consultant Cardiologist & Preventive Medicine Specialist',
-    reviewerHospital: 'Iwosan Lagoon Hospitals, Lekki',
-    reviewDate: 'Reviewed 25 September 2026',
-    sections: [
-      {
-        number: 1,
-        title: 'Alcohol, estrogen metabolism & breast tissue',
-        content:
-          'When the liver processes alcohol, it produces acetaldehyde, a potent cellular toxin. In women, even moderate alcohol intake (3–6 drinks per week) can elevate circulating estrogen levels by competing for liver enzyme pathways. Introducing alcohol-free reset weeks reduces estrogen burden, improves deep sleep quality, and lowers resting blood pressure.',
-      },
-      {
-        number: 2,
-        title: 'Tobacco, vaping & accelerated arterial damage',
-        content:
-          'Cigarette smoking and electronic vaping deliver concentrated nicotine and heavy metals directly to vascular endothelial walls. Women who smoke experience greater arterial stiffening and earlier menopausal onset compared to non-smokers. Quitting at any age yields immediate cardiovascular improvements within days.',
-      },
-      {
-        number: 3,
-        title: 'Household micro-swaps against endocrine disruptors',
-        content:
-          'Everyday plastics containing bisphenols (BPA/BPS) and cosmetics with synthetic phthalates can mimic estrogen in female breast and uterine tissues. Simple switches—using glass or stainless-steel food containers, avoiding microwaving in plastic, and selecting fragrance-free personal care—dramatically reduce internal chemical burden.',
-      },
-    ],
-    content: [
-      'Incorporate weekly alcohol-free reset days to support liver metabolism and hormonal clearance.',
-      'Seek clinical cessation support if you currently smoke or vape to protect arterial walls.',
-      'Replace plastic food containers with glass or ceramic to minimize endocrine-disrupting chemicals.',
-    ],
-    keyTakeaways: [
-      'Every toxin avoided preserves arterial elasticity, supports liver detoxification, and protects breast health.',
-    ],
-    takeawayMessage:
-      'Small, conscious lifestyle swaps—choosing water over alcohol, glass over heated plastics, and clean air—powerfully safeguard your cellular vitality.',
-    disclaimer:
-      'Educational information, not a diagnosis. If you need support with tobacco cessation or alcohol moderation, our clinicians are here to help.',
-    relatedArticles: [
-      {
-        id: 'heart-health-women',
-        title: 'Blood pressure & everyday habits',
-        readTime: '4 min read',
-      },
-      {
-        id: 'breast-health',
-        title: "Knowing what's normal for you",
-        readTime: '4 min read',
-      },
-    ],
-    tags: ['Toxic substances', 'Alcohol moderation', 'Smoking cessation', 'Endocrine health'],
-    relatedTopic: 'Cardiovascular & Preventive Detoxification',
     screenIdTarget: 'contact',
   },
 ];

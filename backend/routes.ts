@@ -10,6 +10,7 @@ import {
   AnonymousRecord,
 } from './db';
 import { generateExcelWorkbook, QUESTION_HEADER_MAP, formatAnswerValue } from './excelExport';
+import { ALL_HEALTH_QUESTIONS } from '../src/data/questions';
 import { config } from './config';
 import { sendBookingEmail, BookingDetails } from './emailService';
 
@@ -124,42 +125,82 @@ apiRouter.get('/admin/stats', async (req: Request, res: Response) => {
     const stats = await getStatsSummary();
     const records = await getAllRecords();
 
-    // Compute detailed percentage breakdown per question for dashboard charts
+    // Compute detailed percentage breakdown per question dynamically from current form questions (ALL_HEALTH_QUESTIONS)
     const questionAnalytics: Record<
       string,
       {
         questionId: string;
         title: string;
+        category: string;
+        categoryLabel: string;
+        stepNumber: number;
         totalResponders: number;
-        options: { optionId: string; label: string; count: number; percentage: number }[];
+        options: {
+          optionId: string;
+          label: string;
+          type?: string;
+          count: number;
+          percentage: number;
+        }[];
       }
     > = {};
 
-    for (const [qId, qTitle] of Object.entries(QUESTION_HEADER_MAP)) {
+    for (const q of ALL_HEALTH_QUESTIONS) {
       const counts: Record<string, number> = {};
       let total = 0;
 
       for (const r of records) {
-        const ans = r.answers ? r.answers[qId] : undefined;
+        const ans =
+          q.id === 'q1_age'
+            ? r.answers?.['q1_age'] || r.ageBand
+            : r.answers?.[q.id];
         if (ans && ans !== 'skipped') {
           counts[ans] = (counts[ans] || 0) + 1;
           total++;
         }
       }
 
-      const options = Object.entries(counts).map(([optId, count]) => ({
-        optionId: optId,
-        label: formatAnswerValue(qId, optId),
-        count,
-        percentage: total > 0 ? Math.round((count / total) * 1000) / 10 : 0,
-      }));
+      const seenOptionIds = new Set<string>();
+      const options: {
+        optionId: string;
+        label: string;
+        type?: string;
+        count: number;
+        percentage: number;
+      }[] = [];
 
-      // Sort by count descending
-      options.sort((a, b) => b.count - a.count);
+      // Include all defined options on the form question so admins can see the complete option breakdown
+      for (const opt of q.options) {
+        seenOptionIds.add(opt.id);
+        const count = counts[opt.id] || 0;
+        options.push({
+          optionId: opt.id,
+          label: opt.label,
+          type: opt.type,
+          count,
+          percentage: total > 0 ? Math.round((count / total) * 1000) / 10 : 0,
+        });
+      }
 
-      questionAnalytics[qId] = {
-        questionId: qId,
-        title: qTitle,
+      // Include any custom/date answers not in static options list
+      for (const [optId, count] of Object.entries(counts)) {
+        if (!seenOptionIds.has(optId)) {
+          options.push({
+            optionId: optId,
+            label: formatAnswerValue(q.id, optId),
+            type: 'neutral',
+            count,
+            percentage: total > 0 ? Math.round((count / total) * 1000) / 10 : 0,
+          });
+        }
+      }
+
+      questionAnalytics[q.id] = {
+        questionId: q.id,
+        title: q.title,
+        category: q.category,
+        categoryLabel: q.categoryLabel,
+        stepNumber: q.stepNumber,
         totalResponders: total,
         options,
       };

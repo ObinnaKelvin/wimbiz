@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion } from 'motion/react';
 import { ScreenId } from '../types';
+import {
+  ALL_HEALTH_QUESTIONS,
+  FORM_CATEGORIES,
+  formatQuestionAnswer,
+} from '../data/questions';
 import {
   AdminUser,
   AdminDashboardData,
@@ -14,30 +19,25 @@ import {
   downloadExcelResponses,
   seedDemoRecordsOnServer,
   reconnectDatabase,
+  buildQuestionAnalyticsFromRecords,
 } from '../utils/adminApi';
 import {
   Lock,
   Unlock,
   ShieldCheck,
-  Download,
   Users,
   CheckCircle2,
   Activity,
   Heart,
-  Calendar,
   Database,
   RefreshCw,
   LogOut,
   Search,
-  ChevronRight,
-  ChevronDown,
   BarChart3,
   Table as TableIcon,
-  Sparkles,
   ArrowLeft,
   AlertTriangle,
   FileSpreadsheet,
-  Stethoscope,
   Info,
 } from 'lucide-react';
 
@@ -134,6 +134,38 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
     await seedDemoRecordsOnServer();
     await loadData();
   };
+
+  // Dynamically map all active questions from src/data/questions.ts so old removed questions never appear
+  // and any new or modified questions on the form automatically display on the dashboard.
+  const questionAnalyticsList: QuestionAnalyticsItem[] = useMemo(() => {
+    const clientFallbackMap = buildQuestionAnalyticsFromRecords(records);
+
+    return ALL_HEALTH_QUESTIONS.map((q) => {
+      const serverItem = stats?.questionAnalytics?.[q.id];
+      const baseItem = serverItem || clientFallbackMap[q.id];
+
+      // Ensure options always include option type & latest label from ALL_HEALTH_QUESTIONS
+      const optionTypeMap = new Map(q.options.map((o) => [o.id, o]));
+      const mappedOptions = (baseItem?.options || []).map((opt) => {
+        const formOpt = optionTypeMap.get(opt.optionId);
+        return {
+          ...opt,
+          label: formOpt ? formOpt.label : opt.label,
+          type: formOpt ? formOpt.type : opt.type,
+        };
+      });
+
+      return {
+        questionId: q.id,
+        title: q.title,
+        category: q.category,
+        categoryLabel: q.categoryLabel,
+        stepNumber: q.stepNumber,
+        totalResponders: baseItem?.totalResponders ?? 0,
+        options: mappedOptions,
+      };
+    });
+  }, [stats, records]);
 
   // If not logged in, render the secure Admin Staff Login Card
   if (!currentUser) {
@@ -249,24 +281,15 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
     return (
       r.id.toLowerCase().includes(q) ||
       (r.ageBand && r.ageBand.toLowerCase().includes(q)) ||
-      (r.timestamp && r.timestamp.toLowerCase().includes(q))
+      (r.timestamp && r.timestamp.toLowerCase().includes(q)) ||
+      formatQuestionAnswer('q0_occupation', r.answers?.['q0_occupation']).toLowerCase().includes(q)
     );
   });
 
-  // Filtered Question Analytics
-  const questionAnalyticsList: QuestionAnalyticsItem[] = stats?.questionAnalytics
-    ? (Object.values(stats.questionAnalytics) as QuestionAnalyticsItem[])
-    : [];
-
+  // Filtered Question Analytics by active form category
   const filteredQuestions = questionAnalyticsList.filter((item) => {
     if (categoryFilter === 'all') return true;
-    if (categoryFilter === 'menstrual') return item.questionId.startsWith('q2049');
-    if (categoryFilter === 'fertility') return item.questionId.startsWith('q2050');
-    if (categoryFilter === 'midlife') return item.questionId.startsWith('q40');
-    if (categoryFilter === 'breast') return item.questionId.startsWith('q_breast') || item.questionId.startsWith('q_last_mam') || item.questionId.startsWith('q_cervical') || item.questionId.startsWith('q_hpv');
-    if (categoryFilter === 'bone') return item.questionId.startsWith('q_bone') || item.questionId.startsWith('q_height') || item.questionId.startsWith('q_osteop') || item.questionId.startsWith('q_stairs') || item.questionId.startsWith('q_strength');
-    if (categoryFilter === 'mental') return item.questionId.startsWith('phq') || item.questionId.startsWith('q_current_mood') || item.questionId.startsWith('q_anxious') || item.questionId.startsWith('q_stress') || item.questionId.startsWith('q_lonely') || item.questionId.startsWith('q_self_harm');
-    return true;
+    return item.category === categoryFilter;
   });
 
   return (
@@ -468,7 +491,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
             }`}
           >
             <BarChart3 className="w-4 h-4 text-emerald-600" />
-            <span>Question Percentage Charts</span>
+            <span>Question Percentage Charts ({ALL_HEALTH_QUESTIONS.length})</span>
           </button>
 
           <button
@@ -509,17 +532,19 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
       {/* TAB 1: VISUAL CHARTS (PERCENTAGES OF PEOPLE WHO ANSWERED EACH QUESTION) */}
       {activeTab === 'analytics' && (
         <div className="space-y-4">
-          {/* Category Filter Pills */}
+          {/* Dynamic Category Filter Pills driven by FORM_CATEGORIES in src/data/questions.ts */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-bold">
-            {[
-              { id: 'all', label: 'All Questions' },
-              { id: 'menstrual', label: 'Menstrual (20-49)' },
-              { id: 'fertility', label: 'Fertility & Pregnancy' },
-              { id: 'midlife', label: 'Perimenopause (40-49)' },
-              { id: 'breast', label: 'Breast & Gynaecology' },
-              { id: 'bone', label: 'Bone & Mobility' },
-              { id: 'mental', label: 'Mental Wellbeing' },
-            ].map((cat) => (
+            <button
+              onClick={() => setCategoryFilter('all')}
+              className={`px-3 py-1.5 rounded-full whitespace-nowrap transition cursor-pointer border ${
+                categoryFilter === 'all'
+                  ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
+                  : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+              }`}
+            >
+              All Questions ({ALL_HEALTH_QUESTIONS.length})
+            </button>
+            {FORM_CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setCategoryFilter(cat.id)}
@@ -529,7 +554,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
                     : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
                 }`}
               >
-                {cat.label}
+                {cat.label} ({cat.count})
               </button>
             ))}
           </div>
@@ -548,15 +573,22 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
                 >
                   <div>
                     <div className="flex items-start justify-between gap-2">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">
-                        {q.questionId}
-                      </span>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        {q.stepNumber && (
+                          <span className="text-[10px] font-extrabold text-emerald-800 bg-emerald-50 border border-emerald-200/80 px-2 py-0.5 rounded-md">
+                            Q{q.stepNumber}
+                          </span>
+                        )}
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                          {q.categoryLabel || q.questionId}
+                        </span>
+                      </div>
                       <span className="text-[11px] font-extrabold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md shrink-0">
                         {totalAnswers} Responders
                       </span>
                     </div>
 
-                    <h3 className="text-sm font-black text-slate-900 leading-snug mt-1">
+                    <h3 className="text-sm font-black text-slate-900 leading-snug mt-1.5">
                       {q.title}
                     </h3>
                   </div>
@@ -565,13 +597,13 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
                   <div className="space-y-2 pt-1">
                     {q.options.length === 0 ? (
                       <div className="text-xs text-slate-400 py-3 text-center italic">
-                        No recorded responses for this demographic yet
+                        No recorded responses for this question yet
                       </div>
                     ) : (
                       q.options.map((opt) => (
                         <div key={opt.optionId} className="space-y-1">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="font-semibold text-slate-700 truncate pr-2">
+                          <div className="flex items-center justify-between text-xs gap-2">
+                            <span className="font-semibold text-slate-700 leading-snug">
                               {opt.label}
                             </span>
                             <span className="font-black text-slate-900 shrink-0">
@@ -579,17 +611,19 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
                             </span>
                           </div>
 
-                          {/* Graphical Visual Bar */}
+                          {/* Graphical Visual Bar color-coded by clinical option type */}
                           <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${opt.percentage}%` }}
                               transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                               className={`h-full rounded-full ${
-                                opt.optionId === 'yes' || opt.optionId.includes('good') || opt.optionId.includes('within_year') || opt.optionId.includes('regular')
+                                opt.type === 'doing_well'
                                   ? 'bg-emerald-500'
-                                  : opt.optionId === 'often' || opt.optionId.includes('severe') || opt.optionId.includes('frequent') || opt.optionId.includes('heavy')
+                                  : opt.type === 'discuss'
                                   ? 'bg-rose-500'
+                                  : opt.type === 'worth_checking'
+                                  ? 'bg-amber-500'
                                   : 'bg-sky-500'
                               }`}
                             />
@@ -614,7 +648,7 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
                 Participant Records Database
               </h3>
               <p className="text-[11px] text-slate-500">
-                Total {filteredRecords.length} records · Arranged in columns & rows exportable to Excel
+                Total {filteredRecords.length} records · All {ALL_HEALTH_QUESTIONS.length} current form questions mapped in columns & rows
               </p>
             </div>
 
@@ -625,87 +659,95 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search ID, date, age..."
+                placeholder="Search ID, date, occupation..."
                 className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-slate-200 text-xs font-semibold bg-slate-50 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500"
               />
             </div>
           </div>
 
-          {/* Interactive Responsive Table */}
-          <div className="overflow-x-auto rounded-2xl border border-slate-100 max-h-[500px]">
+          {/* Interactive Responsive Table with all current form questions mapped as columns */}
+          <div className="overflow-x-auto rounded-2xl border border-slate-100 max-h-[540px]">
             <table className="w-full text-left border-collapse text-xs">
               <thead className="sticky top-0 bg-slate-900 text-white z-10 text-[11px] uppercase tracking-wider font-extrabold">
                 <tr>
-                  <th className="py-3 px-3.5">ID</th>
-                  <th className="py-3 px-3.5">Timestamp</th>
-                  <th className="py-3 px-3.5">Category</th>
-                  <th className="py-3 px-3.5">Age Band</th>
-                  <th className="py-3 px-3.5">BP (mmHg)</th>
-                  <th className="py-3 px-3.5">Glucose</th>
-                  <th className="py-3 px-3.5">BMI</th>
-                  <th className="py-3 px-3.5">Check Status</th>
-                  <th className="py-3 px-3.5">Period Status</th>
-                  <th className="py-3 px-3.5">Mammogram</th>
-                  <th className="py-3 px-3.5">Mood</th>
+                  <th className="py-3 px-3.5 whitespace-nowrap">ID</th>
+                  <th className="py-3 px-3.5 whitespace-nowrap">Timestamp</th>
+                  <th className="py-3 px-3.5 whitespace-nowrap">Check Status</th>
+                  <th className="py-3 px-3.5 whitespace-nowrap">BP (mmHg)</th>
+                  <th className="py-3 px-3.5 whitespace-nowrap">Glucose</th>
+                  <th className="py-3 px-3.5 whitespace-nowrap">BMI</th>
+                  {ALL_HEALTH_QUESTIONS.map((q) => (
+                    <th
+                      key={q.id}
+                      title={`${q.categoryLabel}: ${q.title}`}
+                      className="py-3 px-3.5 min-w-[200px] max-w-[260px]"
+                    >
+                      <div className="text-[9px] text-emerald-300 font-bold tracking-widest uppercase">
+                        Q{q.stepNumber} · {q.categoryLabel}
+                      </div>
+                      <div className="text-[11px] font-extrabold text-white normal-case line-clamp-2 mt-0.5">
+                        {q.title}
+                      </div>
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
                 {filteredRecords.length === 0 ? (
                   <tr>
-                    <td colSpan={11} className="py-8 text-center text-slate-400 italic">
+                    <td
+                      colSpan={6 + ALL_HEALTH_QUESTIONS.length}
+                      className="py-8 text-center text-slate-400 italic"
+                    >
                       No matching records found.
                     </td>
                   </tr>
                 ) : (
                   filteredRecords.map((r, idx) => (
                     <tr key={r.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'}>
-                      <td className="py-2.5 px-3.5 font-bold text-slate-900">{r.id}</td>
+                      <td className="py-2.5 px-3.5 font-bold text-slate-900 whitespace-nowrap">
+                        {r.id}
+                      </td>
                       <td className="py-2.5 px-3.5 whitespace-nowrap text-slate-500 text-[11px]">
                         {r.timestamp ? new Date(r.timestamp).toLocaleDateString('en-GB') : 'N/A'}
                       </td>
-                      <td className="py-2.5 px-3.5 font-semibold text-slate-800 whitespace-nowrap">
-                        {r.answers?.['q0_occupation'] ? ({
-                          full_time: 'Full-Time Employee',
-                          part_time: 'Part-Time Employee',
-                          self_employed: 'Self-Employed Woman',
-                          freelancer: 'Freelancer',
-                          contract_worker: 'Contract Worker',
-                          casual_worker: 'Casual Worker',
-                          unemployed_professional: 'Unemployed Professional',
-                          job_seeker: 'Job Seeker',
-                          retired_professional: 'Retired Professional',
-                          student: 'Student',
-                          stay_at_home: 'Stay-at-Home Woman',
-                        }[r.answers['q0_occupation']] || r.answers['q0_occupation']) : '—'}
-                      </td>
-                      <td className="py-2.5 px-3.5 font-semibold text-emerald-800">
-                        {r.ageBand || r.answers?.['q1_age'] || 'N/A'}
+                      <td className="py-2.5 px-3.5 whitespace-nowrap">
+                        <span
+                          className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            r.completedCheck
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : 'bg-amber-100 text-amber-800'
+                          }`}
+                        >
+                          {r.completedCheck ? 'Completed' : 'In-Progress'}
+                        </span>
                       </td>
                       <td className="py-2.5 px-3.5 whitespace-nowrap">
                         {r.numbers?.systolic ? `${r.numbers.systolic}/${r.numbers.diastolic}` : '—'}
                       </td>
-                      <td className="py-2.5 px-3.5">
-                        {r.numbers?.bloodSugar ? `${r.numbers.bloodSugar} ${r.numbers.sugarUnit || 'mg/dL'}` : '—'}
+                      <td className="py-2.5 px-3.5 whitespace-nowrap">
+                        {r.numbers?.bloodSugar
+                          ? `${r.numbers.bloodSugar} ${r.numbers.sugarUnit || 'mg/dL'}`
+                          : '—'}
                       </td>
-                      <td className="py-2.5 px-3.5 font-bold">
+                      <td className="py-2.5 px-3.5 font-bold whitespace-nowrap">
                         {r.bmi ? `${r.bmi}` : '—'}
                       </td>
-                      <td className="py-2.5 px-3.5">
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          r.completedCheck ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
-                        }`}>
-                          {r.completedCheck ? 'Completed' : 'In-Progress'}
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-3.5 truncate max-w-[120px]">
-                        {r.answers?.['q2049_periods_regular'] || r.answers?.['q40_periods_irregular'] || 'N/A'}
-                      </td>
-                      <td className="py-2.5 px-3.5 truncate max-w-[120px]">
-                        {r.answers?.['q_last_mammogram'] || 'N/A'}
-                      </td>
-                      <td className="py-2.5 px-3.5 capitalize">
-                        {r.answers?.['phq2_depressed'] || r.answers?.['phq1_interest'] || r.answers?.['q_current_mood'] || 'N/A'}
-                      </td>
+                      {ALL_HEALTH_QUESTIONS.map((q) => {
+                        const rawVal =
+                          q.id === 'q1_age'
+                            ? r.answers?.['q1_age'] || r.ageBand
+                            : r.answers?.[q.id];
+                        const formatted = formatQuestionAnswer(q.id, rawVal);
+                        return (
+                          <td
+                            key={q.id}
+                            className="py-2.5 px-3.5 text-slate-700 min-w-[200px] max-w-[260px]"
+                          >
+                            {formatted}
+                          </td>
+                        );
+                      })}
                     </tr>
                   ))
                 )}
@@ -714,7 +756,9 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
           </div>
 
           <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
-            <span>Click "Export to Excel (.xlsx)" to download complete dataset with all questions mapped as individual columns.</span>
+            <span>
+              Click "Export to Excel (.xlsx)" to download the complete dataset with all {ALL_HEALTH_QUESTIONS.length} current form questions mapped as columns and percentage breakdowns.
+            </span>
           </div>
         </div>
       )}
@@ -732,3 +776,4 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
     </div>
   );
 };
+

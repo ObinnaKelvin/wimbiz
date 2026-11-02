@@ -419,7 +419,7 @@ export const AboutSafetyScreen: React.FC<AboutSafetyScreenProps> = ({
       {/* Educational Footer Note with Discrete Admin Link */}
       <div className="flex items-center justify-center gap-1.5 pt-1 pb-4">
         <p className="text-[10px] text-slate-400 text-center font-normal">
-          Educational information, not a diagnosis. Iwosan Healthcare Systems.
+          Educational information, not a diagnostic tool. Iwosan Healthcare Systems.
         </p>
         <button
           type="button"

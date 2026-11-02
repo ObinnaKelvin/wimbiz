@@ -566,7 +566,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
                   <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                   <span>Clinician reviewed</span>
                 </div>
-                <span>14 August 2026</span>
+                <span>2nd November 2026</span>
               </div>
             </div>
           </div>

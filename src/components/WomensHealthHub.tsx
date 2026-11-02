@@ -18,8 +18,6 @@ import {
   User,
   FlaskConical,
   Brain,
-  Wind,
-  Shield,
   QrCode,
 } from 'lucide-react';
 
@@ -46,8 +44,8 @@ const TOPIC_CARDS: TopicCard[] = [
   // 6 Women's Health Topics
   {
     id: 'breast',
-    title: 'Breast health',
-    subtitle: 'Self-awareness, changes & screening',
+    title: 'Breast Health',
+    subtitle: "Knowing what's normal for you",
     articleId: 'breast-health',
     category: 'womens',
     icon: Heart,
@@ -55,8 +53,8 @@ const TOPIC_CARDS: TopicCard[] = [
   },
   {
     id: 'menstrual',
-    title: 'Menstrual health',
-    subtitle: "Cycles, pain & what's normal",
+    title: 'Menstrual Health',
+    subtitle: 'Cycles, pain & what is normal',
     articleId: 'menstrual-health',
     category: 'womens',
     icon: Calendar,
@@ -64,8 +62,8 @@ const TOPIC_CARDS: TopicCard[] = [
   },
   {
     id: 'menopause',
-    title: 'Menopause & midlife',
-    subtitle: 'Changes, comfort & support',
+    title: 'Menopause & Midlife',
+    subtitle: 'Changes, comfort & midlife support',
     articleId: 'menopause-midlife',
     category: 'womens',
     icon: Sun,
@@ -73,8 +71,8 @@ const TOPIC_CARDS: TopicCard[] = [
   },
   {
     id: 'reproductive',
-    title: 'Reproductive health',
-    subtitle: 'Fertility, infections & care',
+    title: 'Reproductive Health',
+    subtitle: 'Fertility, infections & holistic care',
     articleId: 'reproductive-health',
     category: 'womens',
     icon: Sparkles,
@@ -82,7 +80,7 @@ const TOPIC_CARDS: TopicCard[] = [
   },
   {
     id: 'cervical',
-    title: 'Cervical health',
+    title: 'Cervical Health',
     subtitle: 'HPV, smears & prevention',
     articleId: 'cervical-cancer-hpv',
     category: 'womens',
@@ -91,7 +89,7 @@ const TOPIC_CARDS: TopicCard[] = [
   },
   {
     id: 'preventive',
-    title: 'Preventive care',
+    title: 'Preventive Care',
     subtitle: 'Routine checks that matter',
     articleId: 'preventive-care-matrix',
     category: 'womens',
@@ -99,10 +97,10 @@ const TOPIC_CARDS: TopicCard[] = [
     image: '/assets/aistudio/image_a4a9cee3.png',
   },
 
-  // 6 Heart, Diabetes & Lifestyle Topics (from Everyday Wellness & Prevention)
+  // Heart, Diabetes & Lifestyle Topics
   {
     id: 'heart',
-    title: 'Heart health',
+    title: 'Heart Health',
     subtitle: 'Blood pressure & everyday habits',
     articleId: 'heart-health-women',
     category: 'lifestyle',
@@ -111,7 +109,7 @@ const TOPIC_CARDS: TopicCard[] = [
   },
   {
     id: 'diabetes',
-    title: 'Diabetes',
+    title: 'Diabetes & Metabolic Health',
     subtitle: 'Sugar, signs & prevention',
     articleId: 'diabetes-prevention',
     category: 'lifestyle',
@@ -129,7 +127,7 @@ const TOPIC_CARDS: TopicCard[] = [
   },
   {
     id: 'movement',
-    title: 'Movement',
+    title: 'Movement & Physical Activity',
     subtitle: 'Start small, stay steady',
     articleId: 'movement-exercise',
     category: 'lifestyle',
@@ -138,7 +136,7 @@ const TOPIC_CARDS: TopicCard[] = [
   },
   {
     id: 'sleep',
-    title: 'Sleep & stress',
+    title: 'Sleep & Stress',
     subtitle: 'Rest, reset, recover',
     articleId: 'sleep-stress',
     category: 'lifestyle',
@@ -147,7 +145,7 @@ const TOPIC_CARDS: TopicCard[] = [
   },
   {
     id: 'habits',
-    title: 'Healthy habits',
+    title: 'Healthy Habits',
     subtitle: 'Small steps, kept simple',
     articleId: 'healthy-micro-habits',
     category: 'lifestyle',
@@ -156,30 +154,12 @@ const TOPIC_CARDS: TopicCard[] = [
   },
   {
     id: 'mental-health',
-    title: 'Mental health',
-    subtitle: 'Burnout, mood & resilience',
+    title: 'Mental Health & Mindfulness',
+    subtitle: 'Burnout, mood & emotional health',
     articleId: 'mental-health-mindfulness',
     category: 'lifestyle',
     icon: Brain,
     image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=480&q=80',
-  },
-  {
-    id: 'mindfulness',
-    title: 'Mindfulness',
-    subtitle: 'Nervous system & daily calm',
-    articleId: 'mindfulness-daily-peace',
-    category: 'lifestyle',
-    icon: Wind,
-    image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=480&q=80',
-  },
-  {
-    id: 'toxins',
-    title: 'Toxin avoidance',
-    subtitle: 'Alcohol, tobacco & clean living',
-    articleId: 'avoidance-toxic-substances',
-    category: 'lifestyle',
-    icon: Shield,
-    image: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=480&q=80',
   },
 ];
 
@@ -231,7 +211,7 @@ export const WomensHealthHub: React.FC<WomensHealthHubProps> = ({
   const featuredSnippet = isLifestyle
     ? 'Heart disease manifests differently in women. Learn the subtle cues, blood pressure targets, and everyday preventive habits'
     : "Breast awareness is not about checking for cancer every morning. It's about knowing how your breasts normally";
-  const featuredDate = isLifestyle ? '10 February 2026' : '14 August 2026';
+  const featuredDate = '2nd November 2026';
 
   return (
     <div className="w-full min-h-screen bg-[#fafbfe] text-slate-900 px-4 sm:px-5 pt-3 pb-32 flex flex-col justify-start select-none max-w-md mx-auto">

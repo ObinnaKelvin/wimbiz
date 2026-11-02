@@ -324,8 +324,8 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'occ_contract_worker',
       title: 'Project Transitions & Steady Vitality',
       description: 'Contract timelines can bring sprint cycles and transition periods. Keeping a steady hydration, movement, and sleep routine maintains your resilience between deliverables.',
-      articleId: 'mindfulness-daily-peace',
-      actionText: 'Read Mindfulness Guide',
+      articleId: 'mental-health-mindfulness',
+      actionText: 'Read Mental Wellness Guide',
       actionScreen: 'lifestyle',
     });
   } else if (occupation === 'casual_worker') {
@@ -344,7 +344,7 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'occ_unemployed_professional',
       title: 'Nervous System Care & Self-Compassion',
       description: 'Professional transitions can be emotionally demanding. Prioritizing daily gentle walking, nervous system grounding, and supportive social connection preserves your health and optimism.',
-      articleId: 'mindfulness-daily-peace',
+      articleId: 'mental-health-mindfulness',
       actionText: 'Nervous System Recovery',
       actionScreen: 'lifestyle',
     });
@@ -635,8 +635,8 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'toxic_none',
       title: 'Smoke-Free Cellular Health',
       description: 'Living smoke-free directly protects your arterial walls, lung function, vocal cords, and long-term cellular longevity.',
-      articleId: 'avoidance-toxic-substances',
-      actionText: 'Read Toxin Guide',
+      articleId: 'heart-health-women',
+      actionText: 'Read Heart Health Guide',
       actionScreen: 'lifestyle',
     });
   } else if (toxic === 'vape_shisha') {
@@ -644,8 +644,8 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'toxic_vape_shisha',
       title: 'Vaping & Shisha Harm-Reduction Support',
       description: 'Vaping and shisha expose delicate lung tissue and vascular endothelium to heated aerosols and toxic flavorants. Gradual reduction protects cardiovascular elasticity.',
-      articleId: 'avoidance-toxic-substances',
-      actionText: 'Read Toxin Guide',
+      articleId: 'heart-health-women',
+      actionText: 'Read Heart Health Guide',
       actionScreen: 'lifestyle',
     });
   } else if (toxic === 'cigarettes_daily' || toxic === 'smoke_or_vape') {
@@ -653,7 +653,7 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'toxic_smoking_cessation',
       title: 'Cardiovascular & Lung Protection Support',
       description: 'Regular cigarette smoking significantly accelerates arterial stiffness and cardiovascular risk for women. Our clinicians offer warm, evidence-based, compassionate cessation support.',
-      articleId: 'avoidance-toxic-substances',
+      articleId: 'heart-health-women',
       actionText: 'Speak with an Iwosan Clinician',
       actionScreen: 'contact',
     });
@@ -662,8 +662,8 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'toxic_moderate',
       title: 'Conscious & Moderate Lifestyle Habits',
       description: 'Maintaining moderation supports liver metabolism, hormonal balance, and deep sleep architecture.',
-      articleId: 'avoidance-toxic-substances',
-      actionText: 'Read Toxin Guide',
+      articleId: 'healthy-micro-habits',
+      actionText: 'Read Healthy Habits Guide',
       actionScreen: 'lifestyle',
     });
   } else if (toxic === 'regular_alcohol') {
@@ -671,8 +671,8 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'toxic_alcohol_reduction',
       title: 'Consider Alcohol-Free Reset Days',
       description: 'Regular alcohol consumption can subtly increase resting blood pressure, breast cancer risk, and sleep fragmentation. Incorporating alcohol-free days brings quick vitality gains.',
-      articleId: 'avoidance-toxic-substances',
-      actionText: 'Read Toxin Guide',
+      articleId: 'heart-health-women',
+      actionText: 'Read Heart Health Guide',
       actionScreen: 'lifestyle',
     });
   }
@@ -684,7 +684,7 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'alcohol_high_intake_support',
       title: 'Proactive Alcohol Moderation Support',
       description: 'Consuming more than 2 drinks daily places noticeable metabolic load on liver function, blood pressure regulation, and deep sleep. Speaking with our wellness team provides compassionate, evidence-based reduction steps.',
-      articleId: 'avoidance-toxic-substances',
+      articleId: 'heart-health-women',
       actionText: 'Speak with an Iwosan Clinician',
       actionScreen: 'contact',
     });
@@ -693,8 +693,8 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
       id: 'alcohol_daily_moderation',
       title: 'Incorporate Alcohol-Free Days',
       description: 'Daily alcohol intake can subtly elevate resting blood pressure and interrupt deep REM sleep cycles. Introducing 3–4 alcohol-free days per week promotes cellular rejuvenation and metabolic ease.',
-      articleId: 'avoidance-toxic-substances',
-      actionText: 'Read Toxin Guide',
+      articleId: 'healthy-micro-habits',
+      actionText: 'Read Healthy Habits Guide',
       actionScreen: 'lifestyle',
     });
   } else if (alcohol === 'social_drinker') {
@@ -703,8 +703,8 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
         id: 'alcohol_social',
         title: 'Mindful Social Alcohol Consumption',
         description: 'Keeping alcohol consumption to occasional social settings aligns with liver-protective and cardiovascular health guidelines.',
-        articleId: 'avoidance-toxic-substances',
-        actionText: 'Read Toxin Guide',
+        articleId: 'healthy-micro-habits',
+        actionText: 'Read Healthy Habits Guide',
         actionScreen: 'lifestyle',
       });
     }
@@ -714,8 +714,8 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
         id: 'alcohol_zero',
         title: 'Alcohol-Free Cellular Vitality',
         description: 'Abstaining from alcohol supports liver detoxification pathways, restful sleep cycles, and optimal cardiovascular wellness.',
-        articleId: 'avoidance-toxic-substances',
-        actionText: 'Read Toxin Guide',
+        articleId: 'healthy-micro-habits',
+        actionText: 'Read Healthy Habits Guide',
         actionScreen: 'lifestyle',
       });
     }
@@ -1214,8 +1214,8 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
         id: 'mental_resilience_strong',
         title: 'Positive Emotional Baseline & Mindful Wellbeing',
         description: 'Your screening responses reflect a grounded emotional baseline and psychological resilience. Maintaining regular mindfulness, sleep hygiene, and personal boundaries nurtures this healthy balance.',
-        articleId: 'mindfulness-daily-peace',
-        actionText: 'Read Mindfulness Guide',
+        articleId: 'mental-health-mindfulness',
+        actionText: 'Mental Wellness Guide',
         actionScreen: 'lifestyle',
       });
     } else if (phqScore <= 9) {
@@ -1243,8 +1243,8 @@ export function generateSummary(answers: Record<string, string>, numbers?: Healt
         id: 'mental_resilience_strong',
         title: 'Positive Emotional Baseline & Grounded Mindset',
         description: 'Experiencing consistent daily joy, manageable stress levels, and grounded emotional energy actively protects vascular health and cellular immunity.',
-        articleId: 'mindfulness-daily-peace',
-        actionText: 'Read Mindfulness Guide',
+        articleId: 'mental-health-mindfulness',
+        actionText: 'Mental Wellness Guide',
         actionScreen: 'lifestyle',
       });
     } else if (legacyMood === 'low' || legacyAnxiety === 'often' || legacyExhaustion === 'often' || legacyStress === 'high' || legacyJoy === 'rarely_not_at_all') {

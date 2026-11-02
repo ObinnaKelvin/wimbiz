@@ -34,7 +34,7 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
   const [name, setName] = useState('');
   const [contactInfo, setContactInfo] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('lagoon-vi');
-  const [packageInterest, setPackageInterest] = useState('Well-Woman Comprehensive Screening');
+  const [packageInterest, setPackageInterest] = useState('Perimenopause and Menopause clinic');
   const [message, setMessage] = useState('');
   const [hasConsent, setHasConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -468,12 +468,12 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
                   disabled={isSubmitting}
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-emerald-500 bg-slate-50/70 cursor-pointer disabled:opacity-60"
                 >
-                  <option value="Well-Woman Comprehensive Screening">Well-Woman Comprehensive Screening</option>
-                  <option value="Digital Mammography & Breast Ultrasound">Digital Mammography & Breast Ultrasound</option>
-                  <option value="Cervical Pap Smear & HPV DNA Test">Cervical Pap Smear & HPV DNA Test</option>
-                  <option value="Gynaecologist Specialist Consultation">Gynaecologist Specialist Consultation</option>
-                  <option value="Cardiology & Blood Pressure Review">Cardiology & Blood Pressure Review</option>
-                  <option value="General Preventive Checkup">General Preventive Checkup</option>
+                  <option value="Perimenopause and Menopause clinic">Perimenopause and Menopause clinic</option>
+                  <option value="Comprehensive wellness assessment (Medical and Lifestyle)">Comprehensive wellness assessment (Medical and Lifestyle)</option>
+                  <option value="Well Woman Screening">Well Woman Screening</option>
+                  <option value="Women’s Health Clinic">Women’s Health Clinic</option>
+                  <option value="Cardiac Health Assessment">Cardiac Health Assessment</option>
+                  <option value="Weight Loss Clinic">Weight Loss Clinic</option>
                 </select>
               </div>
 

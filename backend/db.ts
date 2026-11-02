@@ -1,5 +1,10 @@
 import { MongoClient, Db, Collection } from 'mongodb';
 import { config } from './config';
+import {
+  getHealthQuestions,
+  QUESTION_MAP,
+  isSafetyTriggerAnswer,
+} from '../src/data/questions';
 
 export interface AnonymousRecord {
   id: string; // e.g. "HH-1042"
@@ -34,19 +39,19 @@ let connectionError: string | null = null;
 // In-memory resilient storage (used when MongoDB URI is not yet configured or connecting)
 const fallbackRecords: AnonymousRecord[] = [];
 
-// Seed sample records on initialization so the dashboard immediately shows realistic conference data
-function seedInitialConferenceData() {
-  if (fallbackRecords.length > 0) return;
+// Dynamically seed sample records from the active form definition in src/data/questions.ts
+// so any adjustment to form questions is automatically reflected in seeded records.
+function seedInitialConferenceData(forceReset = false) {
+  if (fallbackRecords.length > 0 && !forceReset) return;
+  if (forceReset) {
+    fallbackRecords.length = 0;
+  }
 
-  const sampleOccupations = ['full_time', 'self_employed', 'freelancer', 'part_time', 'contract_worker', 'retired_professional'];
-  const sampleAgeBands = ['20_29', '30_39', '40_49', '50_59', '60_plus'];
-  const sampleRoutines = ['within_year', 'within_year', '1_to_2_years', 'more_than_2_years'];
-  const sampleBP = ['within_year', 'within_year', 'longer_ago', 'never'];
-  const sampleSugar = ['within_year', 'longer_ago', 'within_year', 'never'];
-  const sampleActivity = ['active_150', 'moderate', 'light', 'sedentary'];
-  const sampleNutrition = ['daily_most', 'few_times', 'daily_most', 'rarely'];
-  const sampleSleep = ['restful', 'interrupted', 'restful', 'short'];
-  const sampleScreening = ['up_to_date', 'past_overdue', 'up_to_date', 'not_discussed'];
+  const ageQuestion = QUESTION_MAP['q1_age'];
+  const sampleAgeBands =
+    ageQuestion && ageQuestion.options.length > 0
+      ? ageQuestion.options.map((o) => o.id)
+      : ['18_29', '30_39', '40_49', '50_plus'];
 
   const now = Date.now();
   for (let i = 1; i <= 24; i++) {
@@ -54,82 +59,49 @@ function seedInitialConferenceData() {
     const timestamp = new Date(now - i * 14 * 60 * 1000).toISOString();
 
     const answers: Record<string, string> = {
-      q0_occupation: sampleOccupations[i % sampleOccupations.length],
       q1_age: age,
-      q2_checkup: sampleRoutines[i % sampleRoutines.length],
-      q3_bp: sampleBP[i % sampleBP.length],
-      q4_sugar: sampleSugar[i % sampleSugar.length],
-      q5_history: i % 3 === 0 ? 'yes_immediate' : i % 2 === 0 ? 'no_history' : 'yes_extended',
-      q6_activity: sampleActivity[i % sampleActivity.length],
-      q7_nutrition: sampleNutrition[i % sampleNutrition.length],
-      q8_sleep: sampleSleep[i % sampleSleep.length],
-      q9_screening: sampleScreening[i % sampleScreening.length],
     };
 
-    // Age 20-49 Menstrual
-    if (age === '20_29' || age === '30_39' || age === '40_49') {
-      answers['q2049_periods_regular'] = i % 4 === 0 ? 'no_irregular' : 'yes';
-      answers['q2049_cycle_length'] = i % 5 === 0 ? 'over_35' : '21_to_35';
-      answers['q2049_bleed_days'] = '3_to_7_days';
-      answers['q2049_bleed_heaviness'] = i % 3 === 0 ? 'heavy' : 'moderate';
-      answers['q2049_period_pain'] = i % 4 === 0 ? 'severe' : 'none_mild';
-      answers['q2049_large_clots'] = i % 4 === 0 ? 'frequent_large' : 'never_small';
-      answers['q2049_bleed_between'] = 'never';
-      answers['q2049_bleed_after_sex'] = 'never';
-      answers['q2049_period_interference'] = i % 4 === 0 ? 'often_severe' : 'never';
-      answers['q2049_period_changes_2yr'] = 'unchanged';
+    // Get the exact set of questions that a participant in this age band sees on the form
+    const formQuestionsForParticipant = getHealthQuestions(answers);
+
+    for (let qIdx = 0; qIdx < formQuestionsForParticipant.length; qIdx++) {
+      const q = formQuestionsForParticipant[qIdx];
+      if (q.id === 'q1_age') {
+        answers[q.id] = age;
+        continue;
+      }
+
+      if (!q.options || q.options.length === 0) continue;
+
+      // For safety questions (e.g. phq9_self_harm), default to the safe 'doing_well' option
+      if (q.isSafetyQuestion || q.id === 'phq9_self_harm') {
+        const safeOpt =
+          q.options.find((o) => o.type === 'doing_well' || o.id === 'not_at_all' || o.id === 'no') ||
+          q.options[0];
+        answers[q.id] = safeOpt.id;
+        continue;
+      }
+
+      // Distribute responses realistically across options (weighted toward doing_well / neutral / worth_checking)
+      const doingWellOpts = q.options.filter((o) => o.type === 'doing_well');
+      const worthCheckingOpts = q.options.filter((o) => o.type === 'worth_checking');
+      const discussOpts = q.options.filter((o) => o.type === 'discuss');
+
+      let chosenId: string;
+      const roll = (i + qIdx * 3) % 10;
+      if (roll < 5 && doingWellOpts.length > 0) {
+        chosenId = doingWellOpts[(i + qIdx) % doingWellOpts.length].id;
+      } else if (roll < 8 && worthCheckingOpts.length > 0) {
+        chosenId = worthCheckingOpts[(i + qIdx) % worthCheckingOpts.length].id;
+      } else if (discussOpts.length > 0 && roll === 9) {
+        chosenId = discussOpts[(i + qIdx) % discussOpts.length].id;
+      } else {
+        chosenId = q.options[(i + qIdx) % q.options.length].id;
+      }
+
+      answers[q.id] = chosenId;
     }
-
-    // Age 40-49 Perimenopause
-    if (age === '40_49') {
-      answers['q40_periods_irregular'] = i % 2 === 0 ? 'yes_irregular' : 'no_regular';
-      answers['q40_hot_flushes'] = i % 2 === 0 ? 'yes_frequent' : 'no_none';
-      answers['q40_night_sweats'] = i % 3 === 0 ? 'yes_frequent' : 'no_none';
-      answers['q40_sleep_changed'] = 'yes_poor';
-      answers['q40_anxiety_irritability'] = i % 2 === 0 ? 'yes_noticeable' : 'no_stable';
-      answers['q40_memory_concentration'] = 'yes_brain_fog';
-      answers['q40_sexual_desire'] = 'fluctuating';
-      answers['q40_vaginal_dryness'] = i % 3 === 0 ? 'yes_discomfort' : 'no_discomfort';
-      answers['q40_urinary_leakage'] = 'no_symptoms';
-      answers['q40_hrt_discussion'] = i % 2 === 0 ? 'want_to_learn' : 'never_discussed';
-      answers['q40_last_period'] = 'under_30_days';
-    }
-
-    // Breast & Gynae (Universal)
-    answers['q_breast_self_check'] = i % 2 === 0 ? 'yes_monthly' : 'occasionally';
-    answers['q_breast_lump'] = 'no';
-    answers['q_nipple_discharge'] = 'never';
-    answers['q_breast_shape_change'] = 'no_changes';
-    answers['q_nipple_skin_changes'] = 'no_skin_changes';
-    answers['q_last_mammogram'] = age === '20_29' || age === '30_39' ? 'never_under_40' : 'within_1_to_2_years';
-    answers['q_last_cervical_screen'] = 'within_3_years';
-    answers['q_hpv_positive'] = 'never_tested_negative';
-    answers['q_abnormal_cervical'] = 'never_all_normal';
-    answers['q_family_cancer_history'] = 'no_family_history';
-
-    // Bone & Mobility
-    answers['q_bone_minor_fracture'] = 'never_broken';
-    answers['q_bone_density_test'] = age === '50_59' || age === '60_plus' ? 'yes_normal' : 'never_had_one';
-    answers['q_persistent_back_pain'] = i % 3 === 0 ? 'occasional_posture' : 'no_pain';
-    answers['q_persistent_joint_pain'] = 'no_joint_pain';
-    answers['q_height_loss'] = 'no_loss';
-    answers['q_feel_physically_weaker'] = 'strong_capable';
-    answers['q_climb_stairs'] = 'easily';
-    answers['q_strength_exercise'] = i % 2 === 0 ? 'regular_2_plus' : 'occasionally';
-    answers['q_calcium_foods'] = 'daily_rich';
-    answers['q_osteoporosis_dx'] = 'no';
-
-    // Mental & Emotional
-    answers['q_current_mood'] = i % 4 === 0 ? 'okay' : 'good';
-    answers['q_anxious_overwhelmed'] = i % 3 === 0 ? 'sometimes' : 'never';
-    answers['q_exhausted_responsibilities'] = i % 3 === 0 ? 'sometimes' : 'rarely_never';
-    answers['q_enjoy_activities'] = 'yes_regularly';
-    answers['q_feel_lonely'] = 'rarely_never';
-    answers['q_have_confidant'] = 'yes_confidant';
-    answers['q_current_stress'] = i % 3 === 0 ? 'moderate' : 'low';
-    answers['q_grief_trauma'] = 'no';
-    answers['q_mental_health_help'] = 'never_needed';
-    answers['q_self_harm_thoughts'] = 'no';
 
     const systolic = 115 + (i % 5) * 5;
     const diastolic = 75 + (i % 4) * 3;
@@ -191,12 +163,21 @@ export async function initDatabase(): Promise<boolean> {
     connectionError = null;
     console.log(`[MongoDB] Connected successfully to database: ${config.mongo.dbName}`);
 
-    // If fallback records exist, synchronize them to MongoDB
+    // Synchronize seeded conference records so any newly added/updated form questions are present
     if (fallbackRecords.length > 0) {
       const existingCount = await recordsCollection.countDocuments();
       if (existingCount === 0) {
         await recordsCollection.insertMany(fallbackRecords);
         console.log(`[MongoDB] Synchronized ${fallbackRecords.length} initial records into collection.`);
+      } else {
+        // Ensure initial seeded booth records (HH-1001..HH-1024) in MongoDB have current question mappings
+        for (const rec of fallbackRecords) {
+          await recordsCollection.updateOne(
+            { id: rec.id, source: 'WIMBIZ Conference Booth' },
+            { $set: { answers: rec.answers, ageBand: rec.ageBand } },
+            { upsert: false }
+          );
+        }
       }
     }
 
@@ -277,8 +258,9 @@ export async function getStatsSummary() {
 
   for (const r of records) {
     // Age count
-    if (r.ageBand) {
-      ageDistribution[r.ageBand] = (ageDistribution[r.ageBand] || 0) + 1;
+    const ageVal = r.answers?.['q1_age'] || r.ageBand;
+    if (ageVal) {
+      ageDistribution[ageVal] = (ageDistribution[ageVal] || 0) + 1;
     }
 
     // Vitals averages
@@ -291,17 +273,22 @@ export async function getStatsSummary() {
       bmiCount++;
     }
 
-    // Answers per question
+    // Answers per question (only counting active form questions in QUESTION_MAP)
     if (r.answers) {
+      let recordTriggeredSafety = false;
       for (const [qId, optionId] of Object.entries(r.answers)) {
+        if (!QUESTION_MAP[qId]) continue;
         if (!questionResponses[qId]) {
           questionResponses[qId] = {};
         }
         questionResponses[qId][optionId] = (questionResponses[qId][optionId] || 0) + 1;
 
-        if (qId === 'q_self_harm_thoughts' && optionId === 'yes') {
-          safetyTriggerCount++;
+        if (isSafetyTriggerAnswer(qId, optionId)) {
+          recordTriggeredSafety = true;
         }
+      }
+      if (recordTriggeredSafety) {
+        safetyTriggerCount++;
       }
     }
   }
@@ -350,5 +337,19 @@ export async function clearAllRecords() {
 }
 
 export async function seedRecords(count = 10) {
-  seedInitialConferenceData();
+  seedInitialConferenceData(true);
+  if (isConnectedToMongo && recordsCollection && fallbackRecords.length > 0) {
+    try {
+      for (const rec of fallbackRecords) {
+        await recordsCollection.updateOne(
+          { id: rec.id },
+          { $set: rec },
+          { upsert: true }
+        );
+      }
+    } catch (e) {
+      console.error('[MongoDB Seed Sync Error]', e);
+    }
+  }
 }
+
