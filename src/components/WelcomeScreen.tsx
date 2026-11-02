@@ -70,8 +70,8 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
         <div className="flex items-center justify-between">
           {/* Brand Logo */}
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg">
-              <img src="/icon.svg" alt="Wellness Passport Logo" className="w-full h-full rounded-lg object-contain" />
+            <div className="w-[100px] h-8 rounded-[60px]">
+              <img src="/wimbizlogo.png" alt="Wellness Passport Logo" className="w-full h-full rounded-[60px] object-contain" />
             </div>
             {/* Cyan Square Pulse Icon */}
             {/* <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-teal-400 p-1 flex items-center justify-center shadow-[0_0_12px_rgba(6,182,212,0.35)]">
