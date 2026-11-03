@@ -71,7 +71,10 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
           {/* Brand Logo */}
           <div className="flex items-center gap-2.5">
             <div className="w-[100px] h-8 rounded-[60px]">
-              <img src="/wimbizlogo.png" alt="Wellness Passport Logo" className="w-full h-full rounded-[60px] object-contain" />
+              <img src="/wimbizlogo.png" alt="Wellness Passport Logo" className="w-full h-full object-contain" />
+            </div>
+            <div className="w-[100px] h-8 rounded-[60px]">
+              <img src="/iwlhlogo.png" alt="Wellness Passport Logo" className="w-full h-full object-contain" />
             </div>
             {/* Cyan Square Pulse Icon */}
             {/* <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-teal-400 p-1 flex items-center justify-center shadow-[0_0_12px_rgba(6,182,212,0.35)]">
@@ -85,14 +88,14 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
                 />
               </svg>
             </div> */}
-            <div>
+            {/* <div>
               <div className="text-sm font-extrabold tracking-wide text-white leading-tight">
                 <span className="text-cyan-400">Wellness</span> Passport
               </div>
               <div className="text-[8px] font-bold tracking-[0.18em] text-slate-400 uppercase leading-none">
                 IWOSAN X WIMBIZ
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Right Header Controls: QR Code Share + Info Circle */}
@@ -207,6 +210,13 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
 
         {/* TYPOGRAPHY SECTION */}
         <div className="text-center space-y-3 mt-4 max-w-sm px-2">
+          {/* App Name */}
+              <div className="text-sm font-extrabold tracking-wide text-white leading-tight">
+                <span className="text-cyan-400">Wellness</span> Passport
+              </div>
+              {/* <div className="text-[8px] font-bold tracking-[0.18em] text-slate-400 uppercase leading-none">
+                IWOSAN X WIMBIZ
+              </div> */}
           {/* Conference Kicker */}
           <p className="text-[11px] sm:text-xs font-semibold tracking-[0.22em] text-slate-400 uppercase">
             W I M B I Z &nbsp; C o n f e r e n c e &nbsp; · &nbsp; 2 0 2 6

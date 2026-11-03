@@ -128,16 +128,19 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
                 <img src="/icon.svg" alt="Wellness Passport Logo" className="w-full h-full rounded-lg object-contain" />
             </div> */}
             <div className="w-[100px] h-8 rounded-[60px]">
-              <img src="/wimbizlogo.png" alt="Wellness Passport Logo" className="w-full h-full rounded-[20px] object-contain" />
+              <img src="/wimbizlogo.png" alt="Wellness Passport Logo" className="w-full h-full object-contain" />
+            </div>
+            <div className="w-[100px] h-8 rounded-[60px]">
+              <img src="/iwlhlogo.png" alt="Wellness Passport Logo" className="w-full h-full object-contain" />
             </div>
 
             <div>
-              <div className="text-sm font-extrabold tracking-wide text-white leading-tight">
+              {/* <div className="text-sm font-extrabold tracking-wide text-white leading-tight">
                 Wellness Passport
               </div>
               <div className="text-[10px] font-medium text-slate-400 flex items-center gap-1">
                 <span>Private · saved on this device</span>
-              </div>
+              </div> */}
             </div>
           </div>
 
