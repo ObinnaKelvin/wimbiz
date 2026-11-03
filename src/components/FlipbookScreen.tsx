@@ -176,19 +176,27 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                     {/* Security Subtle Grid Tint */}
                     <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(#00B1DA_1px,transparent_1px)] [background-size:16px_16px]" />
 
-                    {/* Top Row: "Iwosan Clinical / WIMBIZ 25th Annual" + "25 Years" Circular Seal */}
-                    <div className="flex items-start justify-between relative z-10 pt-1">
-                      <div className="text-left space-y-0.5">
-                        <div className="text-[11px] font-mono font-bold tracking-[0.22em] text-slate-300 uppercase">
-                          Iwosan Clinical
+                    {/* Top Row: WIMBIZ & Iwosan Logos + "25 Years" Circular Seal */}
+                    <div className="flex items-center justify-between relative z-10 pt-1">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-[95px] sm:w-[105px] h-8 rounded-[60px]">
+                          <img
+                            src="/wimbizlogo.png"
+                            alt="WIMBIZ Logo"
+                            className="w-full h-full object-contain"
+                          />
                         </div>
-                        <div className="text-[10px] font-medium text-slate-400 tracking-wider">
-                          WIMBIZ 25th Annual
+                        <div className="w-[95px] sm:w-[105px] h-8 rounded-[60px]">
+                          <img
+                            src="/iwlhlogo.png"
+                            alt="Iwosan Lagoon Hospitals Logo"
+                            className="w-full h-full object-contain"
+                          />
                         </div>
                       </div>
 
                       {/* 25 Years Concentric Dotted Badge */}
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-dashed border-[#00B1DA]/40 flex flex-col items-center justify-center p-1 bg-white/[0.02] shadow-[0_0_15px_rgba(0,177,218,0.15)]">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-dashed border-[#00B1DA]/40 flex flex-col items-center justify-center p-1 bg-white/[0.02] shadow-[0_0_15px_rgba(0,177,218,0.15)] shrink-0">
                         <span className="text-xl sm:text-2xl font-bold font-sans text-white tracking-tight leading-none">
                           25
                         </span>
