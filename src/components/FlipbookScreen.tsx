@@ -44,6 +44,7 @@ import {
   Smartphone,
   Info,
   FileText,
+  Download,
 } from 'lucide-react';
 
 interface FlipbookScreenProps {
@@ -1848,9 +1849,12 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
             onClick={handleDownloadFullPdf}
             title="Download Complete 9-Page PDF Flipbook"
             aria-label="Download Complete 9-Page PDF Flipbook"
-            className="w-10 h-10 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-center text-slate-700 hover:bg-slate-50 hover:text-[#00B1DA] transition active:scale-95 cursor-pointer"
+            className="px-3 py-1.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col items-center justify-center text-slate-700 hover:bg-slate-50 hover:text-[#00B1DA] transition active:scale-95 cursor-pointer"
           >
-            <FileText className="w-4 h-4" />
+            <Download className="w-4 h-4" />
+            <span className="text-[9px] font-bold leading-none mt-1 tracking-tight">
+              Download
+            </span>
           </button>
         </div>
       </header>

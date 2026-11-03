@@ -79,6 +79,9 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   const answeredCount = questions.filter(
     (q) => answers[q.id] !== undefined && answers[q.id] !== ''
   ).length;
+  const isFormCompleted = totalQuestions > 0 && answeredCount >= totalQuestions;
+  const completionPercent =
+    totalQuestions > 0 ? Math.min(100, Math.round((answeredCount / totalQuestions) * 100)) : 0;
 
   const bmiData =
     numbers.height && numbers.weight
@@ -197,15 +200,82 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
 
         {/* 3 Metrics Row */}
         <div className="grid grid-cols-3 gap-2.5 mt-3 relative z-10">
-          {/* Card 1: Answered */}
+          {/* Card 1: Answered with Glowing Animated Progress Border */}
           <button
             onClick={() => onNavigate('check')}
-            className="bg-[#101b30]/80 hover:bg-[#14223d] border border-slate-700/60 rounded-2xl p-3 flex flex-col justify-between text-left transition cursor-pointer min-h-[72px]"
+            title={
+              isFormCompleted
+                ? 'Form completed — click to review your answers'
+                : `${totalQuestions - answeredCount} question(s) remaining — click to complete form`
+            }
+            className={`relative rounded-2xl p-[2px] overflow-hidden text-left transition-all duration-300 cursor-pointer min-h-[76px] group ${
+              isFormCompleted
+                ? 'shadow-[0_0_20px_rgba(71,181,73,0.45)] hover:shadow-[0_0_28px_rgba(71,181,73,0.7)]'
+                : 'shadow-[0_0_18px_rgba(245,158,11,0.38)] hover:shadow-[0_0_26px_rgba(245,158,11,0.6)]'
+            }`}
           >
-            <div className="text-xl font-extrabold text-white tracking-tight leading-none">
-              {answeredCount}/{totalQuestions}
+            {/* Base subtle track border */}
+            <span
+              aria-hidden="true"
+              className={`absolute inset-0 rounded-2xl ${
+                isFormCompleted ? 'bg-emerald-500/30' : 'bg-amber-500/25'
+              }`}
+            />
+            {/* Glowing animated rotating border beam */}
+            <span
+              aria-hidden="true"
+              className={`absolute -inset-[100%] animate-[spin_3.5s_linear_infinite] ${
+                isFormCompleted
+                  ? 'bg-[conic-gradient(from_0deg,transparent_0_25%,#47B549_45%,#34d399_55%,#00B1DA_70%,transparent_85_100%)]'
+                  : 'bg-[conic-gradient(from_0deg,transparent_0_30%,#f59e0b_55%,#fbbf24_75%,#ef4444_90%,transparent_95_100%)]'
+              }`}
+            />
+            {/* Inner card surface */}
+            <div className="relative z-10 w-full h-full bg-[#101b30]/95 group-hover:bg-[#14223d] rounded-[14px] p-2.5 flex flex-col justify-between">
+              <div className="flex items-center justify-between gap-1">
+                <div className="text-xl font-extrabold text-white tracking-tight leading-none">
+                  {answeredCount}/{totalQuestions}
+                </div>
+                <span
+                  className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold tracking-wide uppercase ${
+                    isFormCompleted
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40'
+                      : 'bg-amber-500/20 text-amber-300 border border-amber-400/40'
+                  }`}
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full animate-pulse ${
+                      isFormCompleted ? 'bg-emerald-400' : 'bg-amber-400'
+                    }`}
+                  />
+                  {isFormCompleted ? 'Done' : 'Open'}
+                </span>
+              </div>
+
+              <div className="mt-1.5 space-y-1">
+                <div className="flex items-center justify-between text-[11px] font-medium">
+                  <span className="text-slate-300">Answered</span>
+                  <span
+                    className={`text-[9px] font-bold ${
+                      isFormCompleted ? 'text-emerald-400' : 'text-amber-400'
+                    }`}
+                  >
+                    {completionPercent}%
+                  </span>
+                </div>
+                {/* Glowing progress bar */}
+                <div className="w-full h-1 rounded-full bg-slate-800/90 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      isFormCompleted
+                        ? 'bg-gradient-to-r from-[#47B549] via-emerald-400 to-[#00B1DA] shadow-[0_0_8px_#47B549]'
+                        : 'bg-gradient-to-r from-amber-500 to-yellow-400 shadow-[0_0_8px_#f59e0b]'
+                    }`}
+                    style={{ width: `${Math.max(completionPercent, 8)}%` }}
+                  />
+                </div>
+              </div>
             </div>
-            <div className="text-[11px] text-slate-400 font-medium">Answered</div>
           </button>
 
           {/* Card 2: BMI */}
