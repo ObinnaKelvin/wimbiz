@@ -100,17 +100,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
   else if (ageRaw.includes('30') || ageRaw.includes('35')) ageBand = '30 – 39';
   else if (ageRaw.includes('18') || ageRaw.includes('20')) ageBand = '18 – 24';
 
-  const occupationAnswer = answers['q0_occupation'] || 'corporate';
-  const occupationLabel =
-    occupationAnswer === 'corporate'
-      ? 'Corporate / Executive Leader'
-      : occupationAnswer === 'entrepreneur'
-      ? 'Entrepreneur / Business Owner'
-      : occupationAnswer === 'public_service'
-      ? 'Public Service / Civil Sector'
-      : occupationAnswer === 'student_early'
-      ? 'Emerging Professional / Graduate'
-      : 'WIMBIZ Delegate';
+  const occupationLabel = 'Rooted and Rising Woman';
 
   const bmiData =
     numbers.height && numbers.weight
