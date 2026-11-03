@@ -7,13 +7,52 @@ const STORAGE_KEY_NUMBERS = 'iwosan_wellness_numbers_v1';
 const STORAGE_KEY_NUMBERS_LEGACY = 'iwosan_herhealth_numbers_v1';
 const STORAGE_KEY_COMPLETED = 'iwosan_wellness_completed_v1';
 const STORAGE_KEY_COMPLETED_LEGACY = 'iwosan_herhealth_completed_v1';
+const STORAGE_KEY_ISSUED_AT = 'iwosan_wellness_issued_at_v1';
 
 export function saveAnswersToLocal(answers: Record<string, string>) {
   try {
     localStorage.setItem(STORAGE_KEY_ANSWERS, JSON.stringify(answers));
+    if (Object.keys(answers).length > 0) {
+      localStorage.setItem(STORAGE_KEY_ISSUED_AT, new Date().toISOString());
+    } else {
+      localStorage.removeItem(STORAGE_KEY_ISSUED_AT);
+    }
   } catch {
     // ignore
   }
+}
+
+export function getFormIssuedTimestamp(): string {
+  try {
+    const existing = localStorage.getItem(STORAGE_KEY_ISSUED_AT);
+    if (existing) {
+      return existing;
+    }
+    const nowIso = new Date().toISOString();
+    const savedAnswers = loadAnswersFromLocal();
+    if (Object.keys(savedAnswers).length > 0) {
+      localStorage.setItem(STORAGE_KEY_ISSUED_AT, nowIso);
+    }
+    return nowIso;
+  } catch {
+    return new Date().toISOString();
+  }
+}
+
+export function formatIssuedTimestamp(isoString?: string): string {
+  const raw = isoString || getFormIssuedTimestamp();
+  const parsed = new Date(raw);
+  const validDate = Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+  const datePart = validDate.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+  const timePart = validDate.toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+  return `${datePart}, ${timePart}`;
 }
 
 export function loadAnswersFromLocal(): Record<string, string> {
@@ -61,6 +100,7 @@ export function clearAllHealthData() {
     localStorage.removeItem(STORAGE_KEY_NUMBERS_LEGACY);
     localStorage.removeItem(STORAGE_KEY_COMPLETED);
     localStorage.removeItem(STORAGE_KEY_COMPLETED_LEGACY);
+    localStorage.removeItem(STORAGE_KEY_ISSUED_AT);
   } catch {
     // ignore
   }
