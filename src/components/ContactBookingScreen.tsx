@@ -77,7 +77,7 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
 
       setBookingResult({
         bookingId: data.bookingId,
-        recipient: data.recipient || 'okereobinna11@gmail.com',
+        recipient: data.recipient || 'hello@iwosanwellness.com',
         timestamp: data.timestamp || new Date().toISOString(),
       });
       setIsSubmitted(true);
@@ -328,7 +328,7 @@ export const ContactBookingScreen: React.FC<ContactBookingScreenProps> = ({ onNa
                   Request Transmitted to Iwosan
                 </h3>
                 <p className="text-xs text-slate-600 leading-relaxed max-w-xs mx-auto">
-                  A clinical intake inquiry email in tabular format was sent to <strong className="text-slate-900">{bookingResult?.recipient || 'okereobinna11@gmail.com'}</strong>.
+                  A clinical intake inquiry email in tabular format was sent to <strong className="text-slate-900">{bookingResult?.recipient || 'hello@iwosanwellness.com'}</strong>.
                 </p>
               </div>
 

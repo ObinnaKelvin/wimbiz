@@ -63,9 +63,9 @@ export const config: ServerConfig = {
     role: 'Clinical Research Administrator',
   },
   email: {
-    receivingEmail: process.env.CONCIERGE_RECEIVING_EMAIL || 'okereobinna11@gmail.com',
-    ccEmails: process.env.CONCIERGE_CC_EMAILS || 'wellness@iwosanlagoon.life',
-    fromAddress: process.env.SMTP_FROM || 'Iwosan Concierge <concierge@iwosanlagoon.life>',
+    receivingEmail: process.env.CONCIERGE_RECEIVING_EMAIL || 'hello@iwosanwellness.com',
+    ccEmails: process.env.CONCIERGE_CC_EMAILS || 'okereobinna11@gmail.com',
+    fromAddress: process.env.SMTP_FROM || 'Iwosan Concierge <hello@iwosanwellness.com>',
     smtp: {
       host: resolvedSmtpHost,
       port: resolvedSmtpPort,
