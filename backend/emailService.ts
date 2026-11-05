@@ -278,6 +278,243 @@ Email: wellness@iwosanlagoon.life
 }
 
 /**
+ * Send email via cPanel / Roundcube HTTPS Webmail interface (Port 2096).
+ * Cloud hosting platforms (like Railway, Render, DigitalOcean) often block outbound
+ * TCP connections on standard SMTP ports (25, 465, 587), causing ETIMEDOUT.
+ * Dispatching over HTTPS (port 2096) completely bypasses outbound SMTP firewall blocks.
+ */
+async function sendViaCpanelHttpsWebmail(params: {
+  webmailHost: string;
+  user: string;
+  pass: string;
+  to: string;
+  cc?: string;
+  subject: string;
+  html: string;
+}): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const base = `https://${params.webmailHost}:2096`;
+  const jar = new Map<string, string>();
+
+  function updateCookies(res: Response) {
+    const anyHeaders = res.headers as any;
+    const sc: string[] =
+      typeof anyHeaders.getSetCookie === 'function'
+        ? anyHeaders.getSetCookie()
+        : res.headers.get('set-cookie')
+        ? [res.headers.get('set-cookie') as string]
+        : [];
+    for (const c of sc) {
+      const [kv] = c.split(';');
+      const idx = kv.indexOf('=');
+      if (idx > 0) {
+        jar.set(kv.slice(0, idx).trim(), kv.slice(idx + 1).trim());
+      }
+    }
+  }
+
+  function getCookieHeader(): string {
+    return Array.from(jar.entries())
+      .map(([k, v]) => `${k}=${v}`)
+      .join('; ');
+  }
+
+  // 1. Authenticate with cPanel Webmail over HTTPS
+  const loginRes = await fetch(`${base}/login/?login_only=1`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      user: params.user,
+      pass: params.pass,
+    }).toString(),
+    signal: AbortSignal.timeout(10000),
+  });
+
+  updateCookies(loginRes);
+  const loginData = (await loginRes.json()) as { status?: number; security_token?: string };
+  if (!loginData || loginData.status !== 1 || !loginData.security_token) {
+    return { success: false, error: 'Webmail authentication failed' };
+  }
+
+  const secToken = loginData.security_token;
+
+  // 2. Initialize Roundcube session
+  const rc1 = await fetch(`${base}${secToken}/3rdparty/roundcube/?_task=mail`, {
+    headers: { Cookie: getCookieHeader() },
+    redirect: 'manual',
+    signal: AbortSignal.timeout(10000),
+  });
+  updateCookies(rc1);
+
+  // 3. Request new compose session ID
+  const rc2 = await fetch(`${base}${secToken}/3rdparty/roundcube/?_task=mail&_action=compose`, {
+    headers: { Cookie: getCookieHeader() },
+    redirect: 'manual',
+    signal: AbortSignal.timeout(10000),
+  });
+  updateCookies(rc2);
+  const loc = rc2.headers.get('location');
+  if (!loc) {
+    return { success: false, error: 'Could not initialize Roundcube compose session' };
+  }
+
+  const composeUrl = loc.startsWith('http') ? loc : `${base}${loc}`;
+  const rc3 = await fetch(composeUrl, {
+    headers: { Cookie: getCookieHeader() },
+    redirect: 'manual',
+    signal: AbortSignal.timeout(10000),
+  });
+  updateCookies(rc3);
+  const composeHtml = await rc3.text();
+
+  const reqToken =
+    composeHtml.match(/"request_token":"([^"]+)"/)?.[1] ||
+    composeHtml.match(/name="_token" value="([^"]+)"/)?.[1];
+  const composeId =
+    composeHtml.match(/"compose_id":"([^"]+)"/)?.[1] ||
+    loc.match(/_id=([^&]+)/)?.[1];
+  const fromIdent =
+    composeHtml.match(/<option[^>]+value="(\d+)"[^>]*>/i)?.[1] || '1';
+
+  if (!reqToken || !composeId) {
+    return { success: false, error: 'Missing Roundcube compose tokens' };
+  }
+
+  // 4. Submit message over HTTPS
+  const unlockId = `loading${Date.now()}`;
+  const sendParams = new URLSearchParams({
+    _token: reqToken,
+    _task: 'mail',
+    _action: 'send',
+    _id: composeId,
+    _attachments: '',
+    _from: fromIdent,
+    _to: params.to,
+    _cc: params.cc || '',
+    _bcc: '',
+    _replyto: '',
+    _followupto: '',
+    _subject: params.subject,
+    _is_html: '1',
+    _framed: '1',
+    _message: params.html,
+  });
+
+  const sendRes = await fetch(
+    `${base}${secToken}/3rdparty/roundcube/?_task=mail&_unlock=${unlockId}&_framed=1`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Cookie: getCookieHeader(),
+        Referer: composeUrl,
+        Origin: base,
+      },
+      body: sendParams.toString(),
+      signal: AbortSignal.timeout(15000),
+    }
+  );
+
+  const sendText = await sendRes.text();
+  if (sendRes.ok && sendText.includes('sent_successfully')) {
+    return {
+      success: true,
+      messageId: `<https-webmail-${composeId}@iwosanwellness.com>`,
+    };
+  }
+
+  return {
+    success: false,
+    error: `Unexpected Roundcube response (status ${sendRes.status})`,
+  };
+}
+
+/**
+ * Send email via Resend HTTPS API (https://api.resend.com/emails).
+ * Uses standard HTTPS (Port 443), so it works reliably on Railway, Render,
+ * Cloud Run, and any external hosting platform that blocks SMTP ports.
+ */
+async function sendViaResendApi(params: {
+  apiKey: string;
+  from: string;
+  to: string;
+  cc?: string;
+  subject: string;
+  html: string;
+  text: string;
+}): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  const toList = params.to
+    .split(',')
+    .map((e) => e.trim())
+    .filter(Boolean);
+  const ccList = params.cc
+    ? params.cc
+        .split(',')
+        .map((e) => e.trim())
+        .filter(Boolean)
+    : [];
+
+  // Attempt with configured from address first; if custom domain isn't verified yet in Resend,
+  // fallback to Resend's default onboarding sender so delivery still succeeds during setup.
+  const candidateFromAddresses = [params.from];
+  if (!params.from.includes('onboarding@resend.dev')) {
+    candidateFromAddresses.push('Iwosan Concierge <onboarding@resend.dev>');
+  }
+
+  let lastError = 'Resend API request failed';
+
+  for (const sender of candidateFromAddresses) {
+    const payload: Record<string, any> = {
+      from: sender,
+      to: toList,
+      subject: params.subject,
+      html: params.html,
+      text: params.text,
+    };
+
+    if (ccList.length > 0) {
+      payload.cc = ccList;
+    }
+
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${params.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(10000),
+    });
+
+    const data = (await res.json().catch(() => ({}))) as {
+      id?: string;
+      message?: string;
+      name?: string;
+    };
+
+    if (res.ok && data.id) {
+      return {
+        success: true,
+        messageId: data.id,
+      };
+    }
+
+    lastError = data.message || `HTTP ${res.status}`;
+    // Only retry with onboarding@resend.dev if the domain wasn't verified yet
+    const isUnverifiedDomainError =
+      res.status === 403 &&
+      (lastError.toLowerCase().includes('domain') || lastError.toLowerCase().includes('verify'));
+    if (!isUnverifiedDomainError) {
+      break;
+    }
+  }
+
+  return {
+    success: false,
+    error: lastError,
+  };
+}
+
+/**
  * Send the booking email to the configured receiving email
  */
 export async function sendBookingEmail(booking: BookingDetails): Promise<{
@@ -294,11 +531,82 @@ export async function sendBookingEmail(booking: BookingDetails): Promise<{
   const htmlContent = generateBookingEmailHtml(booking);
   const textContent = generateBookingEmailText(booking);
 
-  // Determine candidate SMTP endpoints to try
-  const primaryHost = config.email.smtp.host ? config.email.smtp.host.trim() : '';
+  // 1. Primary Route: Resend HTTPS API (Port 443)
+  const resendApiKey = config.email.resend.apiKey;
+  if (resendApiKey) {
+    try {
+      const resendResult = await sendViaResendApi({
+        apiKey: resendApiKey,
+        from: config.email.resend.fromAddress || config.email.fromAddress,
+        to: receivingEmail,
+        cc: ccEmails || undefined,
+        subject,
+        html: htmlContent,
+        text: textContent,
+      });
+
+      if (resendResult.success) {
+        console.log(
+          `[EmailService] Successfully sent booking email #${booking.id} to ${receivingEmail} (CC: ${ccEmails}) via Resend API. Message ID: ${resendResult.messageId}`
+        );
+        return {
+          success: true,
+          messageId: resendResult.messageId,
+          recipient: receivingEmail,
+          cc: ccEmails,
+          simulated: false,
+        };
+      } else {
+        console.log(
+          `[EmailService] Notice: Resend API returned: ${resendResult.error}. Testing fallback dispatch routes.`
+        );
+      }
+    } catch (err: any) {
+      console.log(
+        `[EmailService] Notice: Resend API dispatch not completed (${err?.message || 'network'}). Testing fallback dispatch routes.`
+      );
+    }
+  }
+
+  const primaryHost = config.email.smtp.host ? config.email.smtp.host.trim() : 'server343-5.web-hosting.com';
   const smtpUser = config.email.smtp.user ? config.email.smtp.user.trim() : '';
+  const smtpPass = config.email.smtp.pass ? config.email.smtp.pass : '';
   const isIwosanUser = smtpUser.toLowerCase().includes('iwosanwellness.com');
 
+  // 2. Secondary Cloud-Resilient Route: cPanel HTTPS Webmail API (Port 2096)
+  // Bypasses outbound TCP blocks on ports 25, 465, and 587 in Railway / Render / Cloud environments
+  if (isIwosanUser && smtpPass && !smtpPass.startsWith('re_')) {
+    try {
+      const httpsResult = await sendViaCpanelHttpsWebmail({
+        webmailHost: 'server343-5.web-hosting.com',
+        user: smtpUser,
+        pass: smtpPass,
+        to: receivingEmail,
+        cc: ccEmails || undefined,
+        subject,
+        html: htmlContent,
+      });
+
+      if (httpsResult.success) {
+        console.log(
+          `[EmailService] Successfully sent booking email #${booking.id} to ${receivingEmail} (CC: ${ccEmails}) via Iwosan HTTPS Webmail API (Port 2096). Message ID: ${httpsResult.messageId}`
+        );
+        return {
+          success: true,
+          messageId: httpsResult.messageId,
+          recipient: receivingEmail,
+          cc: ccEmails,
+          simulated: false,
+        };
+      }
+    } catch (err: any) {
+      console.log(
+        `[EmailService] Notice: HTTPS Webmail API dispatch not completed (${err?.message || 'network'}). Testing SMTP endpoints.`
+      );
+    }
+  }
+
+  // 2. Secondary Route: Direct Nodemailer SMTP Endpoints (Ports 26, 465, 587)
   interface SmtpEndpoint {
     host: string;
     port: number;
@@ -309,29 +617,41 @@ export async function sendBookingEmail(booking: BookingDetails): Promise<{
 
   const candidateEndpoints: SmtpEndpoint[] = [];
 
-  // For @iwosanwellness.com mailboxes, server343-5.web-hosting.com is the verified cPanel mail server with active credentials
   if (isIwosanUser) {
-    candidateEndpoints.push({
-      host: 'server343-5.web-hosting.com',
-      port: 465,
-      secure: true,
-      label: 'Iwosan Mail Server (cPanel SSL 465)',
-    });
+    candidateEndpoints.push(
+      {
+        host: 'server343-5.web-hosting.com',
+        port: 26,
+        secure: false,
+        label: 'Iwosan Mail Server (Alternate Exim Port 26)',
+      },
+      {
+        host: 'server343-5.web-hosting.com',
+        port: 465,
+        secure: true,
+        label: 'Iwosan Mail Server (cPanel SSL Port 465)',
+      },
+      {
+        host: 'server343-5.web-hosting.com',
+        port: 587,
+        secure: false,
+        requireTLS: true,
+        label: 'Iwosan Mail Server (STARTTLS Port 587)',
+      }
+    );
   }
 
-  // Also include the configured primaryHost (e.g., smtp.office365.com)
   if (primaryHost && primaryHost !== 'server343-5.web-hosting.com') {
     const isO365 = primaryHost.includes('office365.com') || primaryHost.includes('outlook.com');
     candidateEndpoints.push({
       host: primaryHost,
       port: isO365 ? 587 : config.email.smtp.port,
-      secure: isO365 ? false : (config.email.smtp.secure && config.email.smtp.port === 465),
+      secure: isO365 ? false : config.email.smtp.secure && config.email.smtp.port === 465,
       requireTLS: isO365 ? true : undefined,
       label: isO365 ? 'Microsoft 365 (Port 587 STARTTLS)' : `SMTP (${primaryHost})`,
     });
   }
 
-  // Attempt SMTP dispatch across candidate endpoints
   for (const endpoint of candidateEndpoints) {
     try {
       const transporter = nodemailer.createTransport({
@@ -340,19 +660,18 @@ export async function sendBookingEmail(booking: BookingDetails): Promise<{
         secure: endpoint.secure,
         requireTLS: endpoint.requireTLS,
         auth: {
-          user: config.email.smtp.user,
-          pass: config.email.smtp.pass,
+          user: smtpUser,
+          pass: smtpPass,
         },
         tls: {
           rejectUnauthorized: false,
-          ciphers: 'SSLv3',
         },
-        connectionTimeout: 8000,
-        greetingTimeout: 8000,
+        connectionTimeout: 4500,
+        greetingTimeout: 4500,
       });
 
       const info = await transporter.sendMail({
-        from: config.email.fromAddress || config.email.smtp.user,
+        from: config.email.fromAddress || smtpUser,
         to: receivingEmail,
         cc: ccEmails || undefined,
         subject,
@@ -360,7 +679,9 @@ export async function sendBookingEmail(booking: BookingDetails): Promise<{
         html: htmlContent,
       });
 
-      console.log(`[EmailService] Successfully sent booking email #${booking.id} to ${receivingEmail} via ${endpoint.label}. Message ID: ${info.messageId}`);
+      console.log(
+        `[EmailService] Successfully sent booking email #${booking.id} to ${receivingEmail} via ${endpoint.label}. Message ID: ${info.messageId}`
+      );
       return {
         success: true,
         messageId: info.messageId,
@@ -369,8 +690,9 @@ export async function sendBookingEmail(booking: BookingDetails): Promise<{
         simulated: false,
       };
     } catch (err: any) {
-      // Log clean diagnostic note without throwing or triggering error alarms
-      console.log(`[EmailService] Notice: ${endpoint.label} dispatch not completed (${err?.code || 'auth'}). Testing alternative dispatch route.`);
+      console.log(
+        `[EmailService] Notice: ${endpoint.label} dispatch not completed (${err?.code || 'timeout'}).`
+      );
     }
   }
 
