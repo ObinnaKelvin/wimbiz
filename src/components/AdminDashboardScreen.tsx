@@ -38,7 +38,6 @@ import {
   ArrowLeft,
   AlertTriangle,
   FileSpreadsheet,
-  Info,
 } from 'lucide-react';
 
 interface AdminDashboardScreenProps {
@@ -47,8 +46,8 @@ interface AdminDashboardScreenProps {
 
 export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNavigate }) => {
   const [currentUser, setCurrentUser] = useState<AdminUser | null>(() => getStoredAdminUser());
-  const [email, setEmail] = useState('admin@iwosan.com');
-  const [password, setPassword] = useState('IwosanAdmin2026!');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
 
@@ -216,7 +215,6 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@iwosan.com"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-900 bg-slate-50 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500 transition"
               />
             </div>
@@ -230,24 +228,8 @@ export const AdminDashboardScreen: React.FC<AdminDashboardScreenProps> = ({ onNa
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••"
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-900 bg-slate-50 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500 transition"
               />
-            </div>
-
-            {/* Convenience Pre-configured Credentials Tip for Staff */}
-            <div className="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200/80 text-[11px] text-emerald-900 space-y-1">
-              <span className="font-bold flex items-center gap-1.5 text-emerald-800">
-                <Info className="w-3.5 h-3.5" />
-                Staff Access Credentials
-              </span>
-              <p className="text-[11px] text-emerald-800/90 leading-tight">
-                Use your staff admin email or the default clinic credentials:
-                <br />
-                Email: <span className="font-mono font-bold">admin@iwosan.com</span> (or <span className="font-mono font-bold">okereobinna11@gmail.com</span>)
-                <br />
-                Password: <span className="font-mono font-bold">IwosanAdmin2026!</span> (or <span className="font-mono font-bold">wimbiz</span>)
-              </p>
             </div>
 
             <button
