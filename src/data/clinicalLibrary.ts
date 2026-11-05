@@ -613,7 +613,7 @@ export const CLINICAL_ARTICLES: Article[] = [
         number: 1,
         title: 'Why muscle matters after 30',
         content:
-          'After age 30, women naturally lose 3% to 5% of lean muscle per decade unless challenged. Bodyweight squats, bands, and weights keep metabolism brisk and joints protected.',
+          'After age 30, women naturally lose 3% to 5% of lean muscle per decade unless challenged. Doing bodyweight exercises, using external weights (bands and dumbbells), keep metabolism brisk and joints protected.',
       },
       {
         number: 2,
@@ -625,7 +625,7 @@ export const CLINICAL_ARTICLES: Article[] = [
         number: 3,
         title: 'Brisk daily steps',
         content:
-          'Aim for 7,000 to 10,000 steps daily. Even three 10-minute walks spread throughout the day deliver equal cardiovascular benefits.',
+          'Aim for 5,000 intentionally planned steps daily. Three 10-minute intentionally planned walk, spread throughout the day, can deliver equal cardiovascular benefits.',
       },
     ],
     content: [
@@ -637,7 +637,7 @@ export const CLINICAL_ARTICLES: Article[] = [
       'Pair 150 minutes of weekly walking with 2 short strength sessions.',
     ],
     takeawayMessage:
-      'Strength training and daily steps are the true anti-aging prescription for women.',
+      'Exercising Daily, are the true anti-aging prescription for women.',
     disclaimer:
       'Educational information, not a diagnosis. If a symptom worries you, please speak to a clinician.',
     relatedArticles: [

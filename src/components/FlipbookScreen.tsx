@@ -57,7 +57,7 @@ interface FlipbookScreenProps {
 const TOTAL_PAGES = 9;
 
 const PAGE_META = [
-  { number: 1, title: 'Cover', subtitle: 'E-Health Passport' },
+  { number: 1, title: 'Cover', subtitle: 'Wellness Passport' },
   { number: 2, title: 'Profile', subtitle: 'Fit@25 baseline' },
   { number: 3, title: 'Map One', subtitle: 'The map, part one' },
   { number: 4, title: 'Map Two', subtitle: 'The map, part two' },
@@ -100,7 +100,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
   else if (ageRaw.includes('30') || ageRaw.includes('35')) ageBand = '30 – 39';
   else if (ageRaw.includes('18') || ageRaw.includes('20')) ageBand = '18 – 24';
 
-  const occupationLabel = 'Rooted and Rising Woman';
+  const occupationLabel = 'The Rooted and Rising Woman';
 
   const bmiData =
     numbers.height && numbers.weight
@@ -230,7 +230,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                           WIMBIZ × IWOSAN
                         </div>
                         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white flex items-center justify-center">
-                          <span>E-Health</span>
+                          <span>Wellness</span>
                           <span className="font-serif italic font-normal text-[#47B549] ml-2">Passport</span>
                         </h2>
                       </div>
@@ -1233,7 +1233,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
 
                       {/* 4 Quarter Action Cards */}
                       <div className="space-y-2.5 mt-4">
-                        {/* Q1: Months 1-3 · Oct – Dec */}
+                        {/* Q4: Months 1-3 · Oct – Dec */}
                         <div
                           onClick={() => toggleRoadmapTask('q1')}
                           className={`rounded-2xl p-3 sm:p-3.5 shadow-2xs flex items-center justify-between gap-3 cursor-pointer transition border ${
@@ -1245,7 +1245,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                           <div className="flex items-center gap-3">
                             <button
                               type="button"
-                              aria-label="Toggle Q1 task"
+                              aria-label="Toggle Q4 task"
                               className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition ${
                                 roadmapTasks.q1
                                   ? 'bg-[#47B549] text-white shadow-2xs'
@@ -1261,7 +1261,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="bg-slate-100 text-slate-700 text-[10px] font-bold px-1.5 py-0.5 rounded leading-none">
-                                  Q1
+                                  Q4
                                 </span>
                                 <span className="text-[11px] text-slate-400 font-medium">
                                   Months 1–3 · Oct – Dec
@@ -1284,7 +1284,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                           </div>
                         </div>
 
-                        {/* Q2: Months 4-6 · Jan – Mar */}
+                        {/* Q1: Months 4-6 · Jan – Mar */}
                         <div
                           onClick={() => toggleRoadmapTask('q2')}
                           className={`rounded-2xl p-3 sm:p-3.5 shadow-2xs flex items-center justify-between gap-3 cursor-pointer transition border ${
@@ -1296,7 +1296,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                           <div className="flex items-center gap-3">
                             <button
                               type="button"
-                              aria-label="Toggle Q2 task"
+                              aria-label="Toggle Q1 task"
                               className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition ${
                                 roadmapTasks.q2
                                   ? 'bg-[#47B549] text-white shadow-2xs'
@@ -1312,7 +1312,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="bg-slate-100 text-slate-700 text-[10px] font-bold px-1.5 py-0.5 rounded leading-none">
-                                  Q2
+                                  Q1
                                 </span>
                                 <span className="text-[11px] text-slate-400 font-medium">
                                   Months 4–6 · Jan – Mar
@@ -1335,7 +1335,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                           </div>
                         </div>
 
-                        {/* Q3: Months 7-9 · Apr – Jun */}
+                        {/* Q2: Months 7-9 · Apr – Jun */}
                         <div
                           onClick={() => toggleRoadmapTask('q3')}
                           className={`rounded-2xl p-3 sm:p-3.5 shadow-2xs flex items-center justify-between gap-3 cursor-pointer transition border ${
@@ -1347,7 +1347,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                           <div className="flex items-center gap-3">
                             <button
                               type="button"
-                              aria-label="Toggle Q3 task"
+                              aria-label="Toggle Q2 task"
                               className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition ${
                                 roadmapTasks.q3
                                   ? 'bg-[#47B549] text-white shadow-2xs'
@@ -1363,7 +1363,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="bg-slate-100 text-slate-700 text-[10px] font-bold px-1.5 py-0.5 rounded leading-none">
-                                  Q3
+                                  Q2
                                 </span>
                                 <span className="text-[11px] text-slate-400 font-medium">
                                   Months 7–9 · Apr – Jun
@@ -1386,7 +1386,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                           </div>
                         </div>
 
-                        {/* Q4: Months 10-12 · Jul – Sep */}
+                        {/* Q3: Months 10-12 · Jul – Sep */}
                         <div
                           onClick={() => toggleRoadmapTask('q4')}
                           className={`rounded-2xl p-3 sm:p-3.5 shadow-2xs flex items-center justify-between gap-3 cursor-pointer transition border ${
@@ -1398,7 +1398,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                           <div className="flex items-center gap-3">
                             <button
                               type="button"
-                              aria-label="Toggle Q4 task"
+                              aria-label="Toggle Q3 task"
                               className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition ${
                                 roadmapTasks.q4
                                   ? 'bg-[#47B549] text-white shadow-2xs'
@@ -1414,7 +1414,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="bg-slate-100 text-slate-700 text-[10px] font-bold px-1.5 py-0.5 rounded leading-none">
-                                  Q4
+                                  Q3
                                 </span>
                                 <span className="text-[11px] text-slate-400 font-medium">
                                   Months 10–12 · Jul – Sep
@@ -1742,22 +1742,22 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                               Helpline
                             </div>
                             <div className="text-[11px] text-slate-400 mt-0.5">
-                              Ask at the booth for the direct line
+                              +2349139352778
                             </div>
                           </div>
                         </div>
 
-                        {/* 3. Bring this passport */}
+                        {/* 3. Download this passport */}
                         <div className="rounded-2xl border border-white/10 bg-white/5 p-2.5 sm:p-3 flex items-center gap-3">
                           <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white shrink-0">
                             <Smartphone className="w-4 h-4 text-[#00B1DA]" />
                           </div>
                           <div>
                             <div className="text-xs sm:text-sm font-bold text-white">
-                              Bring this passport
+                              Download this passport
                             </div>
                             <div className="text-[11px] text-slate-400 mt-0.5">
-                              Printed or on your phone
+                              You can have it printed or on your phone
                             </div>
                           </div>
                         </div>
@@ -1814,7 +1814,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
             </button>
             <div>
               <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight">
-                E-Health passport
+                Wellness passport
               </h1>
               <p className="text-xs text-slate-500 font-medium leading-none mt-0.5">
                 Iwosan
@@ -1853,7 +1853,7 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
               Iwosan × WIMBIZ 25
             </div>
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight mt-0.5">
-              Your e-health <span className="font-serif italic font-normal text-slate-800">passport</span>
+              Your Wellness <span className="font-serif italic font-normal text-slate-800">passport</span>
             </h2>
           </div>
           <button
