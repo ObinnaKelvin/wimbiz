@@ -1180,18 +1180,11 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                       </div>
                     </div>
 
-                    {/* Section Footer: Discreet booking action to connect with Iwosan */}
-                    <div className="pt-3 border-t border-dashed border-slate-200 mt-4 flex items-center justify-between gap-3">
+                    {/* Section Footer */}
+                    <div className="pt-3 border-t border-dashed border-slate-200 mt-4">
                       <p className="text-[10px] text-slate-400 leading-tight">
                         Timetable based on clinical consensus. Discuss personal risk factors with your doctor.
                       </p>
-                      <button
-                        type="button"
-                        onClick={() => onNavigate('contact')}
-                        className="py-1.5 px-3 bg-[#47B549] hover:bg-[#3ea040] text-slate-950 font-bold text-[11px] rounded-full shrink-0 shadow-2xs transition cursor-pointer flex items-center gap-1"
-                      >
-                        Book screening
-                      </button>
                     </div>
                   </div>
                 )}
@@ -1709,13 +1702,13 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                           <div>
                             <div className="text-[10px] text-slate-400">Access</div>
                             <div className="text-xs sm:text-sm font-bold text-white mt-0.5">
-                              Walk in, no booking
+                              Free
                             </div>
                           </div>
                         </div>
                       </div>
 
-                      {/* 3 Clinic Details Cards */}
+                      {/* Clinic Details Cards */}
                       <div className="space-y-2 mt-3">
                         {/* 1. Location */}
                         <div className="rounded-2xl border border-white/10 bg-white/5 p-2.5 sm:p-3 flex items-center gap-3">
@@ -1760,6 +1753,30 @@ export const FlipbookScreen: React.FC<FlipbookScreenProps> = ({
                               You can have it printed or on your phone
                             </div>
                           </div>
+                        </div>
+
+                        {/* 4. Book a screening */}
+                        <div className="rounded-2xl border border-white/10 bg-white/5 p-2.5 sm:p-3 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white shrink-0">
+                              <Stethoscope className="w-4 h-4 text-[#00B1DA]" />
+                            </div>
+                            <div>
+                              <div className="text-xs sm:text-sm font-bold text-white">
+                                Book a screening
+                              </div>
+                              <div className="text-[11px] text-slate-400 mt-0.5">
+                                Schedule a checkup with Iwosan
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => onNavigate('contact')}
+                            className="py-1.5 px-3 bg-[#47B549] hover:bg-[#3ea040] text-slate-950 font-bold text-[11px] rounded-full shrink-0 shadow-2xs transition cursor-pointer flex items-center gap-1"
+                          >
+                            Book screening
+                          </button>
                         </div>
                       </div>
 
